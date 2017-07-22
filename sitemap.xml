@@ -1,0 +1,702 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Lackadaisical Cherimoya</title>
+    <description>It is still a beautiful world. Be cheerful. Strive to be happy.</description>
+    <link>http://0.0.0.0:4000/</link>
+    <atom:link href="http://0.0.0.0:4000/sitemap.xml" rel="self" type="application/rss+xml"/>
+    <pubDate>Sat, 22 Jul 2017 01:20:00 +0000</pubDate>
+    <lastBuildDate>Sat, 22 Jul 2017 01:20:00 +0000</lastBuildDate>
+    <generator>Jekyll v3.3.1</generator>
+    
+      <item>
+        <title>Book Note: Introduction to Hierarchical Bayesian Modeling for Ecological Data, Chapter 1</title>
+        <description>&lt;style type=&quot;text/css&quot;&gt;
+#cy {
+  height: 400px;
+  width: 100%;
+  left: 0;
+  top: 0;
+}
+#cy2, #cy3, #cy4, #cy5, #cy6, #cy7, #cy8 {
+  height: 70px;
+  width: 100%;
+  left: 0;
+  top: 0;
+}
+#cy9, #cy10, #cy11, #cy12, #cy13 {
+  height: 200px;
+  width: 100%;
+  left: 0;
+  top: 0;
+}
+#cy14 {
+  height: 300px;
+  width: 100%;
+  left: 0;
+  top: 0;
+}
+#cy15 {
+  height: 400px;
+  width: 100%;
+  left: 0;
+  top: 0;
+}
+#cy16 {
+  height: 500px;
+  width: 100%;
+  left: 0;
+  top: 0;
+}
+&lt;/style&gt;
+
+&lt;p&gt;&lt;img src=&quot;/static/img/posts/salmon_sushi.jpg&quot; alt=&quot;salmon-sushi&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;introduction&quot;&gt;Introduction&lt;/h3&gt;
+
+&lt;p&gt;So I’ve learned a little bit about Bayesian Hierarchical Modeling at FDA and decided to put down my thoughts and write about it more to reinforced what I’ve learned. I also want to try out some new javascript data visual libraries.&lt;/p&gt;
+
+&lt;p&gt;A great book I’ve found is “Introduction to Hierarchical Bayesian Modeling for Ecological Data” by Parent and Rivot&lt;sup&gt;&lt;a href=&quot;#myfootnote1&quot;&gt;1&lt;/a&gt;&lt;/sup&gt;.&lt;/p&gt;
+
+&lt;p&gt;While at the FDA I code my own model without using any MCMC framework and it was very slow in R. I realize I need a MCMC framework under my toolbelt. After some &lt;a href=&quot;https://www.reddit.com/r/statistics/comments/5on87q/stan_vs_winbugs_a_search_for_informed_opinions/&quot;&gt;research&lt;/a&gt; I decided on &lt;a href=&quot;mc-stan.org&quot;&gt;Stan&lt;/a&gt; using the &lt;a href=&quot;http://mc-stan.org/users/interfaces/rstan&quot;&gt;rstan r package&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h3 id=&quot;the-graph-not-dag-not-a-bayesian-network&quot;&gt;The Graph (not DAG; not a Bayesian network)&lt;/h3&gt;
+
+&lt;p&gt;Graph represents the salmon migration and birth cycle. Each edge represent a year pass. The nodes are square because they’re given. The information is given from previous knowledge.&lt;/p&gt;
+
+&lt;div id=&quot;cy&quot;&gt;&lt;/div&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: center&quot;&gt;Variable&lt;/th&gt;
+      &lt;th style=&quot;text-align: center&quot;&gt;Definition&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;Wt&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;Salmon Eggs&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;0+&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;Young-of-the-year (hatched)&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;PSm&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;Pre-smolts&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;Sm1&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;Smolt after 1 year&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;Sp1&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;Returns one year earlier than Sp2&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;Parr1&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;Smaller juveniles left behind by Sm1&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;Sm2&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;Smolt after 2 year&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;Sp2&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;Returns one year after Sp1&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h3 id=&quot;the-models---introducing-probability-into-the-graph&quot;&gt;The Models - Introducing Probability into the Graph&lt;/h3&gt;
+
+&lt;p&gt;We’re going to take the graph that represent Salmon’s migration cycle and introduce uncertainty to it (model it via probability). 
+By doing this we create a new graph that is complete different from the Salmon’s migration cycle graph. 
+It is a graph base on probability view.&lt;/p&gt;
+
+&lt;p&gt;We go through each square node and one by one apply a model and probability to it.&lt;/p&gt;
+
+&lt;p&gt;Model is time base, &lt;em&gt;t&lt;/em&gt; will represent a particular year.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Sp&lt;sub&gt;t&lt;/sub&gt; = Sp1&lt;sub&gt;t&lt;/sub&gt; + Sp2&lt;sub&gt;t&lt;/sub&gt; = # of spawners at t-th year&lt;/li&gt;
+  &lt;li&gt;W&lt;sub&gt;t&lt;/sub&gt; = # of eggs spawned by the adults returning in year t&lt;/li&gt;
+  &lt;li&gt;0+&lt;sub&gt;t&lt;/sub&gt; = Young-of-the-year at t-th year&lt;/li&gt;
+  &lt;li&gt;PSm&lt;sub&gt;t&lt;/sub&gt; = pre-smolts at t-th year&lt;/li&gt;
+  &lt;li&gt;Sm1&lt;sub&gt;t&lt;/sub&gt; = 1+ smolts (1 year to smolt) at t-th year&lt;/li&gt;
+  &lt;li&gt;P1&lt;sub&gt;t&lt;/sub&gt; = Parr1 = smaller juveniles left behind by Sm1 at t-th year&lt;/li&gt;
+  &lt;li&gt;Sm2&lt;sub&gt;t&lt;/sub&gt; = 2+ smolts (2 years to smolt) at t-th year&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;Spawners -&amp;gt; Eggs&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div id=&quot;cy2&quot;&gt;&lt;/div&gt;
+
+&lt;p&gt;W&lt;sub&gt;t&lt;/sub&gt; = Sp&lt;sub&gt;t&lt;/sub&gt; ⋅ P_f ⋅ fec&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;W&lt;sub&gt;t&lt;/sub&gt; = # of eggs spawned by the adults returning in year t&lt;/li&gt;
+  &lt;li&gt;Sp&lt;sub&gt;t&lt;/sub&gt; = # of spawners = Sp1 + Sp2&lt;/li&gt;
+  &lt;li&gt;P_f = proportion of females&lt;/li&gt;
+  &lt;li&gt;fec = mean of fecundity (fertility)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;Eggs -&amp;gt; 0+ juveniles&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div id=&quot;cy3&quot;&gt;&lt;/div&gt;
+
+&lt;p&gt;This is Ricker Cruve model with parameters (α,β) which is a classic discrete population model.&lt;/p&gt;
+
+&lt;p&gt;0+&lt;sub&gt;t+1&lt;/sub&gt; = α ⋅ W&lt;sub&gt;t&lt;/sub&gt; ⋅ e&lt;sup&gt;-β ⋅ W&lt;sub&gt;t&lt;/sub&gt;&lt;/sup&gt; ⋅ e&lt;sup&gt;ε&lt;sub&gt;t&lt;/sub&gt;&lt;/sup&gt; where ε&lt;sub&gt;t&lt;/sub&gt; ~iid N(0, σ&lt;sup&gt;2&lt;/sup&gt;)&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;0+&lt;sub&gt;t+1&lt;/sub&gt; = freshwater production of juveniles resulting from the reproduction of the spawners returning in year t&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;0+ juveniles -&amp;gt; Smolts&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div id=&quot;cy4&quot;&gt;&lt;/div&gt;
+
+&lt;p&gt;PSm&lt;sub&gt;t+2&lt;/sub&gt; ~ Binomial(0+&lt;sub&gt;t+1&lt;/sub&gt;, γ&lt;sub&gt;0+&lt;/sub&gt;) = # of 0+&lt;sub&gt;t+1&lt;/sub&gt; will survive and migrate to PSm&lt;sub&gt;t+2&lt;/sub&gt;&lt;/p&gt;
+
+&lt;div id=&quot;cy5&quot;&gt;&lt;/div&gt;
+
+&lt;p&gt;Sm1&lt;sub&gt;t+2&lt;/sub&gt; ~ Binomial(PSm&lt;sub&gt;t+2&lt;/sub&gt;, θ&lt;sub&gt;Sm1&lt;/sub&gt;) = # of PSm&lt;sub&gt;t+2&lt;/sub&gt; will survive and migrate as 1+smolts (Sm1)&lt;/p&gt;
+
+&lt;div id=&quot;cy6&quot;&gt;&lt;/div&gt;
+
+&lt;p&gt;Sm2&lt;sub&gt;t+3&lt;/sub&gt; ~ Binomial(Parr1&lt;sub&gt;t+2&lt;/sub&gt;, γ&lt;sub&gt;parr1&lt;/sub&gt;) = # of Parr1&lt;sub&gt;t+2&lt;/sub&gt; will survive and migrate as 2+smolts (Sm2)&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;PSm&lt;sub&gt;t+2&lt;/sub&gt; = young-of-the-year 0+&lt;sub&gt;t+1&lt;/sub&gt; will survive next spring year t+2&lt;/li&gt;
+  &lt;li&gt;γ&lt;sub&gt;0+&lt;/sub&gt; = survival rate of 0+&lt;/li&gt;
+  &lt;li&gt;θ&lt;sub&gt;Sm1&lt;/sub&gt; = proportion of pre-smolts will migrate as 1+Smolts (survival rate)&lt;/li&gt;
+  &lt;li&gt;γ&lt;sub&gt;parr1&lt;/sub&gt; = survival rate of parr1&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;Smolts -&amp;gt; Returning Spawners&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div id=&quot;cy7&quot;&gt;&lt;/div&gt;
+
+&lt;p&gt;Sp1&lt;sub&gt;t+3&lt;/sub&gt; ~ Binomial(Sm1&lt;sub&gt;t+2&lt;/sub&gt;, γ&lt;sub&gt;Sm&lt;/sub&gt;)&lt;/p&gt;
+
+&lt;div id=&quot;cy8&quot;&gt;&lt;/div&gt;
+
+&lt;p&gt;Sp2&lt;sub&gt;t+4&lt;/sub&gt; ~ Binomial(Sm2&lt;sub&gt;t+3&lt;/sub&gt;, γ&lt;sub&gt;Sm&lt;/sub&gt;)&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;γ&lt;sub&gt;Sm&lt;/sub&gt; = survival rate&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;Learning from observations&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;These two are observed and given:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;C&lt;sub&gt;Sm1,t&lt;/sub&gt; = observations = # of smolts caught downstream trap&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;π&lt;sub&gt;Sm&lt;/sub&gt; = trap efficiency&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Using these data points we can figure out the unknowns.&lt;/p&gt;
+
+&lt;p&gt;Our unknowns, the parameters, are: α, β, σ, γ&lt;sub&gt;0+&lt;/sub&gt;, θ&lt;sub&gt;sm1&lt;/sub&gt;, γ&lt;sub&gt;Parr1&lt;/sub&gt;, γ&lt;sub&gt;Sm&lt;/sub&gt;&lt;/p&gt;
+
+&lt;p&gt;# of smolts caught downstream trap can be model as a binomial distribution either the smolt is caught or not.&lt;/p&gt;
+
+&lt;p&gt;C&lt;sub&gt;Sm1,t&lt;/sub&gt; ~ Binomial(Sm1&lt;sub&gt;t&lt;/sub&gt;, π&lt;sub&gt;Sm&lt;/sub&gt;)&lt;/p&gt;
+
+&lt;p&gt;*Note (advance): observations assume &lt;a href=&quot;https://en.wikipedia.org/wiki/Bayesian_hierarchical_modeling#Exchangeability&quot;&gt;Bayesian’s property of exchangability&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;the-models---creating-a-proability-graphical-model&quot;&gt;The Models - Creating a proability graphical model&lt;/h3&gt;
+
+&lt;p&gt;0+&lt;sub&gt;t+1&lt;/sub&gt; = α ⋅ W&lt;sub&gt;t&lt;/sub&gt; ⋅ e&lt;sup&gt;-β ⋅ W&lt;sub&gt;t&lt;/sub&gt;&lt;/sup&gt; ⋅ e&lt;sup&gt;ε&lt;sub&gt;t&lt;/sub&gt;&lt;/sup&gt; where ε&lt;sub&gt;t&lt;/sub&gt; ~iid N(0, σ&lt;sup&gt;2&lt;/sup&gt;)&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;0+&lt;sub&gt;t+1&lt;/sub&gt; = freshwater production of juveniles resulting from the reproduction of the spawners returning in year t&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div id=&quot;cy9&quot;&gt;&lt;/div&gt;
+
+&lt;p&gt;PSm&lt;sub&gt;t+2&lt;/sub&gt; ~ Binomial(0+&lt;sub&gt;t+1&lt;/sub&gt;, γ&lt;sub&gt;0+&lt;/sub&gt;) = # of 0+&lt;sub&gt;t+1&lt;/sub&gt; will survive and migrate to PSm&lt;sub&gt;t+2&lt;/sub&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;γ&lt;sub&gt;0+&lt;/sub&gt; = survival rate of 0+&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div id=&quot;cy10&quot;&gt;&lt;/div&gt;
+
+&lt;p&gt;Sm1&lt;sub&gt;t+2&lt;/sub&gt; ~ Binomial(PSm&lt;sub&gt;t+2&lt;/sub&gt;, θ&lt;sub&gt;Sm1&lt;/sub&gt;) = # of PSm&lt;sub&gt;t+2&lt;/sub&gt; will survive and migrate as 1+smolts (Sm1)&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;PSm&lt;sub&gt;t+2&lt;/sub&gt; = young-of-the-year 0+&lt;sub&gt;t+1&lt;/sub&gt; will survive next spring year t+2&lt;/li&gt;
+  &lt;li&gt;θ&lt;sub&gt;Sm1&lt;/sub&gt; = proportion of pre-smolts will migrate as 1+Smolts (survival rate)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div id=&quot;cy11&quot;&gt;&lt;/div&gt;
+
+&lt;p&gt;Sm2&lt;sub&gt;t+3&lt;/sub&gt; ~ Binomial(Parr1&lt;sub&gt;t+2&lt;/sub&gt;, γ&lt;sub&gt;parr1&lt;/sub&gt;) = # of Parr1&lt;sub&gt;t+2&lt;/sub&gt; will survive and migrate as 2+smolts (Sm2)&lt;/p&gt;
+
+&lt;div id=&quot;cy12&quot;&gt;&lt;/div&gt;
+
+&lt;p&gt;Sp1&lt;sub&gt;t+3&lt;/sub&gt; ~ Binomial(Sm1&lt;sub&gt;t+2&lt;/sub&gt;, γ&lt;sub&gt;Sm&lt;/sub&gt;)&lt;/p&gt;
+
+&lt;p&gt;Sp2&lt;sub&gt;t+4&lt;/sub&gt; ~ Binomial(Sm2&lt;sub&gt;t+3&lt;/sub&gt;, γ&lt;sub&gt;Sm&lt;/sub&gt;)&lt;/p&gt;
+
+&lt;div id=&quot;cy13&quot;&gt;&lt;/div&gt;
+
+&lt;p&gt;Now we put all the parts together into graph.&lt;/p&gt;
+
+&lt;div id=&quot;cy14&quot;&gt;&lt;/div&gt;
+
+&lt;p&gt;Okay, now that we got the probability graphical model down we can figure out the joint probability distribution.&lt;/p&gt;
+
+&lt;p&gt;P(J&lt;sub&gt;t&lt;/sub&gt;) = ?&lt;/p&gt;
+
+&lt;p&gt;Step 1. Looking at the graph,  we’re going to start with all nodes with no parent: α, β, σ, W&lt;sub&gt;t&lt;/sub&gt;, γ&lt;sub&gt;0+&lt;/sub&gt;, θ&lt;sub&gt;Sm1&lt;/sub&gt;, γ&lt;sub&gt;Parr1&lt;/sub&gt;, and γ&lt;sub&gt;Sm&lt;/sub&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;P(J&lt;sub&gt;t&lt;/sub&gt;) = 
+P[&amp;alpha;] 
+&amp;sdot; P[&amp;beta;] 
+&amp;sdot; P[&amp;sigma;] 
+&amp;sdot; P[W&lt;sub&gt;t&lt;/sub&gt;] 
+&amp;sdot; P[&amp;gamma;&lt;sub&gt;0+&lt;/sub&gt;] 
+&amp;sdot; P[&amp;theta;&lt;sub&gt;Sm1&lt;/sub&gt;] 
+&amp;sdot; P[&amp;gamma;&lt;sub&gt;Parr1&lt;/sub&gt;] 
+&amp;sdot; P[&amp;gamma;&lt;sub&gt;Sm&lt;/sub&gt;]
+&amp;hellip;
+&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;Step 2. Now we’re going to look at the nodes with parents.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;0+&lt;sub&gt;t+1&lt;/sub&gt; is P[0+&lt;sub&gt;t+1&lt;/sub&gt;  |  W&lt;sub&gt;t&lt;/sub&gt;, α, β, σ]&lt;/li&gt;
+  &lt;li&gt;PSm&lt;sub&gt;t+2&lt;/sub&gt; is P[PSm&lt;sub&gt;t+2&lt;/sub&gt;  |  0+&lt;sub&gt;t+2&lt;/sub&gt;, γ&lt;sub&gt;0+&lt;/sub&gt;]&lt;/li&gt;
+  &lt;li&gt;Sm1&lt;sub&gt;t+2&lt;/sub&gt; &amp;amp; Parr1&lt;sub&gt;t+2&lt;/sub&gt; is P[Sm1&lt;sub&gt;t+2&lt;/sub&gt;, Parr1&lt;sub&gt;t+2&lt;/sub&gt;  |  PSm&lt;sub&gt;t+2&lt;/sub&gt;, θ&lt;sub&gt;Sm1&lt;/sub&gt;]. Notice how complex this one is. It is because Sm1 and Parr1 both share the same parameters.&lt;/li&gt;
+  &lt;li&gt;P[Sp1&lt;sub&gt;t+3&lt;/sub&gt; | Sm1&lt;sub&gt;t+2&lt;/sub&gt;, γ&lt;sub&gt;Sm&lt;/sub&gt;]&lt;/li&gt;
+  &lt;li&gt;P[Sm2&lt;sub&gt;t+3&lt;/sub&gt; | Parr1&lt;sub&gt;t+2&lt;/sub&gt;, γ&lt;sub&gt;Parr1&lt;/sub&gt;]&lt;/li&gt;
+  &lt;li&gt;P[Sp2&lt;sub&gt;t+4&lt;/sub&gt; | Sm2&lt;sub&gt;t+3&lt;/sub&gt;, γ&lt;sub&gt;Sm&lt;/sub&gt;]&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;P(J&lt;sub&gt;t&lt;/sub&gt;) = 
+P[&amp;alpha;] 
+&amp;sdot; P[&amp;beta;] 
+&amp;sdot; P[&amp;sigma;] 
+&amp;sdot; P[W&lt;sub&gt;t&lt;/sub&gt;] 
+&amp;sdot; P[&amp;gamma;&lt;sub&gt;0+&lt;/sub&gt;] 
+&amp;sdot; P[&amp;theta;&lt;sub&gt;Sm1&lt;/sub&gt;] 
+&amp;sdot; P[&amp;gamma;&lt;sub&gt;Parr1&lt;/sub&gt;] 
+&amp;sdot; P[&amp;gamma;&lt;sub&gt;Sm&lt;/sub&gt;] 
+&lt;/code&gt;
+&lt;code class=&quot;highlighter-rouge&quot;&gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;
+&amp;sdot; P[0+&lt;sub&gt;t+1&lt;/sub&gt;  |  W&lt;sub&gt;t&lt;/sub&gt;, &amp;alpha;, &amp;beta;, &amp;sigma;] 
+&amp;sdot; P[PSm&lt;sub&gt;t+2&lt;/sub&gt;  |  0+&lt;sub&gt;t+2&lt;/sub&gt;, &amp;gamma;&lt;sub&gt;0+&lt;/sub&gt;] 
+&lt;/code&gt;
+&lt;code class=&quot;highlighter-rouge&quot;&gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;
+&amp;sdot; P[Sm1&lt;sub&gt;t+2&lt;/sub&gt;, Parr1&lt;sub&gt;t+2&lt;/sub&gt;  |  PSm&lt;sub&gt;t+2&lt;/sub&gt;, &amp;theta;&lt;sub&gt;Sm1&lt;/sub&gt;]
+&amp;sdot; P[Sp1&lt;sub&gt;t+3&lt;/sub&gt; | Sm1&lt;sub&gt;t+2&lt;/sub&gt;, &amp;gamma;&lt;sub&gt;Sm&lt;/sub&gt;]
+&lt;/code&gt;
+&lt;code class=&quot;highlighter-rouge&quot;&gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;
+&amp;sdot; P[Sm2&lt;sub&gt;t+3&lt;/sub&gt; | Parr1&lt;sub&gt;t+2&lt;/sub&gt;, &amp;gamma;&lt;sub&gt;Parr1&lt;/sub&gt;]
+&amp;sdot; P[Sp2&lt;sub&gt;t+4&lt;/sub&gt; | Sm2&lt;sub&gt;t+3&lt;/sub&gt;, &amp;gamma;&lt;sub&gt;Sm&lt;/sub&gt;]
+&lt;/code&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;okay-so-what-wheres-the-bayesian-network&quot;&gt;Okay so what? Where’s the Bayesian network?&lt;/h3&gt;
+
+&lt;p&gt;Not yet. The book needs to introduce the concept of a simple model vs a hierarchical model and some terminology.&lt;/p&gt;
+
+&lt;p&gt;So far we haven’t introduce any observational variable (random variable) at all.&lt;/p&gt;
+
+&lt;div id=&quot;cy15&quot;&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;θ represents parameters&lt;/li&gt;
+  &lt;li&gt;Z represents latent parameters&lt;/li&gt;
+  &lt;li&gt;Y represents the output Random Variable. (little y represent the realization/sample of Y random variable).&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Left is a simple model. The right graph is a hierarchical model.&lt;/p&gt;
+
+&lt;p&gt;Z represents latent variables (nuisance variables), basically variables we don’t really care, also they’re hidden we don’t observed it directly like Y.
+Y represents observations. Observations are random so Y is capitalized and smaller y is the realization of Y or a sample of Y.
+The node is pink because it is an observable.&lt;/p&gt;
+
+&lt;p&gt;P[θ, Z, Y] = P[θ] ⋅ P[Z | θ] ⋅ P[Y | θ, Z]&lt;/p&gt;
+
+&lt;p&gt;Well first what’s the experiment?&lt;/p&gt;
+
+&lt;p&gt;For this it’s salmon captures and they’re model via binomial distribution either you catch the fish or not.&lt;/p&gt;
+
+&lt;p&gt;Notice the C stands for catches.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;C&lt;sub&gt;0+, t+1&lt;/sub&gt; ~ Binomial(0+&lt;sub&gt;t+1&lt;/sub&gt;, π&lt;sub&gt;0+&lt;/sub&gt;)&lt;/li&gt;
+  &lt;li&gt;C&lt;sub&gt;Sm1, t+2&lt;/sub&gt; ~ Binomial(Sm1&lt;sub&gt;t+2&lt;/sub&gt;, π&lt;sub&gt;Sm&lt;/sub&gt;)&lt;/li&gt;
+  &lt;li&gt;C&lt;sub&gt;Sm2, t+3&lt;/sub&gt; ~ Binomial(Sm1&lt;sub&gt;t+3&lt;/sub&gt;, π&lt;sub&gt;Sm&lt;/sub&gt;)&lt;/li&gt;
+  &lt;li&gt;C&lt;sub&gt;Sp1, t+3&lt;/sub&gt; ~ Binomial(Sp1&lt;sub&gt;t+3&lt;/sub&gt;, π&lt;sub&gt;Sp&lt;/sub&gt;)&lt;/li&gt;
+  &lt;li&gt;C&lt;sub&gt;Sp2, t+4&lt;/sub&gt; ~ Binomial(Sp2&lt;sub&gt;t+4&lt;/sub&gt;, π&lt;sub&gt;Sp&lt;/sub&gt;)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div id=&quot;cy16&quot;&gt;&lt;/div&gt;
+
+&lt;p&gt;Once again the squares represent known/given values (the π’s are given). 
+The pink circle means observed values. 
+Pink in general means they’re known either by given or by observations.
+The purple boxes represent grouping and group the nodes into their respective group.&lt;/p&gt;
+
+&lt;p&gt;Ok. Finally, we got a Bayesian network. 
+Really, what now?&lt;/p&gt;
+
+&lt;p&gt;How does y (the sample or realization of Y) fits in this fancy graph?&lt;/p&gt;
+
+&lt;h3 id=&quot;what-happen-when-the-observation-is-available&quot;&gt;What happen when the Observation is available?&lt;/h3&gt;
+
+&lt;p&gt;Before that notice how we build the model and the direction. 
+The direction is downward from the Salmon cycle toward the latent variable and then towards the obsevation.&lt;/p&gt;
+
+&lt;p&gt;Why did the book brought this up? 
+It is because when you train the model using the data/observations that are available you go in the opposite direction.&lt;/p&gt;
+
+&lt;p&gt;You start at the Y (observation layer and Y is a random variable) and Y is now, Y = y, since little y is the realization of random variable Y. 
+y is a sample of Y or the data (values not just some placeholder variable). And you go up to latent layer and then to the parameter later.&lt;/p&gt;
+
+&lt;p&gt;Let’s see it mathematically:&lt;/p&gt;
+
+&lt;p&gt;Here’s the joint probability:&lt;/p&gt;
+
+&lt;p&gt;P[Y, θ, Z]&lt;/p&gt;
+
+&lt;p&gt;Now here’s the joint probability with Y = y, when we have data to train the model and find the paramenter.&lt;/p&gt;
+
+&lt;p&gt;P[θ, Z | Y = y]&lt;/p&gt;
+
+&lt;p&gt;Given Y = y, the observations propagate upward from the observation to the latent layer to the parameter layer.&lt;/p&gt;
+
+&lt;p&gt;This is how you train the model after you are done creating the model.&lt;/p&gt;
+
+&lt;p&gt;You can see the Bayes Rule connection too right? 
+We’re always dealing with Joint Probability and Conditional Probability.&lt;/p&gt;
+
+&lt;p&gt;Bayesian make it so that they’re conditionally independent. 
+This is one of the property of Bayesian statistic.&lt;/p&gt;
+
+&lt;p&gt;This is now a posterior distribution. 
+Posterior being after the data.
+Prior distribution is before the data.&lt;/p&gt;
+
+&lt;p&gt;P[θ, Z | Y = y] = posterior distribution&lt;/p&gt;
+
+&lt;p&gt;I’m going to repeat it again.&lt;/p&gt;
+
+&lt;p&gt;Posterior is after the data have been inputed.&lt;/p&gt;
+
+&lt;p&gt;Prior is before the data. It is your prior belief.&lt;/p&gt;
+
+&lt;p&gt;In Bayesian you need to supply a belief in form of a prior distribution.
+It’s weird but don’t worry if you don’t know anything then you can use a noninformative prior distribution.&lt;/p&gt;
+
+&lt;p&gt;The belief thing is also away to encode expert belief too.&lt;/p&gt;
+
+&lt;p&gt;So given what we have now, we just have to apply Bayes’ Rule to the conditional probability and you get your parameter values.&lt;/p&gt;
+
+&lt;h3 id=&quot;bayes-rule&quot;&gt;Bayes’ Rule&lt;/h3&gt;
+
+&lt;p&gt;P[θ Z | Y = y] = P[θ, Z, Y = y] / P[Y = y]&lt;/p&gt;
+
+&lt;p&gt;Some stat here and you get.&lt;/p&gt;
+
+&lt;p&gt;P[θ Z | Y = y] ∝ P[θ] ⋅ P[Z | θ] ⋅ P[Y = y | θ, Z]&lt;/p&gt;
+
+&lt;h3 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h3&gt;
+
+&lt;p&gt;I highly recommend this book. Andrew Gelman’s DBA book is more PhD level and his approach is not graphical like this but more mathy. 
+Being visual this book helps a lot into tying things together.&lt;/p&gt;
+
+&lt;p&gt;There was no observations/data and no code for this chapter. Ah dangit. Well until next time, stay tuned for the next episode of Bayesian man.&lt;/p&gt;
+
+&lt;p&gt;&lt;sup&gt;&lt;a href=&quot;#myfootnote1&quot;&gt;1&lt;/a&gt;&lt;/sup&gt;Buy the book if you like what you see on the post. This is basically my notes on chapter 1 of the book. 
+It’s an amazing book and I highly recommend it.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;What did I learn about myself&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;I’m glad I’m reviewing this chapter of the book again. I have a confession to make, if I want to understand a material/subject I need to read 3 times and do projects on it and a review of what I’ve learned. I need tons of practice. I guess this is one of the reason why I started this blog.&lt;/p&gt;
+
+&lt;p&gt;This chapter ties in again DAG, Bayes’ Rule, and conditional probabilities. Good refresher and clear up things that I was wrong about. Especially the salmon breeding cycle, I didn’t think about the fact that it wasn’t a DAG. And that from that model we create a Bayesian Graph Model (DAG).&lt;/p&gt;
+
+&lt;p&gt;I think I’ll go through each chapter of this book as a refresher while playing with javascript graphical libraries and hopefully learn Stan. I need to make sure I didn’t miss out on anything from the first reading.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;What Did I Get to Practice? (for me)&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;&lt;del&gt;Bayesian Hierarchical Modeling using &lt;a href=&quot;https://cran.r-project.org/web/packages/rstan/index.html&quot;&gt;rstan&lt;/a&gt;.&lt;/del&gt;&lt;/li&gt;
+  &lt;li&gt;Tried out a javascript data visualisation library, &lt;a href=&quot;https://js.cytoscape.org&quot;&gt;cytoscape.js&lt;/a&gt;, for modeling graphs.&lt;/li&gt;
+  &lt;li&gt;Gets to refresh Bayesian Graphical Model (Bayesian Network).&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;strong&gt;Rough Roadmap for Bayesian HM&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Finish off this book. Introduction to Hierarchical Bayesian Modeling for Ecological Data (Chapman &amp;amp; Hall/CRC Applied Environmental Statistics)&lt;/li&gt;
+  &lt;li&gt;Read this for Hamiltonian Markov Chain(Statistics in the social and behavioral sciences series) Gill, Jeff-Bayesian Methods A Social and Behavioral Sciences Approach-CRC Press (2014)&lt;/li&gt;
+  &lt;li&gt;Read https://arxiv.org/abs/1111.4246 an implementation of HMC&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=21a85f1YS5Q&quot;&gt;Measure theory videos&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;DBA 3 reread again learning Dirichlet Process&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h4 id=&quot;etc&quot;&gt;Etc..&lt;/h4&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;&lt;a name=&quot;myfootnote1&quot; target=&quot;_blank&quot; href=&quot;https://www.amazon.com/gp/product/B00BBGP7QE/ref=as_li_tl?ie=UTF8&amp;amp;camp=1789&amp;amp;creative=9325&amp;amp;creativeASIN=B00BBGP7QE&amp;amp;linkCode=as2&amp;amp;tag=mythicalprogr-20&amp;amp;linkId=0902d5294515fd663d8322cd1c3d0b30&quot;&gt;Introduction to Hierarchical Bayesian Modeling for Ecological Data (Chapman &amp;amp; Hall/CRC Applied Environmental Statistics)&lt;/a&gt;&lt;img src=&quot;//ir-na.amazon-adsystem.com/e/ir?t=mythicalprogr-20&amp;amp;l=am2&amp;amp;o=1&amp;amp;a=B00BBGP7QE&quot; width=&quot;1&quot; height=&quot;1&quot; border=&quot;0&quot; alt=&quot;&quot; style=&quot;border:none !important; margin:0px !important;&quot; /&gt; The book link is Amazon affiliated. If you get it at CRC publishing you can get it 20 bucks cheaper if you use a discount code, just that it takes longer to ship. Also note I would recommend reading “Doing Bayesian Data Analysis” first before even trying to get into Hierarchical Modeling.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;www.htmlhelp.com/reference/html40/entities/symbols.html&quot;&gt;Would like to thank this website for all the html mathematical notations.&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;The salmon sushi picture was taken from &lt;a href=&quot;pixabay.com&quot;&gt;pixabay&lt;/a&gt; under creative common license.&lt;br /&gt;
+&lt;script src=&quot;https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.1.3/cytoscape.min.js&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;/static/js/post/salmon_post.js&quot;&gt;&lt;/script&gt;&lt;/p&gt;
+</description>
+        <pubDate>Sat, 15 Jul 2017 15:29:00 +0000</pubDate>
+        <link>http://0.0.0.0:4000/bayesian/modeling/hierarchicalmodeling/statistic/2017/07/15/bayesian2.html</link>
+        <guid isPermaLink="true">http://0.0.0.0:4000/bayesian/modeling/hierarchicalmodeling/statistic/2017/07/15/bayesian2.html</guid>
+        
+        
+        <category>bayesian</category>
+        
+        <category>modeling</category>
+        
+        <category>hierarchicalmodeling</category>
+        
+        <category>statistic</category>
+        
+      </item>
+    
+      <item>
+        <title>Light Novel Analysis (part 1)</title>
+        <description>&lt;p&gt;&lt;img src=&quot;/static/img/posts/lightnovel.jpg&quot; alt=&quot;light-novels&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;introduction&quot;&gt;Introduction&lt;/h3&gt;
+
+&lt;p&gt;I’m into light novels so I’ve decided to combine my love for data science and light novel.&lt;/p&gt;
+
+&lt;h3 id=&quot;information-retrieval&quot;&gt;Information Retrieval&lt;/h3&gt;
+
+&lt;p&gt;I started out by retrieving some data from online via scraping using &lt;a href=&quot;https://scrapy.org/&quot;&gt;scrapy&lt;/a&gt;. I love scrapy and highly recommend it for any serious web scrapping task.&lt;/p&gt;
+
+&lt;h3 id=&quot;the-data&quot;&gt;The Data&lt;/h3&gt;
+
+&lt;p&gt;So what does the data look like?&lt;/p&gt;
+
+&lt;p&gt;2739 novels.&lt;/p&gt;
+
+&lt;p&gt;It’s in a json format.&lt;/p&gt;
+
+&lt;p&gt;The columns are novel title, description, novel type, genre, tags, rating, language, authors, year, and license.&lt;/p&gt;
+
+&lt;h3 id=&quot;exploratory-data-analysis&quot;&gt;Exploratory Data Analysis&lt;/h3&gt;
+
+&lt;p&gt;For this portion I will be using R to do some EDA (❤ John Tukey).&lt;/p&gt;
+
+&lt;p&gt;There are eight languages in the data including 7 novels with no language category.&lt;/p&gt;
+
+&lt;p&gt;The languages are: Japanese, Chinese, Korean, Malaysian, Filipino, Indonesian, Thai, and Vietnamese.&lt;/p&gt;
+
+&lt;div id=&quot;chart-donut-totalnovel-by-country&quot;&gt;&lt;/div&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: center&quot;&gt;Languages&lt;/th&gt;
+      &lt;th style=&quot;text-align: center&quot;&gt;Number of Novels&lt;/th&gt;
+      &lt;th style=&quot;text-align: center&quot;&gt;Average Ratings&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;Japanese&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;1496&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;3.994248&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;Chinese&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;1059&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;3.978571&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;Korean&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;131&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;4.142424&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;Filipino&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;23&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;NA&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;Indonesian&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;12&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;NA&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;Thai&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;7&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;NA&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;Malaysian&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;3&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;NA&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;Vietnamese&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;1&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;NA&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;Uncategorized&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;7&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;NA&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;The average ratings only include novels that have at least 30 user ratings.&lt;/p&gt;
+
+&lt;p&gt;I did not take any other rating from other countries because there are less than 30 novels. As a statistician I feel 30 or more is a sufficient number to represent the population for each category anything smaller than is insufficient.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/static/img/posts/all_rating.png&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;I plot a histogram plot for all novels from all countries with 30 or more user ratings. It is left skewed. While I can only speculate that people tend to rate for their favorite novels. It’s interesting because there is quite a lot of quality novels out there and many hover above 4.0 rating out of 5.0.&lt;/p&gt;
+
+&lt;p&gt;There is a small number with perfect five ratings. 19 novels with 5 ratings all of them have single digit number of users reviews except for one (“Mum, I Used to Hate You”). It have 18 users that reviewed it with a 5 rating.&lt;/p&gt;
+
+&lt;p&gt;Sweet let’s find novels that have high rating and at least 30 user reviews! I tried 4.5 at first but it’s a huge list at least 300+ so I decided to look for 4.7 ratings. There is exactly 75 novels with that criteria.&lt;/p&gt;
+
+&lt;p&gt;Here’s the list and hope you guys find it useful.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;A Game To Make Him Fall&lt;/li&gt;
+  &lt;li&gt;A Will Eternal&lt;/li&gt;
+  &lt;li&gt;A Slight Smile is Very Charming&lt;/li&gt;
+  &lt;li&gt;Ame no Hi no Iris&lt;/li&gt;
+  &lt;li&gt;At the Northern Fort&lt;/li&gt;
+  &lt;li&gt;By A Slight Mistake&lt;/li&gt;
+  &lt;li&gt;Cultivation Chat Group&lt;/li&gt;
+  &lt;li&gt;Clockwork Planet&lt;/li&gt;
+  &lt;li&gt;Demon Girl ~Tale of a Lax Demon~&lt;/li&gt;
+  &lt;li&gt;Dungeon Defense&lt;/li&gt;
+  &lt;li&gt;Eight Treasures Trousseau&lt;/li&gt;
+  &lt;li&gt;Gekkou&lt;/li&gt;
+  &lt;li&gt;Golden Age Legitimate Fei&lt;/li&gt;
+  &lt;li&gt;Hokuou Kizoku to Moukinzuma no Yukiguni Karigurashi&lt;/li&gt;
+  &lt;li&gt;Hiraheishi wa Kako o Yumemiru&lt;/li&gt;
+  &lt;li&gt;Hikaru ga Chikyuu ni Itakoro……&lt;/li&gt;
+  &lt;li&gt;I Reincarnated into an Otome Game as a Villainess With Only Destruction Flags…&lt;/li&gt;
+  &lt;li&gt;I Don’t Like The World, I Only Like You&lt;/li&gt;
+  &lt;li&gt;It’s Because You Said There Would Be Candy!!&lt;/li&gt;
+  &lt;li&gt;Joy of Life&lt;/li&gt;
+  &lt;li&gt;Kenkyo, Kenjitsu o Motto ni Ikite Orimasu&lt;/li&gt;
+  &lt;li&gt;Kaze no Stigma&lt;/li&gt;
+  &lt;li&gt;Kono Kamen no Akuma ni Sodan wo!&lt;/li&gt;
+  &lt;li&gt;Kuzu to Kinka no Qualidea&lt;/li&gt;
+  &lt;li&gt;Manuscript Screening Boy and Manuscript Submitting Girl&lt;/li&gt;
+  &lt;li&gt;Marietta-hime no Konrei&lt;/li&gt;
+  &lt;li&gt;Marginal Operation&lt;/li&gt;
+  &lt;li&gt;Maoyuu Maou Yuusha&lt;/li&gt;
+  &lt;li&gt;Mimizuku to Yoru no Ou&lt;/li&gt;
+  &lt;li&gt;Mondaiji-tachi ga Isekai kara Kuru Sou Desu yo?&lt;/li&gt;
+  &lt;li&gt;Mulberry Song&lt;/li&gt;
+  &lt;li&gt;My Death Flags Show No Sign of Ending&lt;/li&gt;
+  &lt;li&gt;No Game No Life&lt;/li&gt;
+  &lt;li&gt;Nobunaga’s Imouto is My Wife&lt;/li&gt;
+  &lt;li&gt;Ookami to Koushinryou&lt;/li&gt;
+  &lt;li&gt;Overlord (LN)&lt;/li&gt;
+  &lt;li&gt;Ouroboros Record ~Circus of Oubeniel~&lt;/li&gt;
+  &lt;li&gt;Our Second Master&lt;/li&gt;
+  &lt;li&gt;Quickly Wear the Face of the Devil&lt;/li&gt;
+  &lt;li&gt;Rakuin no Monshou&lt;/li&gt;
+  &lt;li&gt;Rain&lt;/li&gt;
+  &lt;li&gt;Release that Witch&lt;/li&gt;
+  &lt;li&gt;Running Away From The Hero!&lt;/li&gt;
+  &lt;li&gt;Sansheng, Wangchuan Wu Shang&lt;/li&gt;
+  &lt;li&gt;Semi Datte Tensei Sureba Ryuu Ni Naru&lt;/li&gt;
+  &lt;li&gt;Sweet Heart in Honeyed Desire&lt;/li&gt;
+  &lt;li&gt;Tabi ni Deyou, Horobiyuku Sekai no Hate Made&lt;/li&gt;
+  &lt;li&gt;The Bathroom Goddess&lt;/li&gt;
+  &lt;li&gt;The Destruction of a Triad Boss Trilogy&lt;/li&gt;
+  &lt;li&gt;The Girl Who Bore the Flame Ring&lt;/li&gt;
+  &lt;li&gt;The Girl Who Ate a Death God&lt;/li&gt;
+  &lt;li&gt;The Founder of Diabolism&lt;/li&gt;
+  &lt;li&gt;The Legend of Sun Knight&lt;/li&gt;
+  &lt;li&gt;The Grandmaster Strategist&lt;/li&gt;
+  &lt;li&gt;The Magnificent Battle Records of A Former Noble Lady&lt;/li&gt;
+  &lt;li&gt;The Princess Wei Yang&lt;/li&gt;
+  &lt;li&gt;The Probability I Can Kill My Wife Without Being Found Out&lt;/li&gt;
+  &lt;li&gt;The Other World Dining Hall (LN)&lt;/li&gt;
+  &lt;li&gt;The Rebirth of the Malicious Empress of Military Lineage&lt;/li&gt;
+  &lt;li&gt;The Scum Villain’s Self-Saving System&lt;/li&gt;
+  &lt;li&gt;The Tang Dynasty’s Female Forensic Doctor&lt;/li&gt;
+  &lt;li&gt;The Witch and the Gourd of Stories&lt;/li&gt;
+  &lt;li&gt;To Be A Virtuous Wife&lt;/li&gt;
+  &lt;li&gt;Three Days of Happiness&lt;/li&gt;
+  &lt;li&gt;Uchi no Musume no Tame naraba, Ore wa Moshikashitara Maou mo Taoseru kamo Shirenai (LN)&lt;/li&gt;
+  &lt;li&gt;Uchi no Musume no Tame naraba, Ore wa Moshikashitara Maou mo Taoseru kamo Shirenai (WN)&lt;/li&gt;
+  &lt;li&gt;Tsuyokute New Saga (LN)&lt;/li&gt;
+  &lt;li&gt;Vermillion&lt;/li&gt;
+  &lt;li&gt;Utsuro no Hako to Zero no Maria&lt;/li&gt;
+  &lt;li&gt;Why Is the Prettiest Girl in School Trying to Talk to a Loner Like Me during Lunch Break?&lt;/li&gt;
+  &lt;li&gt;When He Comes, Close Your Eyes&lt;/li&gt;
+  &lt;li&gt;Virtual World: Peerless White Emperor&lt;/li&gt;
+  &lt;li&gt;Woof Woof Story ~ I Told You I am a Rich Person’s Dog, Not Fenrir ~&lt;/li&gt;
+  &lt;li&gt;Yahari Ore no Seishun Love Come wa Machigatte Iru&lt;/li&gt;
+  &lt;li&gt;Youjo Senki&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h3&gt;
+
+&lt;p&gt;I think I’ll be doing more light novel analysis in the future.&lt;/p&gt;
+
+&lt;p&gt;I think I’ll do NLP too something like sentiment analysis or something for those tags and categories. Of course this is when I have time.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;What Did I Get to Practice? (for me)&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;My data science &amp;amp; statistic skills using &lt;a href=&quot;https://www.r-project.org/&quot;&gt;R&lt;/a&gt;.&lt;/li&gt;
+  &lt;li&gt;My web scraping skill using &lt;a href=&quot;https://scrapy.org/&quot;&gt;scrapy&lt;/a&gt;.&lt;/li&gt;
+  &lt;li&gt;My devops skill, I made a custom &lt;a href=&quot;https://www.vagrantup.com/&quot;&gt;vagrant&lt;/a&gt; for &lt;a href=&quot;https://jekyllrb.com/&quot;&gt;jekyll&lt;/a&gt; and used &lt;a href=&quot;https://www.ansible.com/&quot;&gt;ansible&lt;/a&gt; to self provision. I created a new blog just for this post.&lt;/li&gt;
+  &lt;li&gt;I made a yummy pie chart.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h4 id=&quot;etc&quot;&gt;Etc..&lt;/h4&gt;
+
+&lt;p&gt;The novel picture is taken from google searching for a CC license image.&lt;/p&gt;
+
+&lt;script src=&quot;https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js&quot;&gt;&lt;/script&gt;
+
+&lt;script src=&quot;https://cdnjs.cloudflare.com/ajax/libs/c3/0.4.14/c3.min.js&quot;&gt;&lt;/script&gt;
+
+&lt;script src=&quot;/static/js/post/lightnovel_novelbycountry_donut.js&quot;&gt;&lt;/script&gt;
+
+</description>
+        <pubDate>Thu, 13 Jul 2017 15:29:00 +0000</pubDate>
+        <link>http://0.0.0.0:4000/analysis/datascience/lightnovel/statistic/2017/07/13/lightnovels_analysis.html</link>
+        <guid isPermaLink="true">http://0.0.0.0:4000/analysis/datascience/lightnovel/statistic/2017/07/13/lightnovels_analysis.html</guid>
+        
+        
+        <category>analysis</category>
+        
+        <category>datascience</category>
+        
+        <category>lightnovel</category>
+        
+        <category>statistic</category>
+        
+      </item>
+    
+  </channel>
+</rss>
