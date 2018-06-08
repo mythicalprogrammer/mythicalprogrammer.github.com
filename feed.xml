@@ -1,0 +1,975 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Lackadaisical Cherimoya</title>
+    <description>It is still a beautiful world. Be cheerful. Strive to be happy.</description>
+    <link>http://localhost:4000/</link>
+    <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
+    <pubDate>Thu, 07 Jun 2018 22:54:43 -0700</pubDate>
+    <lastBuildDate>Thu, 07 Jun 2018 22:54:43 -0700</lastBuildDate>
+    <generator>Jekyll v3.3.1</generator>
+    
+      <item>
+        <title>Linear Mixed Effects Models for CD4+ Cell Counts in Men with HIV</title>
+        <description>&lt;p align=&quot;center&quot;&gt;
+    &lt;img title=&quot;Freddie Mercury Memorial Statue&quot; width=&quot;60%&quot; src=&quot;/static/img/posts/freddie-mercury-memorial-779956_640.jpg&quot; /&gt;
+&lt;/p&gt;
+
+&lt;h3 id=&quot;update&quot;&gt;Update&lt;/h3&gt;
+
+&lt;p&gt;Busy moving. I have a summer project for this blog (look forward to it, it’ll be fun). I also a summer internship at JPL NASA!&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;You can get the &lt;a href=&quot;/static/papers/linear-mixed-effects.pdf&quot;&gt;pdf paper here&lt;/a&gt;.&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;I just finished my semester and I did a final project that I’m pretty proud of. I put in a lot of effort and my professor Dr. Zhou was very awesome.&lt;/p&gt;
+
+&lt;h3 id=&quot;abstract&quot;&gt;Abstract&lt;/h3&gt;
+
+&lt;p&gt;Human immunodeficiency virus or HIV are responsible for decline in CD4+ cell count. The investigation is set out to find the population rate of CD4+ cell count decline per milliliter of blood, to characterize the of individual rate of cell decline, and the factors that predict cell decline. Using exploratory data analysis and longitudinal tools, a linear mixed effects model with random intercept and random slope was created. The estimated population average time course of CD4+ cell depletion is 80.1857 CD4+ cells per milliliter of blood. The degree of heterogeneity across men in the rate of progression as time passes is 54.8061127978 cell count. The factors that predict cell count decline is time, pack of smoke, number of sexual partners, cesd mental illness score, age &amp;amp; time interaction, and smoke &amp;amp; time. The time factor is the most dramatic in term of CD4+ cell depletion.&lt;/p&gt;
+
+&lt;h3 id=&quot;introduction&quot;&gt;1 Introduction&lt;/h3&gt;
+
+&lt;h4 id=&quot;hiv-and-cd4-cells&quot;&gt;1.1 HIV and CD4+ Cells&lt;/h4&gt;
+
+&lt;p&gt;Human immunodeficiency virus or HIV is a virus that attack immune system by killing a class of immune cell named CD4+ cell. On average a normal person without HIV have 1000 cells per milliliter of blood. As time passes from the initial HIV infection an infected person CD4+ cell counts starts to decline. Acquired immune deficiency syndrome or AIDS is the disease caused by the HIV virus.&lt;/p&gt;
+
+&lt;h4 id=&quot;the-data&quot;&gt;1.2 The Data&lt;/h4&gt;
+
+&lt;p&gt;The data used in this paper is a subset of the Multicenter AIDS Cohort Study with 369 men with HIV. The data consist of columns representing: time since seroconversion, CD4 count, age (relative to arbitrary origin), packs of cigarettes smoked per day, recreational drug use (yes/no), number of sexual partners, CESD (mental illness score), and subject ID. The data have been standardized, the measurements are unbalance, and the time interval are not evenly spaced.&lt;/p&gt;
+
+&lt;h4 id=&quot;aim-of-the-investigation&quot;&gt;1.3 Aim of the Investigation&lt;/h4&gt;
+
+&lt;p&gt;The aim of the investigation is four main points: average time course of CD4+ cell depletion, time course for individual men, to characterize the degree of heterogeneity across men in the rate of progression, and factors which predict CD4+ cell changes.&lt;/p&gt;
+
+&lt;h3 id=&quot;methods&quot;&gt;2 Methods&lt;/h3&gt;
+
+&lt;h4 id=&quot;exploratory-data-analysis&quot;&gt;2.1 Exploratory Data Analysis&lt;/h4&gt;
+
+&lt;p&gt;The goal in exploratory data analysis (EDA) is to have an idea what the CD4+ cell count data looks like and ideas to go from EDA to modeling the data. Creating a response trend model will give an idea how time affect the response and if polynomial time is needed. A variogram graph will indicate what kind of variance is needed to be account for in the model. There are three different kind of variance either random effect variance, within-subject variance, and between-subject variance are needed.&lt;/p&gt;
+
+&lt;h4 id=&quot;modeling-longitudinal-data&quot;&gt;2.2 Modeling Longitudinal Data&lt;/h4&gt;
+
+&lt;p&gt;The next step is to create a suitable longitudinal model for the CD4+ cell data to answer the aim of this investigation. The model that will be chosen will have to address the variances that was shown in the variogram during EDA. After the model is selected the next step will be predictor selection. The predictor selection will be base on the deviance test of the full and the reduced model. Deviance test will be perform because the comparison are base on nested models.&lt;/p&gt;
+
+&lt;h4 id=&quot;assumptions&quot;&gt;2.3 Assumptions&lt;/h4&gt;
+
+&lt;p&gt;The assumptions this investigation made is there are between-subject variations, within-subject variations, and measurement variations that need to be explicitly accounted for. The chosen longitudinal model will account for these explicitly so that the investigation can have an accurate and precise answers to the aim of this investigation.&lt;/p&gt;
+
+&lt;p&gt;Between-subject is latent factors. Latent factors are biological variability examples are diet, genetics, and other latent factors. Latent factors can keep an individuals CD4+ cell count consistently higher than the population mean or lower than the population mean.&lt;/p&gt;
+
+&lt;p&gt;The within-subject variation is serial correlation. The serial correlation is induced by time, the close two measurements are the more correlated they are. The farther apart two measurements are the less correlated they are.&lt;/p&gt;
+
+&lt;p&gt;Measurement variation takes into account for the process of taking measurements is an imperfect process and that there will be some variation in taking CD4+ cell count measurement. A variogram with force equally spacing of time intervals will confirm these assumptions of variations exist in the CD4+ cell count data.&lt;/p&gt;
+
+&lt;h3 id=&quot;results&quot;&gt;3 Results&lt;/h3&gt;
+
+&lt;h4 id=&quot;exploratory-data-analysis-results&quot;&gt;3.1 Exploratory Data Analysis Results&lt;/h4&gt;
+
+&lt;p align=&quot;center&quot;&gt;
+    &lt;img title=&quot;CD4+ Cells Spaghetti Plot&quot; width=&quot;80%&quot; src=&quot;/static/img/posts/1_cd4.png&quot; /&gt;
+&lt;/p&gt;
+
+&lt;p&gt;Figure 1: A graph between the response of the CD4+ cell count on the y-axis and the time points on the x-axis.&lt;/p&gt;
+
+&lt;p&gt;The spaghetti plot, Figure 1, shows that the data is unbalanced and that the time intervals are irregular and unequaled. It also show that individual have different base line which imply random intercept and that individual have different rate of progression which imply random slope. This will help in model selection especially when certain covariance structure have assumption about balance data and equally spaced time intervals.&lt;/p&gt;
+
+&lt;p align=&quot;center&quot;&gt;
+    &lt;img title=&quot;CD4+ Cells Population Trend Plot&quot; width=&quot;80%&quot; src=&quot;/static/img/posts/2_cd4.png&quot; /&gt;
+&lt;/p&gt;
+
+&lt;p&gt;Figure 2: A graph between the response of the CD4+ cell count on the y-axis and the time points on the x-axis.&lt;/p&gt;
+
+&lt;p&gt;The response trend graph, Figure 2, indicate that perhaps time is not constant but some sort of polynomial. Between time point 0 and 2 months there is a sharp drop in CD4+ cell count and closer to the 2 month time point the CD4+ cell count rate of decline starts to steady out and the sharp decrease rate is slowed down drastically. Modeling the data with quadratic or cubic time predictor may be needed base on this graph.&lt;/p&gt;
+
+&lt;p align=&quot;center&quot;&gt;
+    &lt;img title=&quot;CD4+ Variogram&quot; width=&quot;80%&quot; src=&quot;/static/img/posts/3_cd4.png&quot; /&gt;
+&lt;/p&gt;
+
+&lt;p&gt;Figure 3: A variogram of the CD4+ cell count data with time intervals forced to be equally space.&lt;/p&gt;
+
+&lt;p&gt;Next is a plotted variogram (Figure 3) to check the assumption of having three sources of variation. Due to the data having unequaled time intervals the measurements are averaged and binned to the nearest time point. The blue line represent that variogram line and the grey horizontal line represents total variance.&lt;/p&gt;
+
+&lt;p&gt;Looking at Figure 3, the variogram blue solid line does not start at zero it indicate that there
+exist measurement errors. The variogram is not a flat blue line but a slanted line with a slope indicating that there exist serial correlation. Finally the blue line does not touched the upper limit of total variance indicating that there is random effect in play. The assumption that the CD4+ cell count data have all three sources of variation can be safely assume and is verified empirically.&lt;/p&gt;
+
+&lt;h4 id=&quot;model-selection-and-rejected-models&quot;&gt;3.2 Model Selection and Rejected Models&lt;/h4&gt;
+
+&lt;p&gt;Longitudinal analysis have many linear models that to choose from. Models such as unstructured covariance and structured covariance. This section will discuss the reason for not choosing certain models.&lt;/p&gt;
+
+&lt;p&gt;Unstructured covariance is ruled out for two reasons. The first reason being that the large data set and large number of predictors would result in a large amount of parameter estimations. The second reason is that unstructured covariance is unsuitable for data set that have measurement taken at unequally spaced intervals.&lt;/p&gt;
+
+&lt;p&gt;Toeplitz covariance structure and autoregressive covariance structure both are other choices of structured covariance model. Both toeplitz and autoregressive assume that measurements are made at equal intervals of time. The CD4+ cell data have irregular unequal intervals of time.&lt;/p&gt;
+
+&lt;p&gt;The variogram shows there are three sources of variation. Independent model is rejected because the model assume there is only measurement error. Uniform model is also rejected because it only address two sources of variation, measurement error and between-individual variation. Exponential covariance model is rejected because the model address only within-individual variation.&lt;/p&gt;
+
+&lt;p&gt;Linear mixed effects models is chosen is because the model addresses all three sources of variation. The model explicitly distinguished between fixed and random effects. The advantage of this explicit distinction enable accurate and precise answers to the aim of this investigation.&lt;/p&gt;
+
+&lt;h4 id=&quot;predictor-selection&quot;&gt;3.3 Predictor Selection&lt;/h4&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;Predictors    &lt;/th&gt;
+      &lt;th style=&quot;text-align: center&quot;&gt;    β_hat values   &lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;      p-values for t-test&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;intercept&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;790.11&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;&amp;lt;.0001&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;time&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;-81.6092&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;&amp;lt;.0001&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;age&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;1.6277&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.3790&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;smoke&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;41.0459&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;&amp;lt;.0001&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;drug&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;22.6537&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.2677&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;partners&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;6.5509&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0043&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;cesd&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;-2.3499&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0070&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;age × time&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;-1.3805&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0317&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;smoke × time&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;-14.2323&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;&amp;lt;.0001&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;drug × time&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;-1.7315&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.8488&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;partners × time&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;-0.3958&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.7161&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;cesd × time&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;0.1585&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.6899&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;time^2&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;0.8753&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.6187&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;Table 1: Full linear mixed effects model estimate.&lt;/p&gt;
+
+&lt;p&gt;After choosing the linear fixed effects model with random intercept and random slope to model the data, the next part is selecting a good combination of predictors that describe the CD4+ cell count data. A full model is fitted first. From Table 1, which show the estimated β, predictors that are not significant at p-value of 0.05 will be dropped and the predictors that are significant will be kept as a reduced model. Note the time^2 was included in the full model because of the nonlinear trend of time that was indicated in the response trend graph.&lt;/p&gt;
+
+&lt;p&gt;The predictors that are dropped are drug, drug × time, partners × time, cesd × time, and time^2. Even though the age predictor is not significant the interaction age × time is significant therefore the age predictor is kept in the reduced model.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;   &lt;/th&gt;
+      &lt;th style=&quot;text-align: center&quot;&gt;    Full Model   &lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;      Reduced Model&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;intercept&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;790.11&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;&amp;lt;.0001&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;-2 Log Likelihood&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;33603.4&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;33600.9&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;χ2 Test&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;2.5&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;2.5&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Statistic Degree of Freedom&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;13&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;8&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;χ2 25,0.95&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;11.070&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;11.070&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;Table 2: Likelihood Ratio test for two linear mixed effect models.&lt;/p&gt;
+
+&lt;p&gt;Hypothesis H1: Reduced Linear Mixed Effects Model 
+Hypothesis H2: Full Linear Mixed Effects Model&lt;/p&gt;
+
+&lt;p&gt;After fitting the reduced model, a likelihood ratio test was conducted between the full model and the reduced model. Table 2 shows the χ2 test statistic at 2.5 which is the difference between the -2 Log Likelihood of full model and reduced model. The degree of freedom for χ2 is the difference between the number of parameters in the full model and the number of parameters in the reduced model which is 5. The null hypothesis for the deviance test is the reduced model and the alternative hypothesis is the full model. Since the test statistic is 2.5 which is much less than 11.070, the
+reduced model is chosen.&lt;/p&gt;
+
+&lt;h4 id=&quot;final-model&quot;&gt;3.4 Final Model&lt;/h4&gt;
+
+&lt;p&gt;The equation listed below is the selected model that best represent the CD4+ cell count data and the best explanation of the data. With this model, the investigation can proceed to answer the aim of the investigation.&lt;/p&gt;
+
+&lt;p&gt;Yij = β0 + β1 timeij + β2 ageij + β3 smokeij + β4 partnersij + β5 cesdij + β6 ageij × timeij + β7 smokeij × timeij + b0i + b1i × timeij + eij&lt;/p&gt;
+
+&lt;p&gt;=791.05 − 80.1857timeij + 1.4697ageij + 38.0785smokeij + 7.0434partnersij − 2.2867 cesdij − 1.3400 ageij × timeij − 13.2674 smokeij × timeij + b0i + b1i timeij + eij  (1)&lt;/p&gt;
+
+&lt;p&gt;Where b0i represents the random intercept for each individual and b1i represents the random slope for each individual.&lt;/p&gt;
+
+&lt;p&gt;The model can be rewritten in matrix notation&lt;/p&gt;
+
+&lt;p&gt;Yi=Xiβ+Zibi +ei, i=1,…,N,j=1,…,ni (2)&lt;/p&gt;
+
+&lt;p&gt;where Y i is a vector of size ni × 1 representing observations for ith individual, j represent the jth measurement for ith individual, Xi is a ni × p design matrix of p independent fixed effect variables, Zi is a ni × q design matrix of q independent random effect variables, β is a vector of size p × 1 representing fixed effect parameters, bi is an independent vector of q × 1 size representing random effects with MVN(0,G) distribution (Multivariate Normal), and ei represents an independent vector of random errors of size ni ×1 with MVN(0,Ri) distribution. The ei are independent of bi.&lt;/p&gt;
+
+&lt;p&gt;The Ri represent within-subject variance. Linear fixed effects model break Ri down into two sources of within-subject variance, serial correlation and measurement error. The measurement error variance (τ^2) is equal to 59104. The serial correlation variance (σ^2) is 1.0649. The G matrix represents the between-subject variance.&lt;/p&gt;
+
+&lt;p&gt;See paper for more matrix notations… &amp;gt;&lt;em&gt;__&lt;/em&gt;&amp;lt;&lt;/p&gt;
+
+&lt;h3 id=&quot;etc&quot;&gt;Etc…&lt;/h3&gt;
+
+&lt;p&gt;Please see paper for results, SAS codes, R codes, and conclusion. The blog post is getting long.&lt;/p&gt;
+
+&lt;h3 id=&quot;post-mordem&quot;&gt;Post Mordem&lt;/h3&gt;
+
+&lt;p&gt;Well… translating a paper into a blog post is terrible. The paper is too academic with high domain assumption and an abstract and a link to the paper is sufficient.&lt;/p&gt;
+
+&lt;h4 id=&quot;etc-1&quot;&gt;Etc..&lt;/h4&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://pixabay.com/en/freddie-mercury-memorial-statue-779956/&quot;&gt;The Freddie Mercury picture is taken from pixabay.&lt;/a&gt;&lt;/p&gt;
+
+</description>
+        <pubDate>Thu, 07 Jun 2018 07:15:00 -0700</pubDate>
+        <link>http://localhost:4000/analysis/longitudinal/biostatistic/statistic/2018/06/07/longitudinal_data_cd4_paper.html</link>
+        <guid isPermaLink="true">http://localhost:4000/analysis/longitudinal/biostatistic/statistic/2018/06/07/longitudinal_data_cd4_paper.html</guid>
+        
+        
+        <category>analysis</category>
+        
+        <category>longitudinal</category>
+        
+        <category>biostatistic</category>
+        
+        <category>statistic</category>
+        
+      </item>
+    
+      <item>
+        <title>Book Note: Introduction to Hierarchical Bayesian Modeling for Ecological Data, Chapter 1</title>
+        <description>&lt;style type=&quot;text/css&quot;&gt;
+#cy {
+  height: 400px;
+  width: 100%;
+  left: 0;
+  top: 0;
+}
+#cy2, #cy3, #cy4, #cy5, #cy6, #cy7, #cy8 {
+  height: 70px;
+  width: 100%;
+  left: 0;
+  top: 0;
+}
+#cy9, #cy10, #cy11, #cy12, #cy13 {
+  height: 200px;
+  width: 100%;
+  left: 0;
+  top: 0;
+}
+#cy14 {
+  height: 300px;
+  width: 100%;
+  left: 0;
+  top: 0;
+}
+#cy15 {
+  height: 400px;
+  width: 100%;
+  left: 0;
+  top: 0;
+}
+#cy16 {
+  height: 500px;
+  width: 100%;
+  left: 0;
+  top: 0;
+}
+&lt;/style&gt;
+
+&lt;p&gt;&lt;img src=&quot;/static/img/posts/salmon_sushi.jpg&quot; alt=&quot;salmon-sushi&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;introduction&quot;&gt;Introduction&lt;/h3&gt;
+
+&lt;p&gt;So I’ve learned a little bit about Bayesian Hierarchical Modeling at FDA and decided to put down my thoughts and write about it more to reinforced what I’ve learned. I also want to try out some new javascript data visual libraries.&lt;/p&gt;
+
+&lt;p&gt;A great book I’ve found is “Introduction to Hierarchical Bayesian Modeling for Ecological Data” by Parent and Rivot&lt;sup&gt;&lt;a href=&quot;#myfootnote1&quot;&gt;1&lt;/a&gt;&lt;/sup&gt;.&lt;/p&gt;
+
+&lt;p&gt;While at the FDA I code my own model without using any MCMC framework and it was very slow in R. I realize I need a MCMC framework under my toolbelt. After some &lt;a href=&quot;https://www.reddit.com/r/statistics/comments/5on87q/stan_vs_winbugs_a_search_for_informed_opinions/&quot;&gt;research&lt;/a&gt; I decided on &lt;a href=&quot;mc-stan.org&quot;&gt;Stan&lt;/a&gt; using the &lt;a href=&quot;http://mc-stan.org/users/interfaces/rstan&quot;&gt;rstan r package&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h3 id=&quot;the-graph-not-dag-not-a-bayesian-network&quot;&gt;The Graph (not DAG; not a Bayesian network)&lt;/h3&gt;
+
+&lt;p&gt;Graph represents the salmon migration and birth cycle. Each edge represent a year pass. The nodes are square because they’re given. The information is given from previous knowledge.&lt;/p&gt;
+
+&lt;div id=&quot;cy&quot;&gt;&lt;/div&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: center&quot;&gt;Variable&lt;/th&gt;
+      &lt;th style=&quot;text-align: center&quot;&gt;Definition&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;Wt&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;Salmon Eggs&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;0+&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;Young-of-the-year (hatched)&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;PSm&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;Pre-smolts&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;Sm1&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;Smolt after 1 year&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;Sp1&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;Returns one year earlier than Sp2&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;Parr1&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;Smaller juveniles left behind by Sm1&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;Sm2&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;Smolt after 2 year&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;Sp2&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;Returns one year after Sp1&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h3 id=&quot;the-models---introducing-probability-into-the-graph&quot;&gt;The Models - Introducing Probability into the Graph&lt;/h3&gt;
+
+&lt;p&gt;We’re going to take the graph that represent Salmon’s migration cycle and introduce uncertainty to it (model it via probability). 
+By doing this we create a new graph that is complete different from the Salmon’s migration cycle graph. 
+It is a graph base on probability view.&lt;/p&gt;
+
+&lt;p&gt;We go through each square node and one by one apply a model and probability to it.&lt;/p&gt;
+
+&lt;p&gt;Model is time base, &lt;em&gt;t&lt;/em&gt; will represent a particular year.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Sp&lt;sub&gt;t&lt;/sub&gt; = Sp1&lt;sub&gt;t&lt;/sub&gt; + Sp2&lt;sub&gt;t&lt;/sub&gt; = # of spawners at t-th year&lt;/li&gt;
+  &lt;li&gt;W&lt;sub&gt;t&lt;/sub&gt; = # of eggs spawned by the adults returning in year t&lt;/li&gt;
+  &lt;li&gt;0+&lt;sub&gt;t&lt;/sub&gt; = Young-of-the-year at t-th year&lt;/li&gt;
+  &lt;li&gt;PSm&lt;sub&gt;t&lt;/sub&gt; = pre-smolts at t-th year&lt;/li&gt;
+  &lt;li&gt;Sm1&lt;sub&gt;t&lt;/sub&gt; = 1+ smolts (1 year to smolt) at t-th year&lt;/li&gt;
+  &lt;li&gt;P1&lt;sub&gt;t&lt;/sub&gt; = Parr1 = smaller juveniles left behind by Sm1 at t-th year&lt;/li&gt;
+  &lt;li&gt;Sm2&lt;sub&gt;t&lt;/sub&gt; = 2+ smolts (2 years to smolt) at t-th year&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;Spawners -&amp;gt; Eggs&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div id=&quot;cy2&quot;&gt;&lt;/div&gt;
+
+&lt;p&gt;W&lt;sub&gt;t&lt;/sub&gt; = Sp&lt;sub&gt;t&lt;/sub&gt; ⋅ P_f ⋅ fec&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;W&lt;sub&gt;t&lt;/sub&gt; = # of eggs spawned by the adults returning in year t&lt;/li&gt;
+  &lt;li&gt;Sp&lt;sub&gt;t&lt;/sub&gt; = # of spawners = Sp1 + Sp2&lt;/li&gt;
+  &lt;li&gt;P_f = proportion of females&lt;/li&gt;
+  &lt;li&gt;fec = mean of fecundity (fertility)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;Eggs -&amp;gt; 0+ juveniles&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div id=&quot;cy3&quot;&gt;&lt;/div&gt;
+
+&lt;p&gt;This is Ricker Cruve model with parameters (α,β) which is a classic discrete population model.&lt;/p&gt;
+
+&lt;p&gt;0+&lt;sub&gt;t+1&lt;/sub&gt; = α ⋅ W&lt;sub&gt;t&lt;/sub&gt; ⋅ e&lt;sup&gt;-β ⋅ W&lt;sub&gt;t&lt;/sub&gt;&lt;/sup&gt; ⋅ e&lt;sup&gt;ε&lt;sub&gt;t&lt;/sub&gt;&lt;/sup&gt; where ε&lt;sub&gt;t&lt;/sub&gt; ~iid N(0, σ&lt;sup&gt;2&lt;/sup&gt;)&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;0+&lt;sub&gt;t+1&lt;/sub&gt; = freshwater production of juveniles resulting from the reproduction of the spawners returning in year t&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;0+ juveniles -&amp;gt; Smolts&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div id=&quot;cy4&quot;&gt;&lt;/div&gt;
+
+&lt;p&gt;PSm&lt;sub&gt;t+2&lt;/sub&gt; ~ Binomial(0+&lt;sub&gt;t+1&lt;/sub&gt;, γ&lt;sub&gt;0+&lt;/sub&gt;) = # of 0+&lt;sub&gt;t+1&lt;/sub&gt; will survive and migrate to PSm&lt;sub&gt;t+2&lt;/sub&gt;&lt;/p&gt;
+
+&lt;div id=&quot;cy5&quot;&gt;&lt;/div&gt;
+
+&lt;p&gt;Sm1&lt;sub&gt;t+2&lt;/sub&gt; ~ Binomial(PSm&lt;sub&gt;t+2&lt;/sub&gt;, θ&lt;sub&gt;Sm1&lt;/sub&gt;) = # of PSm&lt;sub&gt;t+2&lt;/sub&gt; will survive and migrate as 1+smolts (Sm1)&lt;/p&gt;
+
+&lt;div id=&quot;cy6&quot;&gt;&lt;/div&gt;
+
+&lt;p&gt;Sm2&lt;sub&gt;t+3&lt;/sub&gt; ~ Binomial(Parr1&lt;sub&gt;t+2&lt;/sub&gt;, γ&lt;sub&gt;parr1&lt;/sub&gt;) = # of Parr1&lt;sub&gt;t+2&lt;/sub&gt; will survive and migrate as 2+smolts (Sm2)&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;PSm&lt;sub&gt;t+2&lt;/sub&gt; = young-of-the-year 0+&lt;sub&gt;t+1&lt;/sub&gt; will survive next spring year t+2&lt;/li&gt;
+  &lt;li&gt;γ&lt;sub&gt;0+&lt;/sub&gt; = survival rate of 0+&lt;/li&gt;
+  &lt;li&gt;θ&lt;sub&gt;Sm1&lt;/sub&gt; = proportion of pre-smolts will migrate as 1+Smolts (survival rate)&lt;/li&gt;
+  &lt;li&gt;γ&lt;sub&gt;parr1&lt;/sub&gt; = survival rate of parr1&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;Smolts -&amp;gt; Returning Spawners&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div id=&quot;cy7&quot;&gt;&lt;/div&gt;
+
+&lt;p&gt;Sp1&lt;sub&gt;t+3&lt;/sub&gt; ~ Binomial(Sm1&lt;sub&gt;t+2&lt;/sub&gt;, γ&lt;sub&gt;Sm&lt;/sub&gt;)&lt;/p&gt;
+
+&lt;div id=&quot;cy8&quot;&gt;&lt;/div&gt;
+
+&lt;p&gt;Sp2&lt;sub&gt;t+4&lt;/sub&gt; ~ Binomial(Sm2&lt;sub&gt;t+3&lt;/sub&gt;, γ&lt;sub&gt;Sm&lt;/sub&gt;)&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;γ&lt;sub&gt;Sm&lt;/sub&gt; = survival rate&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;Learning from observations&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;These two are observed and given:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;C&lt;sub&gt;Sm1,t&lt;/sub&gt; = observations = # of smolts caught downstream trap&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;π&lt;sub&gt;Sm&lt;/sub&gt; = trap efficiency&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Using these data points we can figure out the unknowns.&lt;/p&gt;
+
+&lt;p&gt;Our unknowns, the parameters, are: α, β, σ, γ&lt;sub&gt;0+&lt;/sub&gt;, θ&lt;sub&gt;sm1&lt;/sub&gt;, γ&lt;sub&gt;Parr1&lt;/sub&gt;, γ&lt;sub&gt;Sm&lt;/sub&gt;&lt;/p&gt;
+
+&lt;p&gt;# of smolts caught downstream trap can be model as a binomial distribution either the smolt is caught or not.&lt;/p&gt;
+
+&lt;p&gt;C&lt;sub&gt;Sm1,t&lt;/sub&gt; ~ Binomial(Sm1&lt;sub&gt;t&lt;/sub&gt;, π&lt;sub&gt;Sm&lt;/sub&gt;)&lt;/p&gt;
+
+&lt;p&gt;*Note (advance): observations assume &lt;a href=&quot;https://en.wikipedia.org/wiki/Bayesian_hierarchical_modeling#Exchangeability&quot;&gt;Bayesian’s property of exchangability&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;the-models---creating-a-proability-graphical-model&quot;&gt;The Models - Creating a proability graphical model&lt;/h3&gt;
+
+&lt;p&gt;0+&lt;sub&gt;t+1&lt;/sub&gt; = α ⋅ W&lt;sub&gt;t&lt;/sub&gt; ⋅ e&lt;sup&gt;-β ⋅ W&lt;sub&gt;t&lt;/sub&gt;&lt;/sup&gt; ⋅ e&lt;sup&gt;ε&lt;sub&gt;t&lt;/sub&gt;&lt;/sup&gt; where ε&lt;sub&gt;t&lt;/sub&gt; ~iid N(0, σ&lt;sup&gt;2&lt;/sup&gt;)&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;0+&lt;sub&gt;t+1&lt;/sub&gt; = freshwater production of juveniles resulting from the reproduction of the spawners returning in year t&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div id=&quot;cy9&quot;&gt;&lt;/div&gt;
+
+&lt;p&gt;PSm&lt;sub&gt;t+2&lt;/sub&gt; ~ Binomial(0+&lt;sub&gt;t+1&lt;/sub&gt;, γ&lt;sub&gt;0+&lt;/sub&gt;) = # of 0+&lt;sub&gt;t+1&lt;/sub&gt; will survive and migrate to PSm&lt;sub&gt;t+2&lt;/sub&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;γ&lt;sub&gt;0+&lt;/sub&gt; = survival rate of 0+&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div id=&quot;cy10&quot;&gt;&lt;/div&gt;
+
+&lt;p&gt;Sm1&lt;sub&gt;t+2&lt;/sub&gt; ~ Binomial(PSm&lt;sub&gt;t+2&lt;/sub&gt;, θ&lt;sub&gt;Sm1&lt;/sub&gt;) = # of PSm&lt;sub&gt;t+2&lt;/sub&gt; will survive and migrate as 1+smolts (Sm1)&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;PSm&lt;sub&gt;t+2&lt;/sub&gt; = young-of-the-year 0+&lt;sub&gt;t+1&lt;/sub&gt; will survive next spring year t+2&lt;/li&gt;
+  &lt;li&gt;θ&lt;sub&gt;Sm1&lt;/sub&gt; = proportion of pre-smolts will migrate as 1+Smolts (survival rate)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div id=&quot;cy11&quot;&gt;&lt;/div&gt;
+
+&lt;p&gt;Sm2&lt;sub&gt;t+3&lt;/sub&gt; ~ Binomial(Parr1&lt;sub&gt;t+2&lt;/sub&gt;, γ&lt;sub&gt;parr1&lt;/sub&gt;) = # of Parr1&lt;sub&gt;t+2&lt;/sub&gt; will survive and migrate as 2+smolts (Sm2)&lt;/p&gt;
+
+&lt;div id=&quot;cy12&quot;&gt;&lt;/div&gt;
+
+&lt;p&gt;Sp1&lt;sub&gt;t+3&lt;/sub&gt; ~ Binomial(Sm1&lt;sub&gt;t+2&lt;/sub&gt;, γ&lt;sub&gt;Sm&lt;/sub&gt;)&lt;/p&gt;
+
+&lt;p&gt;Sp2&lt;sub&gt;t+4&lt;/sub&gt; ~ Binomial(Sm2&lt;sub&gt;t+3&lt;/sub&gt;, γ&lt;sub&gt;Sm&lt;/sub&gt;)&lt;/p&gt;
+
+&lt;div id=&quot;cy13&quot;&gt;&lt;/div&gt;
+
+&lt;p&gt;Now we put all the parts together into graph.&lt;/p&gt;
+
+&lt;div id=&quot;cy14&quot;&gt;&lt;/div&gt;
+
+&lt;p&gt;Okay, now that we got the probability graphical model down we can figure out the joint probability distribution.&lt;/p&gt;
+
+&lt;p&gt;P(J&lt;sub&gt;t&lt;/sub&gt;) = ?&lt;/p&gt;
+
+&lt;p&gt;Step 1. Looking at the graph,  we’re going to start with all nodes with no parent: α, β, σ, W&lt;sub&gt;t&lt;/sub&gt;, γ&lt;sub&gt;0+&lt;/sub&gt;, θ&lt;sub&gt;Sm1&lt;/sub&gt;, γ&lt;sub&gt;Parr1&lt;/sub&gt;, and γ&lt;sub&gt;Sm&lt;/sub&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;P(J&lt;sub&gt;t&lt;/sub&gt;) = 
+P[&amp;alpha;] 
+&amp;sdot; P[&amp;beta;] 
+&amp;sdot; P[&amp;sigma;] 
+&amp;sdot; P[W&lt;sub&gt;t&lt;/sub&gt;] 
+&amp;sdot; P[&amp;gamma;&lt;sub&gt;0+&lt;/sub&gt;] 
+&amp;sdot; P[&amp;theta;&lt;sub&gt;Sm1&lt;/sub&gt;] 
+&amp;sdot; P[&amp;gamma;&lt;sub&gt;Parr1&lt;/sub&gt;] 
+&amp;sdot; P[&amp;gamma;&lt;sub&gt;Sm&lt;/sub&gt;]
+&amp;hellip;
+&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;Step 2. Now we’re going to look at the nodes with parents.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;0+&lt;sub&gt;t+1&lt;/sub&gt; is P[0+&lt;sub&gt;t+1&lt;/sub&gt;  |  W&lt;sub&gt;t&lt;/sub&gt;, α, β, σ]&lt;/li&gt;
+  &lt;li&gt;PSm&lt;sub&gt;t+2&lt;/sub&gt; is P[PSm&lt;sub&gt;t+2&lt;/sub&gt;  |  0+&lt;sub&gt;t+2&lt;/sub&gt;, γ&lt;sub&gt;0+&lt;/sub&gt;]&lt;/li&gt;
+  &lt;li&gt;Sm1&lt;sub&gt;t+2&lt;/sub&gt; &amp;amp; Parr1&lt;sub&gt;t+2&lt;/sub&gt; is P[Sm1&lt;sub&gt;t+2&lt;/sub&gt;, Parr1&lt;sub&gt;t+2&lt;/sub&gt;  |  PSm&lt;sub&gt;t+2&lt;/sub&gt;, θ&lt;sub&gt;Sm1&lt;/sub&gt;]. Notice how complex this one is. It is because Sm1 and Parr1 both share the same parameters.&lt;/li&gt;
+  &lt;li&gt;P[Sp1&lt;sub&gt;t+3&lt;/sub&gt; | Sm1&lt;sub&gt;t+2&lt;/sub&gt;, γ&lt;sub&gt;Sm&lt;/sub&gt;]&lt;/li&gt;
+  &lt;li&gt;P[Sm2&lt;sub&gt;t+3&lt;/sub&gt; | Parr1&lt;sub&gt;t+2&lt;/sub&gt;, γ&lt;sub&gt;Parr1&lt;/sub&gt;]&lt;/li&gt;
+  &lt;li&gt;P[Sp2&lt;sub&gt;t+4&lt;/sub&gt; | Sm2&lt;sub&gt;t+3&lt;/sub&gt;, γ&lt;sub&gt;Sm&lt;/sub&gt;]&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;P(J&lt;sub&gt;t&lt;/sub&gt;) = 
+P[&amp;alpha;] 
+&amp;sdot; P[&amp;beta;] 
+&amp;sdot; P[&amp;sigma;] 
+&amp;sdot; P[W&lt;sub&gt;t&lt;/sub&gt;] 
+&amp;sdot; P[&amp;gamma;&lt;sub&gt;0+&lt;/sub&gt;] 
+&amp;sdot; P[&amp;theta;&lt;sub&gt;Sm1&lt;/sub&gt;] 
+&amp;sdot; P[&amp;gamma;&lt;sub&gt;Parr1&lt;/sub&gt;] 
+&amp;sdot; P[&amp;gamma;&lt;sub&gt;Sm&lt;/sub&gt;] 
+&lt;/code&gt;
+&lt;code class=&quot;highlighter-rouge&quot;&gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;
+&amp;sdot; P[0+&lt;sub&gt;t+1&lt;/sub&gt;  |  W&lt;sub&gt;t&lt;/sub&gt;, &amp;alpha;, &amp;beta;, &amp;sigma;] 
+&amp;sdot; P[PSm&lt;sub&gt;t+2&lt;/sub&gt;  |  0+&lt;sub&gt;t+2&lt;/sub&gt;, &amp;gamma;&lt;sub&gt;0+&lt;/sub&gt;] 
+&lt;/code&gt;
+&lt;code class=&quot;highlighter-rouge&quot;&gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;
+&amp;sdot; P[Sm1&lt;sub&gt;t+2&lt;/sub&gt;, Parr1&lt;sub&gt;t+2&lt;/sub&gt;  |  PSm&lt;sub&gt;t+2&lt;/sub&gt;, &amp;theta;&lt;sub&gt;Sm1&lt;/sub&gt;]
+&amp;sdot; P[Sp1&lt;sub&gt;t+3&lt;/sub&gt; | Sm1&lt;sub&gt;t+2&lt;/sub&gt;, &amp;gamma;&lt;sub&gt;Sm&lt;/sub&gt;]
+&lt;/code&gt;
+&lt;code class=&quot;highlighter-rouge&quot;&gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;
+&amp;sdot; P[Sm2&lt;sub&gt;t+3&lt;/sub&gt; | Parr1&lt;sub&gt;t+2&lt;/sub&gt;, &amp;gamma;&lt;sub&gt;Parr1&lt;/sub&gt;]
+&amp;sdot; P[Sp2&lt;sub&gt;t+4&lt;/sub&gt; | Sm2&lt;sub&gt;t+3&lt;/sub&gt;, &amp;gamma;&lt;sub&gt;Sm&lt;/sub&gt;]
+&lt;/code&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;okay-so-what-wheres-the-bayesian-network&quot;&gt;Okay so what? Where’s the Bayesian network?&lt;/h3&gt;
+
+&lt;p&gt;Not yet. The book needs to introduce the concept of a simple model vs a hierarchical model and some terminology.&lt;/p&gt;
+
+&lt;p&gt;So far we haven’t introduce any observational variable (random variable) at all.&lt;/p&gt;
+
+&lt;div id=&quot;cy15&quot;&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;θ represents parameters&lt;/li&gt;
+  &lt;li&gt;Z represents latent parameters&lt;/li&gt;
+  &lt;li&gt;Y represents the output Random Variable. (little y represent the realization/sample of Y random variable).&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Left is a simple model. The right graph is a hierarchical model.&lt;/p&gt;
+
+&lt;p&gt;Z represents latent variables (nuisance variables), basically variables we don’t really care, also they’re hidden we don’t observed it directly like Y.
+Y represents observations. Observations are random so Y is capitalized and smaller y is the realization of Y or a sample of Y.
+The node is pink because it is an observable.&lt;/p&gt;
+
+&lt;p&gt;P[θ, Z, Y] = P[θ] ⋅ P[Z | θ] ⋅ P[Y | θ, Z]&lt;/p&gt;
+
+&lt;p&gt;Well first what’s the experiment?&lt;/p&gt;
+
+&lt;p&gt;For this it’s salmon captures and they’re model via binomial distribution either you catch the fish or not.&lt;/p&gt;
+
+&lt;p&gt;Notice the C stands for catches.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;C&lt;sub&gt;0+, t+1&lt;/sub&gt; ~ Binomial(0+&lt;sub&gt;t+1&lt;/sub&gt;, π&lt;sub&gt;0+&lt;/sub&gt;)&lt;/li&gt;
+  &lt;li&gt;C&lt;sub&gt;Sm1, t+2&lt;/sub&gt; ~ Binomial(Sm1&lt;sub&gt;t+2&lt;/sub&gt;, π&lt;sub&gt;Sm&lt;/sub&gt;)&lt;/li&gt;
+  &lt;li&gt;C&lt;sub&gt;Sm2, t+3&lt;/sub&gt; ~ Binomial(Sm1&lt;sub&gt;t+3&lt;/sub&gt;, π&lt;sub&gt;Sm&lt;/sub&gt;)&lt;/li&gt;
+  &lt;li&gt;C&lt;sub&gt;Sp1, t+3&lt;/sub&gt; ~ Binomial(Sp1&lt;sub&gt;t+3&lt;/sub&gt;, π&lt;sub&gt;Sp&lt;/sub&gt;)&lt;/li&gt;
+  &lt;li&gt;C&lt;sub&gt;Sp2, t+4&lt;/sub&gt; ~ Binomial(Sp2&lt;sub&gt;t+4&lt;/sub&gt;, π&lt;sub&gt;Sp&lt;/sub&gt;)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div id=&quot;cy16&quot;&gt;&lt;/div&gt;
+
+&lt;p&gt;Once again the squares represent known/given values (the π’s are given). 
+The pink circle means observed values. 
+Pink in general means they’re known either by given or by observations.
+The purple boxes represent grouping and group the nodes into their respective group.&lt;/p&gt;
+
+&lt;p&gt;Ok. Finally, we got a Bayesian network. 
+Really, what now?&lt;/p&gt;
+
+&lt;p&gt;How does y (the sample or realization of Y) fits in this fancy graph?&lt;/p&gt;
+
+&lt;h3 id=&quot;what-happen-when-the-observation-is-available&quot;&gt;What happen when the Observation is available?&lt;/h3&gt;
+
+&lt;p&gt;Before that notice how we build the model and the direction. 
+The direction is downward from the Salmon cycle toward the latent variable and then towards the obsevation.&lt;/p&gt;
+
+&lt;p&gt;Why did the book brought this up? 
+It is because when you train the model using the data/observations that are available you go in the opposite direction.&lt;/p&gt;
+
+&lt;p&gt;You start at the Y (observation layer and Y is a random variable) and Y is now, Y = y, since little y is the realization of random variable Y. 
+y is a sample of Y or the data (values not just some placeholder variable). And you go up to latent layer and then to the parameter later.&lt;/p&gt;
+
+&lt;p&gt;Let’s see it mathematically:&lt;/p&gt;
+
+&lt;p&gt;Here’s the joint probability:&lt;/p&gt;
+
+&lt;p&gt;P[Y, θ, Z]&lt;/p&gt;
+
+&lt;p&gt;Now here’s the joint probability with Y = y, when we have data to train the model and find the paramenter.&lt;/p&gt;
+
+&lt;p&gt;P[θ, Z | Y = y]&lt;/p&gt;
+
+&lt;p&gt;Given Y = y, the observations propagate upward from the observation to the latent layer to the parameter layer.&lt;/p&gt;
+
+&lt;p&gt;This is how you train the model after you are done creating the model.&lt;/p&gt;
+
+&lt;p&gt;You can see the Bayes Rule connection too right? 
+We’re always dealing with Joint Probability and Conditional Probability.&lt;/p&gt;
+
+&lt;p&gt;Bayesian make it so that they’re conditionally independent. 
+This is one of the property of Bayesian statistic.&lt;/p&gt;
+
+&lt;p&gt;This is now a posterior distribution. 
+Posterior being after the data.
+Prior distribution is before the data.&lt;/p&gt;
+
+&lt;p&gt;P[θ, Z | Y = y] = posterior distribution&lt;/p&gt;
+
+&lt;p&gt;I’m going to repeat it again.&lt;/p&gt;
+
+&lt;p&gt;Posterior is after the data have been inputed.&lt;/p&gt;
+
+&lt;p&gt;Prior is before the data. It is your prior belief.&lt;/p&gt;
+
+&lt;p&gt;In Bayesian you need to supply a belief in form of a prior distribution.
+It’s weird but don’t worry if you don’t know anything then you can use a noninformative prior distribution.&lt;/p&gt;
+
+&lt;p&gt;The belief thing is also away to encode expert belief too.&lt;/p&gt;
+
+&lt;p&gt;So given what we have now, we just have to apply Bayes’ Rule to the conditional probability and you get your parameter values.&lt;/p&gt;
+
+&lt;h3 id=&quot;bayes-rule&quot;&gt;Bayes’ Rule&lt;/h3&gt;
+
+&lt;p&gt;P[θ Z | Y = y] = P[θ, Z, Y = y] / P[Y = y]&lt;/p&gt;
+
+&lt;p&gt;Some stat here and you get.&lt;/p&gt;
+
+&lt;p&gt;P[θ Z | Y = y] ∝ P[θ] ⋅ P[Z | θ] ⋅ P[Y = y | θ, Z]&lt;/p&gt;
+
+&lt;h3 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h3&gt;
+
+&lt;p&gt;I highly recommend this book. Andrew Gelman’s DBA book is more PhD level and his approach is not graphical like this but more mathy. 
+Being visual this book helps a lot into tying things together.&lt;/p&gt;
+
+&lt;p&gt;There was no observations/data and no code for this chapter. Ah dangit. Well until next time, stay tuned for the next episode of Bayesian man.&lt;/p&gt;
+
+&lt;p&gt;&lt;sup&gt;&lt;a href=&quot;#myfootnote1&quot;&gt;1&lt;/a&gt;&lt;/sup&gt;Buy the book if you like what you see on the post. This is basically my notes on chapter 1 of the book. 
+It’s an amazing book and I highly recommend it.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;What did I learn about myself&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;I’m glad I’m reviewing this chapter of the book again. I have a confession to make, if I want to understand a material/subject I need to read 3 times and do projects on it and a review of what I’ve learned. I need tons of practice. I guess this is one of the reason why I started this blog.&lt;/p&gt;
+
+&lt;p&gt;This chapter ties in again DAG, Bayes’ Rule, and conditional probabilities. Good refresher and clear up things that I was wrong about. Especially the salmon breeding cycle, I didn’t think about the fact that it wasn’t a DAG. And that from that model we create a Bayesian Graph Model (DAG).&lt;/p&gt;
+
+&lt;p&gt;I think I’ll go through each chapter of this book as a refresher while playing with javascript graphical libraries and hopefully learn Stan. I need to make sure I didn’t miss out on anything from the first reading.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;What Did I Get to Practice? (for me)&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;&lt;del&gt;Bayesian Hierarchical Modeling using &lt;a href=&quot;https://cran.r-project.org/web/packages/rstan/index.html&quot;&gt;rstan&lt;/a&gt;.&lt;/del&gt;&lt;/li&gt;
+  &lt;li&gt;Tried out a javascript data visualisation library, &lt;a href=&quot;https://js.cytoscape.org&quot;&gt;cytoscape.js&lt;/a&gt;, for modeling graphs.&lt;/li&gt;
+  &lt;li&gt;Gets to refresh Bayesian Graphical Model (Bayesian Network).&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;strong&gt;Rough Roadmap for Bayesian HM&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Finish off this book. Introduction to Hierarchical Bayesian Modeling for Ecological Data (Chapman &amp;amp; Hall/CRC Applied Environmental Statistics)&lt;/li&gt;
+  &lt;li&gt;Read this for Hamiltonian Markov Chain(Statistics in the social and behavioral sciences series) Gill, Jeff-Bayesian Methods A Social and Behavioral Sciences Approach-CRC Press (2014)&lt;/li&gt;
+  &lt;li&gt;Read https://arxiv.org/abs/1111.4246 an implementation of HMC&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=21a85f1YS5Q&quot;&gt;Measure theory videos&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;DBA 3 reread again learning Dirichlet Process&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h4 id=&quot;etc&quot;&gt;Etc..&lt;/h4&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;&lt;a name=&quot;myfootnote1&quot; target=&quot;_blank&quot; href=&quot;https://www.amazon.com/gp/product/B00BBGP7QE/ref=as_li_tl?ie=UTF8&amp;amp;camp=1789&amp;amp;creative=9325&amp;amp;creativeASIN=B00BBGP7QE&amp;amp;linkCode=as2&amp;amp;tag=mythicalprogr-20&amp;amp;linkId=0902d5294515fd663d8322cd1c3d0b30&quot;&gt;Introduction to Hierarchical Bayesian Modeling for Ecological Data (Chapman &amp;amp; Hall/CRC Applied Environmental Statistics)&lt;/a&gt;&lt;img src=&quot;//ir-na.amazon-adsystem.com/e/ir?t=mythicalprogr-20&amp;amp;l=am2&amp;amp;o=1&amp;amp;a=B00BBGP7QE&quot; width=&quot;1&quot; height=&quot;1&quot; border=&quot;0&quot; alt=&quot;&quot; style=&quot;border:none !important; margin:0px !important;&quot; /&gt; The book link is Amazon affiliated. If you get it at CRC publishing you can get it 20 bucks cheaper if you use a discount code, just that it takes longer to ship. Also note I would recommend reading “Doing Bayesian Data Analysis” first before even trying to get into Hierarchical Modeling.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;www.htmlhelp.com/reference/html40/entities/symbols.html&quot;&gt;Would like to thank this website for all the html mathematical notations.&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;The salmon sushi picture was taken from &lt;a href=&quot;pixabay.com&quot;&gt;pixabay&lt;/a&gt; under creative common license.&lt;br /&gt;
+&lt;script src=&quot;https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.1.3/cytoscape.min.js&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;/static/js/post/salmon_post.js&quot;&gt;&lt;/script&gt;&lt;/p&gt;
+</description>
+        <pubDate>Sat, 15 Jul 2017 08:29:00 -0700</pubDate>
+        <link>http://localhost:4000/bayesian/modeling/hierarchicalmodeling/statistic/2017/07/15/bayesian2.html</link>
+        <guid isPermaLink="true">http://localhost:4000/bayesian/modeling/hierarchicalmodeling/statistic/2017/07/15/bayesian2.html</guid>
+        
+        
+        <category>bayesian</category>
+        
+        <category>modeling</category>
+        
+        <category>hierarchicalmodeling</category>
+        
+        <category>statistic</category>
+        
+      </item>
+    
+      <item>
+        <title>Light Novel Analysis (part 1)</title>
+        <description>&lt;p&gt;&lt;img src=&quot;/static/img/posts/lightnovel.jpg&quot; alt=&quot;light-novels&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;introduction&quot;&gt;Introduction&lt;/h3&gt;
+
+&lt;p&gt;I’m into light novels so I’ve decided to combine my love for data science and light novel.&lt;/p&gt;
+
+&lt;h3 id=&quot;information-retrieval&quot;&gt;Information Retrieval&lt;/h3&gt;
+
+&lt;p&gt;I started out by retrieving some data from online via scraping using &lt;a href=&quot;https://scrapy.org/&quot;&gt;scrapy&lt;/a&gt;. I love scrapy and highly recommend it for any serious web scrapping task.&lt;/p&gt;
+
+&lt;h3 id=&quot;the-data&quot;&gt;The Data&lt;/h3&gt;
+
+&lt;p&gt;So what does the data look like?&lt;/p&gt;
+
+&lt;p&gt;2739 novels.&lt;/p&gt;
+
+&lt;p&gt;It’s in a json format.&lt;/p&gt;
+
+&lt;p&gt;The columns are novel title, description, novel type, genre, tags, rating, language, authors, year, and license.&lt;/p&gt;
+
+&lt;h3 id=&quot;exploratory-data-analysis&quot;&gt;Exploratory Data Analysis&lt;/h3&gt;
+
+&lt;p&gt;For this portion I will be using R to do some EDA (❤ John Tukey).&lt;/p&gt;
+
+&lt;p&gt;There are eight languages in the data including 7 novels with no language category.&lt;/p&gt;
+
+&lt;p&gt;The languages are: Japanese, Chinese, Korean, Malaysian, Filipino, Indonesian, Thai, and Vietnamese.&lt;/p&gt;
+
+&lt;div id=&quot;chart-donut-totalnovel-by-country&quot;&gt;&lt;/div&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: center&quot;&gt;Languages&lt;/th&gt;
+      &lt;th style=&quot;text-align: center&quot;&gt;Number of Novels&lt;/th&gt;
+      &lt;th style=&quot;text-align: center&quot;&gt;Average Ratings&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;Japanese&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;1496&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;3.994248&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;Chinese&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;1059&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;3.978571&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;Korean&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;131&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;4.142424&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;Filipino&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;23&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;NA&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;Indonesian&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;12&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;NA&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;Thai&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;7&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;NA&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;Malaysian&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;3&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;NA&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;Vietnamese&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;1&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;NA&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;Uncategorized&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;7&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;NA&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;The average ratings only include novels that have at least 30 user ratings.&lt;/p&gt;
+
+&lt;p&gt;I did not take any other rating from other countries because there are less than 30 novels. As a statistician I feel 30 or more is a sufficient number to represent the population for each category anything smaller than is insufficient.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/static/img/posts/all_rating.png&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;I plot a histogram plot for all novels from all countries with 30 or more user ratings. It is left skewed. While I can only speculate that people tend to rate for their favorite novels. It’s interesting because there is quite a lot of quality novels out there and many hover above 4.0 rating out of 5.0.&lt;/p&gt;
+
+&lt;p&gt;There is a small number with perfect five ratings. 19 novels with 5 ratings all of them have single digit number of users reviews except for one (“Mum, I Used to Hate You”). It have 18 users that reviewed it with a 5 rating.&lt;/p&gt;
+
+&lt;p&gt;Sweet let’s find novels that have high rating and at least 30 user reviews! I tried 4.5 at first but it’s a huge list at least 300+ so I decided to look for 4.7 ratings. There is exactly 75 novels with that criteria.&lt;/p&gt;
+
+&lt;p&gt;Here’s the list and hope you guys find it useful.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;A Game To Make Him Fall&lt;/li&gt;
+  &lt;li&gt;A Will Eternal&lt;/li&gt;
+  &lt;li&gt;A Slight Smile is Very Charming&lt;/li&gt;
+  &lt;li&gt;Ame no Hi no Iris&lt;/li&gt;
+  &lt;li&gt;At the Northern Fort&lt;/li&gt;
+  &lt;li&gt;By A Slight Mistake&lt;/li&gt;
+  &lt;li&gt;Cultivation Chat Group&lt;/li&gt;
+  &lt;li&gt;Clockwork Planet&lt;/li&gt;
+  &lt;li&gt;Demon Girl ~Tale of a Lax Demon~&lt;/li&gt;
+  &lt;li&gt;Dungeon Defense&lt;/li&gt;
+  &lt;li&gt;Eight Treasures Trousseau&lt;/li&gt;
+  &lt;li&gt;Gekkou&lt;/li&gt;
+  &lt;li&gt;Golden Age Legitimate Fei&lt;/li&gt;
+  &lt;li&gt;Hokuou Kizoku to Moukinzuma no Yukiguni Karigurashi&lt;/li&gt;
+  &lt;li&gt;Hiraheishi wa Kako o Yumemiru&lt;/li&gt;
+  &lt;li&gt;Hikaru ga Chikyuu ni Itakoro……&lt;/li&gt;
+  &lt;li&gt;I Reincarnated into an Otome Game as a Villainess With Only Destruction Flags…&lt;/li&gt;
+  &lt;li&gt;I Don’t Like The World, I Only Like You&lt;/li&gt;
+  &lt;li&gt;It’s Because You Said There Would Be Candy!!&lt;/li&gt;
+  &lt;li&gt;Joy of Life&lt;/li&gt;
+  &lt;li&gt;Kenkyo, Kenjitsu o Motto ni Ikite Orimasu&lt;/li&gt;
+  &lt;li&gt;Kaze no Stigma&lt;/li&gt;
+  &lt;li&gt;Kono Kamen no Akuma ni Sodan wo!&lt;/li&gt;
+  &lt;li&gt;Kuzu to Kinka no Qualidea&lt;/li&gt;
+  &lt;li&gt;Manuscript Screening Boy and Manuscript Submitting Girl&lt;/li&gt;
+  &lt;li&gt;Marietta-hime no Konrei&lt;/li&gt;
+  &lt;li&gt;Marginal Operation&lt;/li&gt;
+  &lt;li&gt;Maoyuu Maou Yuusha&lt;/li&gt;
+  &lt;li&gt;Mimizuku to Yoru no Ou&lt;/li&gt;
+  &lt;li&gt;Mondaiji-tachi ga Isekai kara Kuru Sou Desu yo?&lt;/li&gt;
+  &lt;li&gt;Mulberry Song&lt;/li&gt;
+  &lt;li&gt;My Death Flags Show No Sign of Ending&lt;/li&gt;
+  &lt;li&gt;No Game No Life&lt;/li&gt;
+  &lt;li&gt;Nobunaga’s Imouto is My Wife&lt;/li&gt;
+  &lt;li&gt;Ookami to Koushinryou&lt;/li&gt;
+  &lt;li&gt;Overlord (LN)&lt;/li&gt;
+  &lt;li&gt;Ouroboros Record ~Circus of Oubeniel~&lt;/li&gt;
+  &lt;li&gt;Our Second Master&lt;/li&gt;
+  &lt;li&gt;Quickly Wear the Face of the Devil&lt;/li&gt;
+  &lt;li&gt;Rakuin no Monshou&lt;/li&gt;
+  &lt;li&gt;Rain&lt;/li&gt;
+  &lt;li&gt;Release that Witch&lt;/li&gt;
+  &lt;li&gt;Running Away From The Hero!&lt;/li&gt;
+  &lt;li&gt;Sansheng, Wangchuan Wu Shang&lt;/li&gt;
+  &lt;li&gt;Semi Datte Tensei Sureba Ryuu Ni Naru&lt;/li&gt;
+  &lt;li&gt;Sweet Heart in Honeyed Desire&lt;/li&gt;
+  &lt;li&gt;Tabi ni Deyou, Horobiyuku Sekai no Hate Made&lt;/li&gt;
+  &lt;li&gt;The Bathroom Goddess&lt;/li&gt;
+  &lt;li&gt;The Destruction of a Triad Boss Trilogy&lt;/li&gt;
+  &lt;li&gt;The Girl Who Bore the Flame Ring&lt;/li&gt;
+  &lt;li&gt;The Girl Who Ate a Death God&lt;/li&gt;
+  &lt;li&gt;The Founder of Diabolism&lt;/li&gt;
+  &lt;li&gt;The Legend of Sun Knight&lt;/li&gt;
+  &lt;li&gt;The Grandmaster Strategist&lt;/li&gt;
+  &lt;li&gt;The Magnificent Battle Records of A Former Noble Lady&lt;/li&gt;
+  &lt;li&gt;The Princess Wei Yang&lt;/li&gt;
+  &lt;li&gt;The Probability I Can Kill My Wife Without Being Found Out&lt;/li&gt;
+  &lt;li&gt;The Other World Dining Hall (LN)&lt;/li&gt;
+  &lt;li&gt;The Rebirth of the Malicious Empress of Military Lineage&lt;/li&gt;
+  &lt;li&gt;The Scum Villain’s Self-Saving System&lt;/li&gt;
+  &lt;li&gt;The Tang Dynasty’s Female Forensic Doctor&lt;/li&gt;
+  &lt;li&gt;The Witch and the Gourd of Stories&lt;/li&gt;
+  &lt;li&gt;To Be A Virtuous Wife&lt;/li&gt;
+  &lt;li&gt;Three Days of Happiness&lt;/li&gt;
+  &lt;li&gt;Uchi no Musume no Tame naraba, Ore wa Moshikashitara Maou mo Taoseru kamo Shirenai (LN)&lt;/li&gt;
+  &lt;li&gt;Uchi no Musume no Tame naraba, Ore wa Moshikashitara Maou mo Taoseru kamo Shirenai (WN)&lt;/li&gt;
+  &lt;li&gt;Tsuyokute New Saga (LN)&lt;/li&gt;
+  &lt;li&gt;Vermillion&lt;/li&gt;
+  &lt;li&gt;Utsuro no Hako to Zero no Maria&lt;/li&gt;
+  &lt;li&gt;Why Is the Prettiest Girl in School Trying to Talk to a Loner Like Me during Lunch Break?&lt;/li&gt;
+  &lt;li&gt;When He Comes, Close Your Eyes&lt;/li&gt;
+  &lt;li&gt;Virtual World: Peerless White Emperor&lt;/li&gt;
+  &lt;li&gt;Woof Woof Story ~ I Told You I am a Rich Person’s Dog, Not Fenrir ~&lt;/li&gt;
+  &lt;li&gt;Yahari Ore no Seishun Love Come wa Machigatte Iru&lt;/li&gt;
+  &lt;li&gt;Youjo Senki&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h3&gt;
+
+&lt;p&gt;I think I’ll be doing more light novel analysis in the future.&lt;/p&gt;
+
+&lt;p&gt;I think I’ll do NLP too something like sentiment analysis or something for those tags and categories. Of course this is when I have time.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;What Did I Get to Practice? (for me)&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;My data science &amp;amp; statistic skills using &lt;a href=&quot;https://www.r-project.org/&quot;&gt;R&lt;/a&gt;.&lt;/li&gt;
+  &lt;li&gt;My web scraping skill using &lt;a href=&quot;https://scrapy.org/&quot;&gt;scrapy&lt;/a&gt;.&lt;/li&gt;
+  &lt;li&gt;My devops skill, I made a custom &lt;a href=&quot;https://www.vagrantup.com/&quot;&gt;vagrant&lt;/a&gt; for &lt;a href=&quot;https://jekyllrb.com/&quot;&gt;jekyll&lt;/a&gt; and used &lt;a href=&quot;https://www.ansible.com/&quot;&gt;ansible&lt;/a&gt; to self provision. I created a new blog just for this post.&lt;/li&gt;
+  &lt;li&gt;I made a yummy pie chart.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h4 id=&quot;etc&quot;&gt;Etc..&lt;/h4&gt;
+
+&lt;p&gt;The novel picture is taken from google searching for a CC license image.&lt;/p&gt;
+
+&lt;script src=&quot;https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js&quot;&gt;&lt;/script&gt;
+
+&lt;script src=&quot;https://cdnjs.cloudflare.com/ajax/libs/c3/0.4.14/c3.min.js&quot;&gt;&lt;/script&gt;
+
+&lt;script src=&quot;/static/js/post/lightnovel_novelbycountry_donut.js&quot;&gt;&lt;/script&gt;
+
+</description>
+        <pubDate>Thu, 13 Jul 2017 08:29:00 -0700</pubDate>
+        <link>http://localhost:4000/analysis/datascience/lightnovel/statistic/2017/07/13/lightnovels_analysis.html</link>
+        <guid isPermaLink="true">http://localhost:4000/analysis/datascience/lightnovel/statistic/2017/07/13/lightnovels_analysis.html</guid>
+        
+        
+        <category>analysis</category>
+        
+        <category>datascience</category>
+        
+        <category>lightnovel</category>
+        
+        <category>statistic</category>
+        
+      </item>
+    
+  </channel>
+</rss>
