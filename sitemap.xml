@@ -5,8 +5,8 @@
     <description>It is still a beautiful world. Be cheerful. Strive to be happy.</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/sitemap.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Tue, 27 Nov 2018 11:16:15 -0800</pubDate>
-    <lastBuildDate>Tue, 27 Nov 2018 11:16:15 -0800</lastBuildDate>
+    <pubDate>Tue, 27 Nov 2018 11:22:43 -0800</pubDate>
+    <lastBuildDate>Tue, 27 Nov 2018 11:22:43 -0800</lastBuildDate>
     <generator>Jekyll v3.3.1</generator>
     
       <item>
@@ -54,10 +54,11 @@ Plus I’m hoping to learn PostGIS in the future for temporal spatial analysis.&
 &lt;p&gt;One of the biggest reason is that I want to keep my data safe and I want to be in control of my data. 
 The application logic is not the end goal. 
 The real gold, pun intended, is the data. 
-It takes awhile to become an authorative site and a community. The data is what make this possible.
+It takes awhile to become an authorative site and developed an active community. The data is what makes this possible.
 Do not give your data to third party that’s silly.&lt;/p&gt;
 
-&lt;p&gt;Another reason is that relational database will be here in 10 years from now. I don’t know about anything else.&lt;/p&gt;
+&lt;p&gt;Another reason is that relational database will be here in 10 years from now. I don’t know about anything else but you can try to guess and bet on it. 
+I won’t be taking that bet or joining that rat race.&lt;/p&gt;
 
 &lt;p&gt;I learned and did professionally Cassandra and MongoDB. I don’t know when and where it’ll be in a decade from now. 
 I don’t believe it is a use case for the majority of the data out there, at least the data I care about. 
@@ -65,14 +66,19 @@ I’m not going to write joins manually. How well does my knowledge of column ba
 
 &lt;p&gt;When you find yourself doing relational joins and doing nothing with text search in Elasticsearch, Solr, or any Lucene-based database then you’re doing it wrong.&lt;/p&gt;
 
-&lt;p&gt;I can go into B+ trees vs trie but I get paid for that when I do consult and it’s a huge discussion in it self.&lt;/p&gt;
+&lt;p&gt;I can go into B+ trees vs trie but I get paid for that when I did consulting and it’s a huge discussion in itself.&lt;/p&gt;
 
 &lt;p&gt;It should be the responsibility of the programmer to do a pro and con. 
-Often time than not, those programmers are chasing hype. That is fine. 
-I don’t want to be the person getting stuck maintaining such choices when it goes out of vogue. Inheriting technical debt is not fun and if I have the choice then I choose no. Go out there and test those fancy new technology. I’ll wait until they are battle tested, I’ll wait until it’s boring like Ruby on Rails is now.&lt;/p&gt;
+Often time than not, those programmers are chasing hype and money. That is fine. 
+I don’t want to be the person getting stuck maintaining such choices when it goes out of vogue. 
+Inheriting technical debt is not fun and if I have the choice then I choose no. 
+Go out there and test those fancy new technology. 
+I’ll wait until they are battle tested, I’ll wait until it’s boring like Ruby on Rails is now.&lt;/p&gt;
 
-&lt;p&gt;The majority of the data out there are relational. Use a relational database and if you want to gamble try one of the graph database.
-Also the big data hype is dying down. The majority of the data out there are not big. You don’t need fancy convoluted tech stacks for your small data. 
+&lt;p&gt;The majority of the data out there are relational. 
+Use a relational database and if you want to gamble try one of the graph database.
+Also the big data hype is dying down. 
+The majority of the data out there are not big. You don’t need fancy convoluted tech stacks for your small data. 
 If you want to juggle and maintain convoluted tech stacks all day then sure.&lt;/p&gt;
 
 &lt;h3 id=&quot;back-to-front-side-rendering-javascript-framework&quot;&gt;Back to Front Side Rendering Javascript Framework&lt;/h3&gt;
