@@ -5,13 +5,17 @@
     <description>It is still a beautiful world. Be cheerful. Strive to be happy.</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Tue, 27 Nov 2018 11:22:43 -0800</pubDate>
-    <lastBuildDate>Tue, 27 Nov 2018 11:22:43 -0800</lastBuildDate>
+    <pubDate>Tue, 27 Nov 2018 17:13:56 -0800</pubDate>
+    <lastBuildDate>Tue, 27 Nov 2018 17:13:56 -0800</lastBuildDate>
     <generator>Jekyll v3.3.1</generator>
     
       <item>
         <title>The Case for Boring Technology</title>
-        <description>&lt;h3 id=&quot;introduction&quot;&gt;Introduction&lt;/h3&gt;
+        <description>&lt;p align=&quot;center&quot;&gt;
+    &lt;img title=&quot;A funny bored picture.&quot; width=&quot;60%&quot; src=&quot;/static/img/posts/bored-3082828_1920.jpg&quot; /&gt;
+&lt;/p&gt;
+
+&lt;h3 id=&quot;introduction&quot;&gt;Introduction&lt;/h3&gt;
 
 &lt;p&gt;I recently talked to a buddy of mine and we had different view on technology. Being a veteran in the whole gamut full stack of web development I have a set of belief that I’ve come to developed toward technology stack. I didn’t fully express my view when talking to him and I’d like to put it down in words next time I have to discuss such topic.&lt;/p&gt;
 
@@ -41,6 +45,10 @@ I get to choose what I feel like reasonable regardless if it’s wrong or not. I
 &lt;p&gt;Keeping up to date is always something you hear but it’s importance does not overshadow having a reliable technology.&lt;/p&gt;
 
 &lt;h3 id=&quot;lets-start-with-database-sql-vs-nosql&quot;&gt;Let’s start with Database SQL vs NoSQL&lt;/h3&gt;
+
+&lt;p align=&quot;center&quot;&gt;
+    &lt;img title=&quot;OpenBSD banner.&quot; src=&quot;/static/img/posts/PostgreSQL_logo.3colors.120x120.png&quot; /&gt;
+&lt;/p&gt;
 
 &lt;p&gt;One statement I made with my buddy is that I’m going to relearn and sharpen my relational database skillset and I’ve chosen PostgreSQL. 
 I’ve been using the ORM libaries of MVC frameworks which abstract from the relation database. 
@@ -83,6 +91,10 @@ If you want to juggle and maintain convoluted tech stacks all day then sure.&lt;
 
 &lt;h3 id=&quot;back-to-front-side-rendering-javascript-framework&quot;&gt;Back to Front Side Rendering Javascript Framework&lt;/h3&gt;
 
+&lt;p align=&quot;center&quot;&gt;
+    &lt;img title=&quot;OpenBSD banner.&quot; src=&quot;/static/img/posts/phoenix_elixir.jpg&quot; /&gt;
+&lt;/p&gt;
+
 &lt;p&gt;Another technology that keeps on changing is front side rendering javascript frameworks. 
 I am basically done with this, I went from ember.js, angular.js, and now to Vue.js. 
 I’ll come back when it’s boring. I’ll come back when there are clear winners.&lt;/p&gt;
@@ -102,6 +114,10 @@ I can just let it crash and only catch cases that I want in Erlang.&lt;/p&gt;
 
 &lt;h3 id=&quot;os&quot;&gt;OS&lt;/h3&gt;
 
+&lt;p align=&quot;center&quot;&gt;
+    &lt;img title=&quot;OpenBSD banner.&quot; src=&quot;/static/img/posts/openbsd_banner1.gif&quot; /&gt;
+&lt;/p&gt;
+
 &lt;p&gt;As for OS, I’m going for OpenBSD. I want to master an OS and I find that linux is increasingly complicated.&lt;/p&gt;
 
 &lt;p&gt;Which is fine but I want to know the in’s and out’s of my OS and OpenBSD is boring enough for me.
@@ -118,6 +134,16 @@ I wish it have a better filesystem but I know it’ll work years from now. I’l
 &lt;/ul&gt;
 
 &lt;p&gt;This is my rationality and hopefully there is some wisdom in these.&lt;/p&gt;
+&lt;p align=&quot;center&quot;&gt;
+    &lt;img title=&quot;A another funny bored picture. I personally think it's more of a duck face than a bored face.&quot; width=&quot;60%&quot; src=&quot;/static/img/posts/grimace-1012862_1280.jpg&quot; /&gt;
+&lt;/p&gt;
+
+&lt;h3 id=&quot;etc&quot;&gt;Etc…&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;First picture: &lt;a href=&quot;/https://pixabay.com/en/users/RobinHiggins-1321953/&quot;&gt;https://pixabay.com/en/users/RobinHiggins-1321953&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;Last picture: &lt;a href=&quot;https://pixabay.com/en/grimace-girl-teen-mimicry-brutal-1012862/&quot;&gt;https://pixabay.com/en/grimace-girl-teen-mimicry-brutal-1012862/&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
 </description>
         <pubDate>Mon, 26 Nov 2018 16:44:00 -0800</pubDate>
         <link>http://localhost:4000/technology/webdev/openbsd/2018/11/26/the_case_for_boring_technology.html</link>
