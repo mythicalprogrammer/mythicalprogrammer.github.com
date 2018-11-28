@@ -5,8 +5,8 @@
     <description>It is still a beautiful world. Be cheerful. Strive to be happy.</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Tue, 27 Nov 2018 17:13:56 -0800</pubDate>
-    <lastBuildDate>Tue, 27 Nov 2018 17:13:56 -0800</lastBuildDate>
+    <pubDate>Tue, 27 Nov 2018 22:01:48 -0800</pubDate>
+    <lastBuildDate>Tue, 27 Nov 2018 22:01:48 -0800</lastBuildDate>
     <generator>Jekyll v3.3.1</generator>
     
       <item>
@@ -23,15 +23,15 @@
 
 &lt;h3 id=&quot;keeping-up-to-date&quot;&gt;Keeping Up To Date&lt;/h3&gt;
 
-&lt;p&gt;Technology is always changing. There is a new front side rendering every few months. 
+&lt;p&gt;Technology is always changing. There is a new frontend rendering every few months. 
 The people on the otherside will say, “It is up to you to learn and keep up to date.”
 I used to believe this until the realized this:&lt;/p&gt;
 
 &lt;p&gt;It sounds great but the fact is when your whole stack change often enough especially when you are a full stack this become a full time job.&lt;/p&gt;
 
-&lt;p&gt;Front side rendering rate of change is really really fast. That’s great if you don’t have no life, no ambition for relationship or family, etc…&lt;/p&gt;
+&lt;p&gt;Frontend rendering rate of change is really really fast. That’s great if you don’t have no life, no ambition for relationship or family, etc…&lt;/p&gt;
 
-&lt;p&gt;The pro to frontside rendering is that we have tons of awesome stuff created by javascript community and I would argue that web component standardization was because of the cuttroat nature of flavor flav of the month front side rendering javascript.&lt;/p&gt;
+&lt;p&gt;The pro to frontend rendering is that we have tons of awesome stuff created by javascript community and I would argue that web component standardization was because of the cuttroat nature of flavor flav of the month frontend rendering javascript.&lt;/p&gt;
 
 &lt;p&gt;I am done with this rat race.&lt;/p&gt;
 
@@ -89,22 +89,22 @@ Also the big data hype is dying down.
 The majority of the data out there are not big. You don’t need fancy convoluted tech stacks for your small data. 
 If you want to juggle and maintain convoluted tech stacks all day then sure.&lt;/p&gt;
 
-&lt;h3 id=&quot;back-to-front-side-rendering-javascript-framework&quot;&gt;Back to Front Side Rendering Javascript Framework&lt;/h3&gt;
+&lt;h3 id=&quot;back-to-frontend-rendering-javascript-framework&quot;&gt;Back to Frontend Rendering Javascript Framework&lt;/h3&gt;
 
 &lt;p align=&quot;center&quot;&gt;
     &lt;img title=&quot;OpenBSD banner.&quot; src=&quot;/static/img/posts/phoenix_elixir.jpg&quot; /&gt;
 &lt;/p&gt;
 
-&lt;p&gt;Another technology that keeps on changing is front side rendering javascript frameworks. 
+&lt;p&gt;Another technology that keeps on changing is frontend rendering javascript frameworks. 
 I am basically done with this, I went from ember.js, angular.js, and now to Vue.js. 
 I’ll come back when it’s boring. I’ll come back when there are clear winners.&lt;/p&gt;
 
 &lt;p&gt;I’ve highlight the reasons above. Other reason such as the sketchy security issue of npm packages. 
-Or SEO for front side rendering sucks, it is a bunch of hacks. 
+Or SEO for frontend rendering sucks, it is a bunch of hacks. 
 Supposely Google got something that can handle crawling that. 
 No thanks, I don’t need more headaches. SSR for me.&lt;/p&gt;
 
-&lt;p&gt;I’ve chosen a server side rendering MVC framework, Phoenix and Elixir programming language and call it a day. 
+&lt;p&gt;I’ve chosen a server side/backend rendering MVC framework, Phoenix and Elixir programming language and call it a day. 
 It’s a small community, the changes aren’t often, and more importantly it’s boring. I am pretty sure it’ll be here at least 2 years from now.
 It is a bet on my part on this technology but SSR aren’t changing as fast as FSR.&lt;/p&gt;
 
