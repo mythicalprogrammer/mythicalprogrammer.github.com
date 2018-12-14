@@ -5,12 +5,12 @@
     <description>It is still a beautiful world. Be cheerful. Strive to be happy.</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/sitemap.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Thu, 13 Dec 2018 19:01:18 -0800</pubDate>
-    <lastBuildDate>Thu, 13 Dec 2018 19:01:18 -0800</lastBuildDate>
+    <pubDate>Thu, 13 Dec 2018 22:00:53 -0800</pubDate>
+    <lastBuildDate>Thu, 13 Dec 2018 22:00:53 -0800</lastBuildDate>
     <generator>Jekyll v3.3.1</generator>
     
       <item>
-        <title>Interesting Papers I've read this week. (Draft)</title>
+        <title>Interesting Papers I've read this week.</title>
         <description>&lt;p align=&quot;center&quot;&gt;
     &lt;img title=&quot;Book with magnifying glass.&quot; width=&quot;60%&quot; src=&quot;/static/img/posts/book-2304078_1920.jpg&quot; /&gt;
 &lt;/p&gt;
@@ -43,7 +43,7 @@ parameter as a random variable and not a fixed point.&lt;/li&gt;
 &lt;h3 id=&quot;bayesian-review&quot;&gt;Bayesian Review&lt;/h3&gt;
 
 &lt;ul&gt;
-  &lt;li&gt;On Bayesian Data Analysis by Christian P. Robert and Judith Rousseau (August 27, 2018)&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://arxiv.org/abs/1001.4656&quot;&gt;On Bayesian Data Analysis by Christian P. Robert and Judith Rousseau (August 27, 2018)&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;p&gt;Point estimation parameter vs parameter with distribution. 
@@ -57,14 +57,10 @@ Critiques of Bayesian and solutions.&lt;/p&gt;
 &lt;p&gt;Great visualization take on how to explain Bayesian Statistic.&lt;/p&gt;
 
 &lt;ul&gt;
-  &lt;li&gt;A tutorial on Bayesian nonparametric models by Samuel J. Gershman and David M. Blei (2012)&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://arxiv.org/abs/1106.2697&quot;&gt;A tutorial on Bayesian nonparametric models by Samuel J. Gershman and David M. Blei (2012)&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;A review what I use during my time at the FDA.&lt;/p&gt;
-
-&lt;h3 id=&quot;todo&quot;&gt;TODO&lt;/h3&gt;
-
-&lt;p&gt;Add some links to those papers.&lt;/p&gt;
+&lt;p&gt;A review what I used during my time at the FDA.&lt;/p&gt;
 
 &lt;h3 id=&quot;credits&quot;&gt;Credits&lt;/h3&gt;
 
