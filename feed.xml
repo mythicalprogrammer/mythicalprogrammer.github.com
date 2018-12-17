@@ -5,12 +5,12 @@
     <description>It is still a beautiful world. Be cheerful. Strive to be happy.</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Sun, 16 Dec 2018 19:42:21 -0800</pubDate>
-    <lastBuildDate>Sun, 16 Dec 2018 19:42:21 -0800</lastBuildDate>
+    <pubDate>Mon, 17 Dec 2018 08:17:54 -0800</pubDate>
+    <lastBuildDate>Mon, 17 Dec 2018 08:17:54 -0800</lastBuildDate>
     <generator>Jekyll v3.3.1</generator>
     
       <item>
-        <title>Books I've read this week and future reading plans (draft).</title>
+        <title>Books I've read this week and future reading plans.</title>
         <description>&lt;p align=&quot;center&quot;&gt;
     &lt;img title=&quot;Door surrounds by a wall made out of books.&quot; width=&quot;100%&quot; src=&quot;/static/img/posts/books-1655783_1280.jpg&quot; /&gt;
 &lt;/p&gt;
@@ -26,8 +26,8 @@ Mostly setting up my dev machine and foundation toolings.&lt;/p&gt;
 &lt;p&gt;Tutorial I’ve used is:&lt;/p&gt;
 
 &lt;ol&gt;
-  &lt;li&gt;https://sohcahtoa.org.uk/openbsd.html&lt;/li&gt;
-  &lt;li&gt;https://www.c0ffee.net/blog/openbsd-on-a-laptop/&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://sohcahtoa.org.uk/openbsd.html&quot;&gt;https://sohcahtoa.org.uk/openbsd.html&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.c0ffee.net/blog/openbsd-on-a-laptop/&quot;&gt;https://www.c0ffee.net/blog/openbsd-on-a-laptop/&lt;/a&gt;&lt;/li&gt;
 &lt;/ol&gt;
 
 &lt;p&gt;I’ve installed xfce window manager desktop whatever and there were some hiccup. Especially having to figure out to enable an option for xfce terminal to run as shell login user (why is this not default?).&lt;/p&gt;
@@ -60,6 +60,9 @@ read up on neo vim and the latest book by the same author iirc.
 
 &lt;p&gt;I’ve found this sweeet article from my alma mata for vim+tmux R dev:
 &lt;a href=&quot;https://hpcc.ucr.edu/manuals_linux-cluster_terminalIDE.html&quot;&gt;https://hpcc.ucr.edu/manuals_linux-cluster_terminalIDE.html&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Also forgot about this one:
+&lt;a href=&quot;https://kadekillary.work/post/nvim-r/&quot;&gt;https://kadekillary.work/post/nvim-r/&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;Also a sweet website for top vim plugins:
 &lt;a href=&quot;https://vimawesome.com/&quot;&gt;vim awesome&lt;/a&gt;&lt;/p&gt;
