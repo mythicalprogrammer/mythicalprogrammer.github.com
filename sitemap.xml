@@ -5,9 +5,127 @@
     <description>It is still a beautiful world. Be cheerful. Strive to be happy.</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/sitemap.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Thu, 13 Dec 2018 22:00:53 -0800</pubDate>
-    <lastBuildDate>Thu, 13 Dec 2018 22:00:53 -0800</lastBuildDate>
+    <pubDate>Sun, 16 Dec 2018 19:42:21 -0800</pubDate>
+    <lastBuildDate>Sun, 16 Dec 2018 19:42:21 -0800</lastBuildDate>
     <generator>Jekyll v3.3.1</generator>
+    
+      <item>
+        <title>Books I've read this week and future reading plans (draft).</title>
+        <description>&lt;p align=&quot;center&quot;&gt;
+    &lt;img title=&quot;Door surrounds by a wall made out of books.&quot; width=&quot;100%&quot; src=&quot;/static/img/posts/books-1655783_1280.jpg&quot; /&gt;
+&lt;/p&gt;
+
+&lt;h2 id=&quot;books-ive-read-this-week&quot;&gt;Books I’ve read this week&lt;/h2&gt;
+
+&lt;p&gt;So I’m reading up my tech stack I’ve chosen for the next five years for my start up.
+Mostly setting up my dev machine and foundation toolings.&lt;/p&gt;
+
+&lt;h4 id=&quot;absolute-openbsd-unix-for-the-practical-paranoid-2nd-edition-by-michael-w-lucashttpsnostarchcomobenbsd2e&quot;&gt;&lt;a href=&quot;https://nostarch.com/obenbsd2e&quot;&gt;Absolute OpenBSD Unix for the Practical Paranoid (2nd Edition) by Michael W. Lucas&lt;/a&gt;&lt;/h4&gt;
+&lt;p&gt;The partition harddrive during installing of this book is outdated.&lt;/p&gt;
+
+&lt;p&gt;Tutorial I’ve used is:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;https://sohcahtoa.org.uk/openbsd.html&lt;/li&gt;
+  &lt;li&gt;https://www.c0ffee.net/blog/openbsd-on-a-laptop/&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;I’ve installed xfce window manager desktop whatever and there were some hiccup. Especially having to figure out to enable an option for xfce terminal to run as shell login user (why is this not default?).&lt;/p&gt;
+
+&lt;p&gt;I’ve also set up ksh terminal using &lt;a href=&quot;https://github.com/agkozak/polyglot&quot;&gt;polyglot github&lt;/a&gt; configuration. It works for me.&lt;/p&gt;
+
+&lt;h4 id=&quot;tmux-2-productive-mouse-free-development-by-brian-p-hoganhttpspragprogcombookbhtmux2tmux-2&quot;&gt;&lt;a href=&quot;https://pragprog.com/book/bhtmux2/tmux-2&quot;&gt;tmux 2 Productive Mouse-Free Development by Brian P. Hogan&lt;/a&gt;&lt;/h4&gt;
+
+&lt;p&gt;I’ve read this book a few years ago and it’s the reason why I am good at tmux. I learned about tmux at a Ruby on Rail talk 10 years ago.&lt;/p&gt;
+
+&lt;p&gt;I’m using this &lt;a href=&quot;https://github.com/gpakosz/.tmux&quot;&gt;config file&lt;/a&gt; with a few tweaks. 
+The pane split short cut for both horizontal and vertical are the same &amp;gt;___&amp;gt;.
+Also copy mode doesn’t use vi key even though pane navigation uses vi keys.&lt;/p&gt;
+
+&lt;p&gt;I couldn’t get the font working on OpenBSD and am still working on it. It’s in the backburner.&lt;/p&gt;
+
+&lt;p align=&quot;center&quot;&gt;
+    &lt;img title=&quot;Opened book with story coming alives on the pages.&quot; width=&quot;100%&quot; src=&quot;/static/img/posts/narrative-794978_1920.jpg&quot; /&gt;
+&lt;/p&gt;
+
+&lt;h2 id=&quot;what-am-i-reading-next&quot;&gt;What am I reading next&lt;/h2&gt;
+
+&lt;p&gt;In the technology queue there are two books.&lt;/p&gt;
+
+&lt;p&gt;I would like the latest Vim book. I’ve read the practical vim book and currently want to 
+read up on neo vim and the latest book by the same author iirc. 
+&lt;a href=&quot;https://pragprog.com/book/modvim/modern-vim&quot;&gt;https://pragprog.com/book/modvim/modern-vim&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;The vim one will be handy since R studio is not a port in OpenBSD and the dependancies is pretty bad to make it port.&lt;/p&gt;
+
+&lt;p&gt;I’ve found this sweeet article from my alma mata for vim+tmux R dev:
+&lt;a href=&quot;https://hpcc.ucr.edu/manuals_linux-cluster_terminalIDE.html&quot;&gt;https://hpcc.ucr.edu/manuals_linux-cluster_terminalIDE.html&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Also a sweet website for top vim plugins:
+&lt;a href=&quot;https://vimawesome.com/&quot;&gt;vim awesome&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Another one I would like to read is a postgresql book. 
+I’ll start with the book below and see how it goes.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.packtpub.com/big-data-and-business-intelligence/learning-postgresql-10-second-edition&quot;&gt;Learning PostgreSQL 10 - Second Edition by Andrey Volkov and Salahaldin Juba&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;There’s also a pretty interesting one in depth: &lt;a href=&quot;https://use-the-index-luke.com/&quot;&gt;Use the Index Luke&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;From there I have an elixir book to read and a phoenix book but that’s for later.&lt;/p&gt;
+
+&lt;p align=&quot;center&quot;&gt;
+    &lt;img title=&quot;Girl sitting and leaning against a tree reading a book on an island with sun setting over the horizon.&quot; height=&quot;50%&quot; width=&quot;100%&quot; src=&quot;/static/img/posts/sunset-485016_1920.png&quot; /&gt;
+&lt;/p&gt;
+
+&lt;h3 id=&quot;random-thoughts-on-publishers&quot;&gt;Random thoughts on publishers&lt;/h3&gt;
+
+&lt;p&gt;It seems like I’m moving away from manning and have been reading a lot of Pragmatic Programmers and No Stach publisher.&lt;/p&gt;
+
+&lt;p&gt;Packt is really a hit or miss.&lt;/p&gt;
+
+&lt;h3 id=&quot;what-about-books-in-other-subject&quot;&gt;What about books in other subject?&lt;/h3&gt;
+
+&lt;p&gt;I’m reading a few self help books, which is personal, so I won’t be putting it here. 
+Just trying to be my best self that’s all.&lt;/p&gt;
+
+&lt;p&gt;As for statistic, I’ve found a new spatial modeling book that was recently released:
+&lt;a href=&quot;https://geocompr.robinlovelace.net/&quot;&gt;Geocomputation with R by Robin Lovelace, Jakub Nowosad, Jannes Muenchow&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;I dislike the title name because it sounds funky to be honest I’m hoping it spatial analysis which 
+from the summary it is. Maybe geocomputation is some domain specific terminology I don’t know
+and I’m just being silly.&lt;/p&gt;
+
+&lt;p&gt;Feel free to hit me up on &lt;a href=&quot;https://twitter.com/AnthonyDoan20&quot;&gt;twitter&lt;/a&gt;, &lt;a href=&quot;https://mastodon.social/@anthony_doan&quot;&gt;mastodon&lt;/a&gt;, and whatever if you guys have any suggestions on books either technical
+or self help or statistical modeling.&lt;/p&gt;
+
+&lt;p&gt;Have a wonderful week.&lt;/p&gt;
+
+&lt;h3 id=&quot;credits&quot;&gt;Credits&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;First picture: &lt;a href=&quot;https://pixabay.com/en/books-door-entrance-culture-1655783/&quot;&gt;https://pixabay.com/en/books-door-entrance-culture-1655783/&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;Second picture: &lt;a href=&quot;https://pixabay.com/en/narrative-history-dream-tell-794978/&quot;&gt;https://pixabay.com/en/narrative-history-dream-tell-794978/&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;Third picture: &lt;a href=&quot;https://pixabay.com/en/sunset-island-mar-dusk-brain-485016/&quot;&gt;https://pixabay.com/en/sunset-island-mar-dusk-brain-485016/&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        <pubDate>Sun, 16 Dec 2018 18:58:05 -0800</pubDate>
+        <link>http://localhost:4000/modeling/statistic/datascience/machinelearning/technology/webdev/2018/12/16/reading-progress.html</link>
+        <guid isPermaLink="true">http://localhost:4000/modeling/statistic/datascience/machinelearning/technology/webdev/2018/12/16/reading-progress.html</guid>
+        
+        
+        <category>modeling</category>
+        
+        <category>statistic</category>
+        
+        <category>datascience</category>
+        
+        <category>machinelearning</category>
+        
+        <category>technology</category>
+        
+        <category>webdev</category>
+        
+      </item>
     
       <item>
         <title>Interesting Papers I've read this week.</title>
