@@ -3,11 +3,1283 @@
   <channel>
     <title>Lackadaisical Cherimoya</title>
     <description>It is still a beautiful world. Be cheerful. Strive to be happy.</description>
-    <link>http://localhost:4000/</link>
-    <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Mon, 17 Dec 2018 08:17:54 -0800</pubDate>
-    <lastBuildDate>Mon, 17 Dec 2018 08:17:54 -0800</lastBuildDate>
+    <link>https://mythicalprogrammer.github.io/</link>
+    <atom:link href="https://mythicalprogrammer.github.io/feed.xml" rel="self" type="application/rss+xml"/>
+    <pubDate>Mon, 16 Sep 2019 14:21:03 -0700</pubDate>
+    <lastBuildDate>Mon, 16 Sep 2019 14:21:03 -0700</lastBuildDate>
     <generator>Jekyll v3.3.1</generator>
+    
+      <item>
+        <title>Elixir Phoenix 1.4 Deployments with Distillery and Edeliver on Ubuntu</title>
+        <description>&lt;p&gt;Base on:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;&lt;a href=&quot;https://devato.com/automate-elixir-phoenix-1-4-deployment-with-distillery-and-edeliver-on-ubuntu/#step-6-target-server-install-nodejs&quot;&gt;https://devato.com/automate-elixir-phoenix-1-4-deployment-with-distillery-and-edeliver-on-ubuntu/#step-6-target-server-install-nodejs&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://medium.com/@zek/deploy-early-and-often-deploying-phoenix-with-edeliver-and-distillery-part-one-5e91cac8d4bd&quot;&gt;https://medium.com/@zek/deploy-early-and-often-deploying-phoenix-with-edeliver-and-distillery-part-one-5e91cac8d4bd&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://medium.com/@zek/deploy-early-and-often-deploying-phoenix-with-edeliver-and-distillery-part-two-f361ef36aa10&quot;&gt;https://medium.com/@zek/deploy-early-and-often-deploying-phoenix-with-edeliver-and-distillery-part-two-f361ef36aa10&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://blog.progressplum.app/ssl-migration-from-nginx-to-cowboy-2-in-phoenix-1-4/&quot;&gt;https://blog.progressplum.app/ssl-migration-from-nginx-to-cowboy-2-in-phoenix-1-4/&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://elixirforum.com/t/elixir-1-9-releases-with-edeliver/23728/3?u=mythicalprogrammer&quot;&gt;https://elixirforum.com/t/elixir-1-9-releases-with-edeliver/23728/3?u=mythicalprogrammer&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&quot;step-1-create-your-digital-ocean-droplet&quot;&gt;Step 1: Create your Digital Ocean droplet&lt;/h2&gt;
+
+&lt;p&gt;Make sure you add your SSH when creating digital ocean and do not add a paraphrase to your SSH. It doesn’t work with paraphrase.&lt;/p&gt;
+
+&lt;h2 id=&quot;step-2-setting-up-your-server-do-droplet&quot;&gt;Step 2: Setting up your server (DO droplet)&lt;/h2&gt;
+
+&lt;h3 id=&quot;log-into-your-server&quot;&gt;Log into your server.&lt;/h3&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;ssh root@134.209.8.141
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h3 id=&quot;setup-vim-as-default-editor-on-your-server&quot;&gt;Setup VIM as default editor on your server.&lt;/h3&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sudo update-alternatives --config editor
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Make sure you select the &lt;code class=&quot;highlighter-rouge&quot;&gt;/usr/bin/vim.basic&lt;/code&gt; option which is number 3.&lt;/p&gt;
+
+&lt;h3 id=&quot;update-your-locale&quot;&gt;Update your locale.&lt;/h3&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sudo update-locale &lt;span class=&quot;nv&quot;&gt;LC_ALL&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;en_US.UTF-8
+sudo update-locale &lt;span class=&quot;nv&quot;&gt;LANGUAGE&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;en_US.UTF-8
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h3 id=&quot;create-new-deploy-user&quot;&gt;Create new &lt;code class=&quot;highlighter-rouge&quot;&gt;deploy&lt;/code&gt; user&lt;/h3&gt;
+
+&lt;p&gt;The next step is to create a non-root user on the server which will own our application and handle deployments. We’ll configure the .ssh directory for the user, configure the user to have passwordless sudo access, and disabled password login to harden the server a bit.&lt;/p&gt;
+
+&lt;p&gt;Let’s create the user &lt;code class=&quot;highlighter-rouge&quot;&gt;deploy&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;As &lt;code class=&quot;highlighter-rouge&quot;&gt;root&lt;/code&gt; on the target server:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;adduser deploy
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Fill out the data as required. Like password.&lt;/p&gt;
+
+&lt;p&gt;Next, run this series of commands to configure the user’s &lt;code class=&quot;highlighter-rouge&quot;&gt;.ssh&lt;/code&gt; directory:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sudo mkdir -p /home/deploy/.ssh
+sudo touch /home/deploy/.ssh/authorized_keys
+sudo chmod 700 /home/deploy/.ssh
+sudo chmod 644 /home/deploy/.ssh/authorized_keys
+sudo chown -R deploy:deploy /home/deploy
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;As &lt;code class=&quot;highlighter-rouge&quot;&gt;root&lt;/code&gt; on the target server:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sudo vim /etc/ssh/sshd_config
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Verify that password authentication is set to “no”:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;PasswordAuthentication no
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h3 id=&quot;add-deploy-to-sudoers&quot;&gt;Add deploy to sudoers&lt;/h3&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Finally we'll add the user to sudo.
+
+As `root` on the target machine:
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;visudo
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;This will open the sudoers file where we can add the &lt;code class=&quot;highlighter-rouge&quot;&gt;deploy&lt;/code&gt; users privileges below &lt;code class=&quot;highlighter-rouge&quot;&gt;root&lt;/code&gt; like this:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# User privilege specification&lt;/span&gt;
+
+root &lt;span class=&quot;nv&quot;&gt;ALL&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=(&lt;/span&gt;ALL:ALL&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ALL
+
+deploy &lt;span class=&quot;nv&quot;&gt;ALL&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=(&lt;/span&gt;ALL&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; NOPASSWD: ALL
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h3 id=&quot;add-ssh-public-key-to-authorizedkeys&quot;&gt;Add ssh public key to authorized_keys&lt;/h3&gt;
+
+&lt;p&gt;In another terminal window, on your local machine:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;cat ~/.ssh/id_rsa.pub
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;On the target server, paste the key into authorized_keys:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sudo vim /home/deploy/.ssh/authorized_keys
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Now we can safely log in and work as the &lt;code class=&quot;highlighter-rouge&quot;&gt;deploy&lt;/code&gt; user on the target machine without having to enter a password.&lt;/p&gt;
+
+&lt;p&gt;Now go to Basic Hardening article to remove root login&lt;/p&gt;
+
+&lt;h3 id=&quot;set-up-your-firewall-on-ubuntu&quot;&gt;Set up your firewall on Ubuntu&lt;/h3&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.digitalocean.com/community/tutorials/initial-server-setup-with-ubuntu-18-04&quot;&gt;https://www.digitalocean.com/community/tutorials/initial-server-setup-with-ubuntu-18-04&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Ubuntu 18.04 servers can use the UFW firewall to make sure only connections to certain services are allowed. We can set up a basic firewall very easily using this application.&lt;/p&gt;
+
+&lt;p&gt;Different applications can register their profiles with UFW upon installation. These profiles allow UFW to manage these applications by name. OpenSSH, the service allowing us to connect to our server now, has a profile registered with UFW.&lt;/p&gt;
+
+&lt;p&gt;You can see this by typing:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;ufw app list
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Output:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Available applications:
+  OpenSSH
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;We need to make sure that the firewall allows SSH connections so that we can log back in next time. We can allow these connections by typing:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;ufw allow OpenSSH
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Afterwards, we can enable the firewall by typing:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;ufw &lt;span class=&quot;nb&quot;&gt;enable&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Type “&lt;code class=&quot;highlighter-rouge&quot;&gt;y&lt;/code&gt;” and press &lt;code class=&quot;highlighter-rouge&quot;&gt;ENTER&lt;/code&gt; to proceed. You can see that SSH connections are still allowed by typing:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;ufw status
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Output:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Status: active
+
+To                         Action      From
+--                         ------      ----
+OpenSSH                    ALLOW       Anywhere
+OpenSSH &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;v6&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;               ALLOW       Anywhere &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;v6&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;As &lt;strong&gt;the firewall is currently blocking all connections except for SSH&lt;/strong&gt;, if you install and configure additional services, you will need to adjust the firewall settings to allow acceptable traffic in. You can learn some common UFW operations in &lt;a href=&quot;https://www.digitalocean.com/community/tutorials/ufw-essentials-common-firewall-rules-and-commands&quot;&gt;this guide&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;step-4-target-server---install-asdf&quot;&gt;Step 4: Target Server - Install asdf&lt;/h2&gt;
+
+&lt;p&gt;Sometimes, you’ll need to install specific versions or Erlang, Elixir or Node, and we’ll use &lt;code class=&quot;highlighter-rouge&quot;&gt;[asdf](https://github.com/asdf-vm/asdf)&lt;/code&gt;, a version manager to tackle this complex task.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;asdf&lt;/code&gt; is an extendable version manager with support for Ruby, Node.js, Elixir, Erlang &amp;amp; more.&lt;/p&gt;
+
+&lt;p&gt;To install it, we’ll first switch over to our newly created &lt;code class=&quot;highlighter-rouge&quot;&gt;deploy&lt;/code&gt; user.&lt;/p&gt;
+
+&lt;p&gt;On the target server as &lt;code class=&quot;highlighter-rouge&quot;&gt;root&lt;/code&gt;:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;gp&quot;&gt;$ &lt;/span&gt;su deploy
+&lt;span class=&quot;gp&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cd&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;# move into deploy's home path&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h3 id=&quot;install-asdf&quot;&gt;Install asdf&lt;/h3&gt;
+
+&lt;p&gt;Install dependencies:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sudo add-apt-repository &lt;span class=&quot;s2&quot;&gt;&quot;deb http://archive.ubuntu.com/ubuntu &lt;/span&gt;&lt;span class=&quot;k&quot;&gt;$(&lt;/span&gt;lsb_release -sc&lt;span class=&quot;k&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt; main universe restricted multiverse&quot;&lt;/span&gt;
+
+sudo add-apt-repository &lt;span class=&quot;s2&quot;&gt;&quot;deb http://archive.ubuntu.com/ubuntu &lt;/span&gt;&lt;span class=&quot;k&quot;&gt;$(&lt;/span&gt;lsb_release -sc&lt;span class=&quot;k&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt; universe&quot;&lt;/span&gt;
+
+sudo apt-get update
+
+sudo apt-get install -y build-essential git wget libssl-dev libreadline-dev &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+  libncurses5-dev zlib1g-dev m4 curl wx-common libwxgtk3.0-dev autoconf &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+  libxml2-utils xsltproc fop unixodbc unixodbc-bin unixodbc-dev
+
+sudo apt-get install openjdk-8-jdk
+sudo apt-get autoremove
+sudo apt-get upgrade
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Ensure that you are using the deploy account, and clone the repo:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;git clone https://github.com/asdf-vm/asdf.git ~/.asdf
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Then add the shims and source the changes:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; -e &lt;span class=&quot;s1&quot;&gt;'\n. $HOME/.asdf/asdf.sh'&lt;/span&gt; &amp;gt;&amp;gt; ~/.bashrc
+&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; -e &lt;span class=&quot;s1&quot;&gt;'\n. $HOME/.asdf/completions/asdf.bash'&lt;/span&gt; &amp;gt;&amp;gt; ~/.bashrc
+&lt;span class=&quot;nb&quot;&gt;source&lt;/span&gt; ~/.bashrc
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;After this you need to add asdf to your deploy user bash profile:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;cd&lt;/span&gt; ~
+vim ~/.profile
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Add this at the end of your profile:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;. &lt;span class=&quot;nv&quot;&gt;$HOME&lt;/span&gt;/.asdf/asdf.sh
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h3 id=&quot;optional-step-if-you-are-on-5-digital-ocean-droplet&quot;&gt;Optional step if you are on $5 Digital Ocean Droplet&lt;/h3&gt;
+
+&lt;p&gt;For $5 droplet, asdf only works if you create a swapspace (I set it to 4GB) and wait a bit for asdf to install and build erlang felt like 30 min. See solution: (&lt;a href=&quot;https://www.digitalocean.com/community/tutorials/how-to-add-swap-space-on-ubuntu-18-04&quot;&gt;https://www.digitalocean.com/community/tutorials/how-to-add-swap-space-on-ubuntu-18-04&lt;/a&gt;) See the problem reported: (&lt;a href=&quot;https://github.com/asdf-vm/asdf-erlang/issues/91&quot;&gt;https://github.com/asdf-vm/asdf-erlang/issues/91&lt;/a&gt;)&lt;/p&gt;
+
+&lt;p&gt;Switch to root to create swap space.&lt;/p&gt;
+
+&lt;p&gt;We can see if the system has any configured swap by typing:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sudo swapon --show
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;You can verify that there is no active swap using the &lt;code class=&quot;highlighter-rouge&quot;&gt;free&lt;/code&gt; utility:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;free -h
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Create swap file. The size of swap file is usually double your ram. But do 4G minimum.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sudo fallocate -l 4G /swapfile
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;We can verify that the correct amount of space was reserved by typing:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;ls -lh /swapfile
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Enabling the swap file&lt;/p&gt;
+
+&lt;p&gt;Now that we have a file of the correct size available, we need to actually turn this into swap space.&lt;/p&gt;
+
+&lt;p&gt;First, we need to lock down the permissions of the file so that only the users with &lt;strong&gt;root&lt;/strong&gt; privileges can read the contents. This prevents normal users from being able to access the file, which would have significant security implications.&lt;/p&gt;
+
+&lt;p&gt;Make the file only accessible to &lt;strong&gt;root&lt;/strong&gt; by typing:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sudo chmod 600 /swapfile
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Verify the permissions change by typing:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;ls -lh /swapfile
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;As you can see, only the &lt;strong&gt;root&lt;/strong&gt; user has the read and write flags enabled.&lt;/p&gt;
+
+&lt;p&gt;We can now mark the file as swap space by typing:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sudo mkswap /swapfile
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;
+Output
+
+Setting up swapspace version 1, size = 1024 MiB (1073737728 bytes)
+no label, UUID=6e965805-2ab9-450f-aed6-577e74089dbf
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;After marking the file, we can enable the swap file, allowing our system to start utilizing it:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sudo swapon /swapfile
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Verify that the swap is available by typing:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sudo swapon --show
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Making the swapfile permanent&lt;/p&gt;
+
+&lt;p&gt;Our recent changes have enabled the swap file for the current session. However, if we reboot, the server will not retain the swap settings automatically. We can change this by adding the swap file to our &lt;code class=&quot;highlighter-rouge&quot;&gt;/etc/fstab&lt;/code&gt; file.&lt;/p&gt;
+
+&lt;p&gt;Back up the &lt;code class=&quot;highlighter-rouge&quot;&gt;/etc/fstab&lt;/code&gt; file in case anything goes wrong:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sudo cp /etc/fstab /etc/fstab.bak
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Add the swap file information to the end of your &lt;code class=&quot;highlighter-rouge&quot;&gt;/etc/fstab&lt;/code&gt; file by typing:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'/swapfile none swap sw 0 0'&lt;/span&gt; | sudo tee -a /etc/fstab
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Now switch to deploy user and check to see if asdf by typing &lt;code class=&quot;highlighter-rouge&quot;&gt;asdf&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;step-5-target-server---install-erlangelixir&quot;&gt;Step 5: Target Server - Install Erlang/Elixir&lt;/h2&gt;
+
+&lt;p&gt;Because we need our Phoenix project to run on both the local development machine and the production server, we’ll need to install the same languages and tools in both places. Erlang 21.1, and Elixir 1.7.4.&lt;/p&gt;
+
+&lt;h3 id=&quot;install-erlang&quot;&gt;Install Erlang&lt;/h3&gt;
+
+&lt;p&gt;We’re going to use &lt;code class=&quot;highlighter-rouge&quot;&gt;asdf&lt;/code&gt; to install Erlang. I uses plugins for different libraries, so let’s add the plugin:&lt;/p&gt;
+
+&lt;p&gt;As &lt;code class=&quot;highlighter-rouge&quot;&gt;deploy&lt;/code&gt; on the target machine:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;asdf plugin-add erlang
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Install Erlang/OTP 22 (or whichever version your app needs)&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;asdf install erlang 22.0
+asdf global erlang 22.0
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;OPTIONAL If anything went wrong or if dependencies skipped&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;asdf plugin-remove erlang
+asdf plugin-remove elixir
+asdf plugin-add erlang
+asdf plugin-add elixir
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h3 id=&quot;install-elixir&quot;&gt;Install Elixir&lt;/h3&gt;
+
+&lt;p&gt;As &lt;code class=&quot;highlighter-rouge&quot;&gt;deploy&lt;/code&gt; add the plugin:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;asdf plugin-add elixir
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Install Elixir and make it global:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;asdf install elixir 1.8.2
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;asdf global elixir 1.8.2
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Now you can open a new terminal and try &lt;code class=&quot;highlighter-rouge&quot;&gt;erl&lt;/code&gt;:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;erl
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;And you can try &lt;code class=&quot;highlighter-rouge&quot;&gt;iex&lt;/code&gt;:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;iex
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Use &lt;code class=&quot;highlighter-rouge&quot;&gt;asdf&lt;/code&gt; &lt;code class=&quot;highlighter-rouge&quot;&gt;.tool-versions&lt;/code&gt; file to manage which version is active on each of your projects.&lt;/p&gt;
+
+&lt;p&gt;Use Mix to install Hex.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; mix local.hex
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h2 id=&quot;step-6-target-server---install-nodejs&quot;&gt;Step 6: Target Server - Install Nodejs&lt;/h2&gt;
+
+&lt;p&gt;Installing Node is straightforward with a few commands.&lt;/p&gt;
+
+&lt;p&gt;NOTE: Look up what NODE version to install. Replace XX with version number such as 12. see &lt;a href=&quot;https://github.com/nodesource/distributions/blob/master/README.md&quot;&gt;https://github.com/nodesource/distributions/blob/master/README.md&lt;/a&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sudo apt install curl
+curl -sL https://deb.nodesource.com/setup_XX.x | sudo -E bash -
+sudo apt-get install -y nodejs
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h2 id=&quot;step-7-target-server---install-postgresql&quot;&gt;Step 7: Target Server - Install Postgresql&lt;/h2&gt;
+
+&lt;p&gt;base on &lt;a href=&quot;https://computingforgeeks.com/install-postgresql-11-on-ubuntu-18-04-ubuntu-16-04/&quot;&gt;https://computingforgeeks.com/install-postgresql-11-on-ubuntu-18-04-ubuntu-16-04/&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;As &lt;code class=&quot;highlighter-rouge&quot;&gt;root&lt;/code&gt; on the target server:&lt;/p&gt;
+
+&lt;p&gt;Add PostgreSQL 11 APT repository (for Bionic 18.04 ubuntu)&lt;/p&gt;
+
+&lt;p&gt;https://www.postgresql.org/download/linux/ubuntu/&lt;/p&gt;
+
+&lt;p&gt;Create the file /etc/apt/sources.list.d/pgdg.list and add a line for the repository.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sudo vim /etc/apt/sources.list.d/pgdg.list
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Add this line:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;deb http://apt.postgresql.org/pub/repos/apt/ bionic-pgdg main
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Import the repository signing key, and update the package lists :&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+sudo apt-get update
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h3 id=&quot;install-postgresql-11-on-ubuntu-1804--ubuntu-1604&quot;&gt;Install PostgreSQL 11 on Ubuntu 18.04 / Ubuntu 16.04&lt;/h3&gt;
+
+&lt;p&gt;After importing GPG key, add repository contents to your Ubuntu 18.04/16.04 system:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sudo apt-get install postgresql-11
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Verify repository file contents&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;cat /etc/apt/sources.list.d/pgdg.list
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h3 id=&quot;create-new-database-user&quot;&gt;Create new database user&lt;/h3&gt;
+
+&lt;p&gt;During the postgres installation, a postgres root user &lt;code class=&quot;highlighter-rouge&quot;&gt;postgres&lt;/code&gt; was created, but we don’t want to connect to the server with this user. Let’s create a separate postgres user for our app.&lt;/p&gt;
+
+&lt;p&gt;You can switch to the postgres user with &lt;code class=&quot;highlighter-rouge&quot;&gt;su postgres&lt;/code&gt; than back to root with &lt;code class=&quot;highlighter-rouge&quot;&gt;exit&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;On the target server, switch to the &lt;code class=&quot;highlighter-rouge&quot;&gt;postgres&lt;/code&gt; user, create a &lt;code class=&quot;highlighter-rouge&quot;&gt;phx&lt;/code&gt; database user and set the new user’s password:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;gp&quot;&gt;$ &lt;/span&gt;su postgres
+&lt;span class=&quot;gp&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cd&lt;/span&gt; ~
+
+&lt;span class=&quot;gp&quot;&gt;$ &lt;/span&gt;createuser phx --pwprompt
+Enter password &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;new role: 
+Enter it again:
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;NOTE: Remember these credentials as they’ll be used once we configure our Phoenix application for production.&lt;/p&gt;
+
+&lt;h3 id=&quot;create-production-database&quot;&gt;Create production database:&lt;/h3&gt;
+
+&lt;p&gt;We’ll need to create our production database manually as edeliver only manages migrations.&lt;/p&gt;
+
+&lt;p&gt;As &lt;code class=&quot;highlighter-rouge&quot;&gt;postgres&lt;/code&gt; on the target server:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;createdb fumigate_prod
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Then log in to &lt;code class=&quot;highlighter-rouge&quot;&gt;psql&lt;/code&gt;:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;psql
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Ensure that you are logged into the postgres cli tool and run:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;GRANT ALL PRIVILEGES ON DATABASE fumigate_prod TO phx;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;This gives our new &lt;code class=&quot;highlighter-rouge&quot;&gt;phx&lt;/code&gt; user access to the newly created database. Exit psql with &lt;code class=&quot;highlighter-rouge&quot;&gt;\q&lt;/code&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;database-credentials&quot;&gt;Database credentials:&lt;/h3&gt;
+
+&lt;p&gt;To re-cap:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;username: &lt;code class=&quot;highlighter-rouge&quot;&gt;phx&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;password: &lt;code class=&quot;highlighter-rouge&quot;&gt;&amp;lt;yourpass&amp;gt;&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;database: fumigate&lt;code class=&quot;highlighter-rouge&quot;&gt;_prod&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;step-8-target-server---production-configuration&quot;&gt;Step 8: Target Server - Production Configuration&lt;/h2&gt;
+
+&lt;h3 id=&quot;create-prodsecretexs&quot;&gt;Create prod.secret.exs&lt;/h3&gt;
+
+&lt;p&gt;You may have noticed that Phoenix created a &lt;code class=&quot;highlighter-rouge&quot;&gt;config/prod.secret.exs&lt;/code&gt; file. This is imported by &lt;code class=&quot;highlighter-rouge&quot;&gt;config/prod.exs&lt;/code&gt; but is ignored by git by default. We’ll need to create this file on the target machine so edeliver can symlink to it during the build process.&lt;/p&gt;
+
+&lt;p&gt;We’re also going to store our applications in &lt;code class=&quot;highlighter-rouge&quot;&gt;~/apps/&amp;lt;appname&amp;gt;&lt;/code&gt; format which is the equivalent of &lt;code class=&quot;highlighter-rouge&quot;&gt;/home/deploy/apps/&amp;lt;appname&amp;gt;&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Let’s switch over to our deploy user. On the target machine:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;su deploy
+&lt;span class=&quot;nb&quot;&gt;cd&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Make a new directory for our secrets:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;mkdir -p apps/fumigate/secret
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Then create a new &lt;code class=&quot;highlighter-rouge&quot;&gt;prod.secret.exs&lt;/code&gt; file in that directory:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;vim ~/apps/fumigate/secret/prod.secret.exs
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Add this content to it:&lt;/p&gt;
+
+&lt;div class=&quot;language-elixir highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;use&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;Mix&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;Config&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;config&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:fumigate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;FumigateWeb&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;Endpoint&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+
+ &lt;span class=&quot;ss&quot;&gt;secret_key_base:&lt;/span&gt; &lt;span class=&quot;sd&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;YOURKEYHERE+v7fAdFNvoSZpUwTU96jA0UjEF1sgiVwdI5F&quot;&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;config&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:fumigate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;Fumigate&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;Repo&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+
+ &lt;span class=&quot;ss&quot;&gt;username:&lt;/span&gt; &lt;span class=&quot;sd&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;phx&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+
+ &lt;span class=&quot;ss&quot;&gt;password:&lt;/span&gt; &lt;span class=&quot;sd&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;yourpassword&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+
+ &lt;span class=&quot;ss&quot;&gt;database:&lt;/span&gt; &lt;span class=&quot;sd&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;fumigate_prod&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+
+ &lt;span class=&quot;ss&quot;&gt;pool_size:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;15&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;You can generate a new secret key by using &lt;code class=&quot;highlighter-rouge&quot;&gt;mix phx.gen.secret&lt;/code&gt; on your local machine.&lt;/p&gt;
+
+&lt;p&gt;IMPORTANT: Update the file to have a production ready secret key, and the database credentials you set from earlier.&lt;/p&gt;
+
+&lt;h2 id=&quot;step-9-install-distillery-and-edeliver&quot;&gt;Step 9: Install Distillery and edeliver&lt;/h2&gt;
+
+&lt;p&gt;As previously mentioned, &lt;a href=&quot;https://github.com/bitwalker/distillery&quot;&gt;Distillery&lt;/a&gt; compiles our Phoenix application into releases, and &lt;a href=&quot;https://github.com/edeliver/edeliver&quot;&gt;edeliver&lt;/a&gt; uses ssh and scp to build and deploy the releases to our production server.&lt;/p&gt;
+
+&lt;p&gt;On your local machine, open &lt;code class=&quot;highlighter-rouge&quot;&gt;mix.exs&lt;/code&gt; and add 2 deps:&lt;/p&gt;
+
+&lt;div class=&quot;language-elixir highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;ss&quot;&gt;:edeliver&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;sd&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;gt;= 1.6.0&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;ss&quot;&gt;:distillery&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;sd&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;~&amp;gt; 2.0&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;warn_missing:&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;false&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;And add &lt;code class=&quot;highlighter-rouge&quot;&gt;:edeliver&lt;/code&gt; to extra_applications in the &lt;code class=&quot;highlighter-rouge&quot;&gt;application&lt;/code&gt; block:&lt;/p&gt;
+
+&lt;div class=&quot;language-elixir highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;  &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;application&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;   
+      &lt;span class=&quot;ss&quot;&gt;mod:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;Fumigate&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;Application&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[]},&lt;/span&gt;
+      &lt;span class=&quot;ss&quot;&gt;extra_applications:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;ss&quot;&gt;:logger&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:runtime_tools&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:edeliver&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;   
+  &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt; 
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Use mix to install deps:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;mix deps.get
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h3 id=&quot;initialize-distillery&quot;&gt;Initialize Distillery&lt;/h3&gt;
+
+&lt;p&gt;Distillery requires a build configuration file that is not generated by default.&lt;/p&gt;
+
+&lt;p&gt;Let’s generate it with:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;mix distillery.init
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;This generates configuration files for Distillery in the &lt;code class=&quot;highlighter-rouge&quot;&gt;rel&lt;/code&gt; directory. We don’t need to make any changes to the default config.&lt;/p&gt;
+
+&lt;p&gt;We now need to exclude &lt;code class=&quot;highlighter-rouge&quot;&gt;.deliver/releases/&lt;/code&gt; from our git repo.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;.deliver/releases/&quot;&lt;/span&gt; &amp;gt;&amp;gt; .gitignore
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h3 id=&quot;configure-edeliver&quot;&gt;Configure edeliver&lt;/h3&gt;
+
+&lt;p&gt;Create a &lt;code class=&quot;highlighter-rouge&quot;&gt;.deliver&lt;/code&gt; directory in your project folder and add the &lt;code class=&quot;highlighter-rouge&quot;&gt;config&lt;/code&gt; file:
+(Change the IP to your server IP 134.209.8.141)&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;#!/bin/bash&lt;/span&gt;
+
+ &lt;span class=&quot;nv&quot;&gt;APP&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;fumigate&quot;&lt;/span&gt;
+
+ &lt;span class=&quot;nv&quot;&gt;BUILD_HOST&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;134.209.8.141&quot;&lt;/span&gt;
+ &lt;span class=&quot;nv&quot;&gt;BUILD_USER&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;deploy&quot;&lt;/span&gt;
+ &lt;span class=&quot;nv&quot;&gt;BUILD_AT&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;/tmp/edeliver/&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$APP&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;/builds&quot;&lt;/span&gt;
+
+ &lt;span class=&quot;nv&quot;&gt;START_DEPLOY&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;true
+ &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;CLEAN_DEPLOY&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;true&lt;/span&gt;
+ 
+ &lt;span class=&quot;c&quot;&gt;# prevent re-installing node modules; this defaults to &quot;.&quot;&lt;/span&gt;
+ &lt;span class=&quot;nv&quot;&gt;GIT_CLEAN_PATHS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;_build rel priv/static&quot;&lt;/span&gt;
+
+ &lt;span class=&quot;nv&quot;&gt;PRODUCTION_HOSTS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;134.209.8.141&quot;&lt;/span&gt;
+ &lt;span class=&quot;nv&quot;&gt;PRODUCTION_USER&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;deploy&quot;&lt;/span&gt;
+ &lt;span class=&quot;nv&quot;&gt;DELIVER_TO&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;/home/deploy/apps&quot;&lt;/span&gt;
+
+
+ &lt;span class=&quot;c&quot;&gt;# For Phoenix projects, symlink prod.secret.exs to our tmp source&lt;/span&gt;
+ pre_erlang_get_and_update_deps&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+   &lt;span class=&quot;nb&quot;&gt;local &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;_prod_secret_path&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;/home/deploy/apps/&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$APP&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;/secret/prod.secret.exs&quot;&lt;/span&gt;
+   &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$TARGET_MIX_ENV&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;prod&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;; &lt;span class=&quot;k&quot;&gt;then
+     &lt;/span&gt;status &lt;span class=&quot;s2&quot;&gt;&quot;Linking '&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$_prod_secret_path&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;'&quot;&lt;/span&gt;
+     __sync_remote &lt;span class=&quot;s2&quot;&gt;&quot;
+       [ -f ~/.profile ] &amp;amp;&amp;amp; source ~/.profile
+       mkdir -p '&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$BUILD_AT&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;'
+       ln -sfn '&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$_prod_secret_path&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;' '&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$BUILD_AT&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;/config/prod.secret.exs'
+     &quot;&lt;/span&gt;
+   &lt;span class=&quot;k&quot;&gt;fi&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+ pre_erlang_clean_compile&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+   status &lt;span class=&quot;s2&quot;&gt;&quot;Running npm install&quot;&lt;/span&gt;
+     __sync_remote &lt;span class=&quot;s2&quot;&gt;&quot;
+       [ -f ~/.profile ] &amp;amp;&amp;amp; source ~/.profile
+       set -e
+       cd '&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$BUILD_AT&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;'/assets
+       npm install
+     &quot;&lt;/span&gt;
+
+   status &lt;span class=&quot;s2&quot;&gt;&quot;Compiling assets&quot;&lt;/span&gt;
+      __sync_remote &lt;span class=&quot;s2&quot;&gt;&quot;
+       [ -f ~/.profile ] &amp;amp;&amp;amp; source ~/.profile
+       set -e
+       cd '&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$BUILD_AT&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;'/assets
+       node_modules/.bin/webpack --mode production --silent
+     &quot;&lt;/span&gt;
+
+   status &lt;span class=&quot;s2&quot;&gt;&quot;Running phoenix.digest&quot;&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;# log output prepended with &quot;-----&amp;gt;&quot;&lt;/span&gt;
+   __sync_remote &lt;span class=&quot;s2&quot;&gt;&quot; # runs the commands on the build host
+     [ -f ~/.profile ] &amp;amp;&amp;amp; source ~/.profile # load profile (optional)
+     set -e # fail if any command fails (recommended)
+     cd '&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$BUILD_AT&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;' # enter the build directory on the build host (required)
+          # prepare something
+     mkdir -p priv/static # required by the phoenix.digest task
+     # run your custom task
+     APP='&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$APP&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;' MIX_ENV='&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$TARGET_MIX_ENV&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;' &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$MIX_CMD&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt; phx.digest &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$SILENCE&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;
+     APP='&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$APP&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;' MIX_ENV='&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$TARGET_MIX_ENV&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;' &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$MIX_CMD&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt; phx.digest.clean &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$SILENCE&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;
+   &quot;&lt;/span&gt;
+ &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;These are mostly environment variables use by Edeliver in the shell scripts. Go through them one by one and try to understand what they’re doing.&lt;/p&gt;
+
+&lt;p&gt;You can read more about the configuration variables in their &lt;a href=&quot;https://github.com/edeliver/edeliver/wiki/Configuration-(.deliver-config)&quot;&gt;Wiki&lt;/a&gt;.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Don’t forget to update your host configuration&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;The custom functions are hooks that run during different phases of the deployment.&lt;/p&gt;
+
+&lt;p&gt;You can also read more about running additional tasks in their &lt;a href=&quot;https://github.com/edeliver/edeliver/wiki/Run-additional-build-tasks&quot;&gt;Wiki&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h3 id=&quot;project-prod-configuration&quot;&gt;Project prod configuration&lt;/h3&gt;
+
+&lt;p&gt;We’ll need to make some changes to the default production configuration in our project.&lt;/p&gt;
+
+&lt;p&gt;DO NOT RUN ON PORT 80. KEEP IT AT 4000. The application is running on deploy there fore it cannot run on port 80. We need to route incoming requests from 80 http and https to port 4000. Do not attempt to run app as root. That’s asking for trouble. Source: &lt;a href=&quot;https://elixirforum.com/t/running-on-ec2-giving-error/13574/5&quot;&gt;https://elixirforum.com/t/running-on-ec2-giving-error/13574/5&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Open &lt;code class=&quot;highlighter-rouge&quot;&gt;config/prod.exs&lt;/code&gt; and update it to this:&lt;/p&gt;
+
+&lt;div class=&quot;language-elixir highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;use&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;Mix&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;Config&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;config&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:fumigate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;FumigateWeb&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;Endpoint&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+   &lt;span class=&quot;ss&quot;&gt;http:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;ss&quot;&gt;:inet6&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;port:&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get_env&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sd&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;PORT&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;4000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+   &lt;span class=&quot;ss&quot;&gt;url:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;ss&quot;&gt;host:&lt;/span&gt; &lt;span class=&quot;sd&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;fumigatedb.com&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;port:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;80&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+   &lt;span class=&quot;ss&quot;&gt;cache_static_manifest:&lt;/span&gt; &lt;span class=&quot;sd&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;priv/static/cache_manifest.json&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+   &lt;span class=&quot;ss&quot;&gt;server:&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+   &lt;span class=&quot;ss&quot;&gt;code_reloader:&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;false&lt;/span&gt;
+
+ &lt;span class=&quot;c1&quot;&gt;# Do not print debug messages in production&lt;/span&gt;
+ &lt;span class=&quot;n&quot;&gt;config&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:logger&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;level:&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:info&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# ## SSL Support&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;#&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;# To get SSL working, you will need to add the `https` key&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;# to the previous section and set your `:url` port to 443:&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;#&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;#     config :fumigate, FumigateWeb.Endpoint,&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;#       ...&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;#       url: [host: &quot;example.com&quot;, port: 443],&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;#       https: [&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;#         :inet6,&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;#         port: 443,&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;#         cipher_suite: :strong,&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;#         keyfile: System.get_env(&quot;SOME_APP_SSL_KEY_PATH&quot;),&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;#         certfile: System.get_env(&quot;SOME_APP_SSL_CERT_PATH&quot;)&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;#       ]&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;#&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;# The `cipher_suite` is set to `:strong` to support only the&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;# latest and more secure SSL ciphers. This means old browsers&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;# and clients may not be supported. You can set it to&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;# `:compatible` for wider support.&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;#&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;# `:keyfile` and `:certfile` expect an absolute path to the key&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;# and cert in disk or a relative path inside priv, for example&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;# &quot;priv/ssl/server.key&quot;. For all supported SSL configuration&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;# options, see https://hexdocs.pm/plug/Plug.SSL.html#configure/1&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;#&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;# We also recommend setting `force_ssl` in your endpoint, ensuring&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;# no data is ever sent via http, always redirecting to https:&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;#&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;#     config :fumigate, FumigateWeb.Endpoint,&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;#       force_ssl: [hsts: true]&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;#&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;# Check `Plug.SSL` for all available options in `force_ssl`.&lt;/span&gt;
+
+ &lt;span class=&quot;c1&quot;&gt;# ## Using releases (distillery)&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;#&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;# If you are doing OTP releases, you need to instruct Phoenix&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;# to start the server for all endpoints:&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;#&lt;/span&gt;
+ &lt;span class=&quot;n&quot;&gt;config&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:phoenix&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:serve_endpoints&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;true&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;#&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;# Alternatively, you can configure exactly which server to&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;# start per endpoint:&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;#&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;#     config :fumigate, FumigateWeb.Endpoint, server: true&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;#&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;# Note you can't rely on `System.get_env/1` when using releases.&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;# See the releases documentation accordingly.&lt;/span&gt;
+
+ &lt;span class=&quot;c1&quot;&gt;# Finally import the config/prod.secret.exs which should be versioned&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;# separately.&lt;/span&gt;
+ &lt;span class=&quot;n&quot;&gt;import_config&lt;/span&gt; &lt;span class=&quot;sd&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;prod.secret.exs&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;These are settings recommended by Distillery. You might notice that we’re setting the system port using the &lt;code class=&quot;highlighter-rouge&quot;&gt;PORT&lt;/code&gt; environment variable. This needs to be available during the build process and we can add it to the &lt;code class=&quot;highlighter-rouge&quot;&gt;~/.profile&lt;/code&gt; file on our production server.&lt;/p&gt;
+
+&lt;h3 id=&quot;add-env-variables-to-target-server&quot;&gt;Add env Variables to Target Server&lt;/h3&gt;
+
+&lt;p&gt;Login as &lt;code class=&quot;highlighter-rouge&quot;&gt;deploy&lt;/code&gt; to the target server.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;cd&lt;/span&gt; ~
+vim ~/.profile
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;And add these lines:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;export MIX_ENV=prod
+export PORT=4000
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;This will ensure that our system runs on port 4000, and that the environment is set to &lt;code class=&quot;highlighter-rouge&quot;&gt;prod&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Logout of deploy and log back in for ~/.profile be in effect&lt;/p&gt;
+
+&lt;h2 id=&quot;step-10-deployment&quot;&gt;Step 10: Deployment&lt;/h2&gt;
+
+&lt;p&gt;We’re finally ready to build and deploy our first release. The default version is &lt;code class=&quot;highlighter-rouge&quot;&gt;0.1.0&lt;/code&gt; so let’s just keep that for now.&lt;/p&gt;
+
+&lt;p&gt;Warning: the commands for building and deploy can seem complicated at first but once you become familiar with them, you will see that they use a natural language style.&lt;/p&gt;
+
+&lt;h3 id=&quot;build-the-production-release&quot;&gt;Build the production release:&lt;/h3&gt;
+
+&lt;p&gt;NOTE: edeliver uses &lt;strong&gt;git master branch&lt;/strong&gt; to build the code into release package.&lt;/p&gt;
+
+&lt;p&gt;In your project directory and git master branch:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;mix edeliver build release production --verbose
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;This builds the release on the target server, and stores the archive in your local &lt;code class=&quot;highlighter-rouge&quot;&gt;.edeliver/releases&lt;/code&gt; directory.&lt;/p&gt;
+
+&lt;h3 id=&quot;deploy-the-reload-to-production&quot;&gt;Deploy the reload to production:&lt;/h3&gt;
+
+&lt;p&gt;In your project directory:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;mix edeliver deploy release to production --verbose
+mix edeliver migrate production --verbose
+mix edeliver start production --verbose
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Other neat edeliver commands:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;mix edeliver ping production &lt;span class=&quot;c&quot;&gt;# shows which nodes are up and running&lt;/span&gt;
+mix edeliver version production &lt;span class=&quot;c&quot;&gt;# shows the release version running on the nodes&lt;/span&gt;
+mix edeliver show migrations on production &lt;span class=&quot;c&quot;&gt;# shows pending database migrations&lt;/span&gt;
+mix edeliver migrate production &lt;span class=&quot;c&quot;&gt;# run database migrations&lt;/span&gt;
+mix edeliver restart production &lt;span class=&quot;c&quot;&gt;# or start or stop&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;You can read more about Edeliver in their &lt;a href=&quot;https://github.com/edeliver/edeliver&quot;&gt;documentation&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h3 id=&quot;view-our-website-on-our-server&quot;&gt;View our website on our server&lt;/h3&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;ssh deploy@188.166.182.170
+curl localhost:4000
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h2 id=&quot;step-11-generating-ssl-cert---before-routing-incoming-http-request-to-port-4000-our-phoenix-app&quot;&gt;Step 11: Generating SSL CERT - BEFORE Routing incoming http request to port 4000 (our phoenix app)&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.digitalocean.com/community/tutorials/how-to-use-certbot-standalone-mode-to-retrieve-let-s-encrypt-ssl-certificates-on-ubuntu-1804&quot;&gt;https://www.digitalocean.com/community/tutorials/how-to-use-certbot-standalone-mode-to-retrieve-let-s-encrypt-ssl-certificates-on-ubuntu-1804&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://github.com/certbot/certbot/issues/5257&quot;&gt;https://github.com/certbot/certbot/issues/5257&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;We should generate SSL Certificate. The certbot generator needs port 80. So you need to do this before rerouting incoming port 80 requests to our phoenix web app that’s listening on port 4000.&lt;/p&gt;
+
+&lt;h3 id=&quot;step-1--installing-certbot&quot;&gt;Step 1 — Installing Certbot&lt;/h3&gt;
+
+&lt;p&gt;The first step to using Let’s Encrypt to obtain an SSL certificate is to install the Certbot software on your server.&lt;/p&gt;
+
+&lt;p&gt;Certbot is in very active development, so the Certbot packages provided by Ubuntu tend to be outdated. However, the Certbot developers maintain a Ubuntu software repository with up-to-date versions, so we’ll use that repository instead.&lt;/p&gt;
+
+&lt;p&gt;First, add the repository:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sudo add-apt-repository ppa:certbot/certbot
+apt-get update
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Install certbot:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sudo apt-get install certbot
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h3 id=&quot;step-2--generating-certificate&quot;&gt;Step 2 — Generating Certificate&lt;/h3&gt;
+
+&lt;p&gt;Make sure that your firewall is accepting port 80.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sudo ufw allow 80
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Generate the SSL cert:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sudo certbot certonly --standalone --preferred-challenges http -d fumigatedb.com -d www.fumigatedb.com
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Enable it so deploy user and app own by deploy can read those certs:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;chmod 755 /etc/letsencrypt/live/
+chmod 755 /etc/letsencrypt/archive/
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;We’ll get back to using cert on the server soon in step 14.&lt;/p&gt;
+
+&lt;h2 id=&quot;step-12-routing-incoming-http-request-to-port-4000-our-phoenix-app&quot;&gt;Step 12: Routing incoming http request to port 4000 (our phoenix app)&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://serverfault.com/questions/238563/can-i-use-ufw-to-setup-a-port-forward&quot;&gt;https://serverfault.com/questions/238563/can-i-use-ufw-to-setup-a-port-forward&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Let’s say you want to forward requests going to 80 (http) to a server listening on port 4000.&lt;/p&gt;
+
+&lt;p&gt;Note that you will need to make sure port 8080 is allowed, otherwise ufw will block the requests that are redirected to 4000.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sudo ufw allow 4000/tcp
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;There are no ufw commands for setting up the port forwards, so it must be done via configuraton files. Add the lines below to &lt;code class=&quot;highlighter-rouge&quot;&gt;/etc/ufw/before.rules&lt;/code&gt;, before the &lt;code class=&quot;highlighter-rouge&quot;&gt;filter&lt;/code&gt; section, right at the top of the file:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sudo vim /etc/ufw/before.rules
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;*nat
+:PREROUTING ACCEPT [0:0]
+-A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 4000
+COMMIT
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Then restart the server:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sudo reboot
+ssh deploy@134.209.8.141
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Enable ufw to start on boot:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sudo ufw &lt;span class=&quot;nb&quot;&gt;enable&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Debug tips: check &lt;code class=&quot;highlighter-rouge&quot;&gt;/var/log/syslog&lt;/code&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;step-13-fail2ban&quot;&gt;Step 13: Fail2ban&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.lifewire.com/harden-ubuntu-server-security-4178243&quot;&gt;https://www.lifewire.com/harden-ubuntu-server-security-4178243&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.techrepublic.com/article/how-to-install-fail2ban-on-ubuntu-server-18-04/&quot;&gt;https://www.techrepublic.com/article/how-to-install-fail2ban-on-ubuntu-server-18-04/&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;The fail2ban system is an intrusion prevention system that monitors log files and searches for particular patterns that correspond to a failed login attempt. If a certain number of failed logins are detected from a specific IP address (within a specified amount of time), fail2ban will block access from that IP address.&lt;/p&gt;
+
+&lt;p&gt;To install fail2ban, open a terminal window and issue the command:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sudo apt-get update
+sudo apt-get upgrade
+sudo apt-get install -y fail2ban
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Within the directory&lt;code class=&quot;highlighter-rouge&quot;&gt; /etc/fail2ban&lt;/code&gt;&lt;em&gt;,&lt;/em&gt; you’ll find the main configuration file, jail.conf. Also in that directory is the subdirectory, jail.d. The jail.conf file is the main configuration file and jail.d contains the secondary configuration files. Do not edit the jail.conf file. Instead, we’ll create a new configuration that will monitor SSH logins with the command:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sudo vim /etc/fail2ban/jail.local
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;In this new file add the following contents:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;sshd]
+    enabled &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;true
+    &lt;/span&gt;port &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 22
+    filter &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; sshd
+    logpath &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; /var/log/auth.log
+    maxretry &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 3
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;This configuration does the following:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Enables the jail.&lt;/li&gt;
+  &lt;li&gt;Sets the SSH port to be monitored to 22.&lt;/li&gt;
+  &lt;li&gt;Uses the sshd filter.&lt;/li&gt;
+  &lt;li&gt;Sets the log file to be monitored.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Save and close that file. Restart fail2ban with the command:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sudo systemctl start fail2ban
+sudo systemctl &lt;span class=&quot;nb&quot;&gt;enable &lt;/span&gt;fail2ban
+sudo systemctl restart fail2ban
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;If you attempt to Secure Shell into that server and fail the log in three times (set as the default by fail2ban), access will be then blocked from the &lt;a href=&quot;https://www.lifewire.com/what-is-an-ip-address-2625920&quot;&gt;IP address&lt;/a&gt; you are working from.&lt;/p&gt;
+
+&lt;h3 id=&quot;testing-and-unbanning&quot;&gt;Testing and unbanning&lt;/h3&gt;
+
+&lt;p&gt;You can test to make sure the new jail works by failing three attempts at logging into the server, via ssh. After the third failed attempt, the connection will hang. Hit [Ctrl]+[c] to escape and then attempt to SSH back into the server. You should no longer be able to SSH into that server from the IP address you were using.&lt;/p&gt;
+
+&lt;p&gt;You can then unban your test IP address with the following command:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sudo fail2ban-client &lt;span class=&quot;nb&quot;&gt;set &lt;/span&gt;sshd unbanip IP_ADDRESS
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;where IP_ADDRESS is the banned IP Address.&lt;/p&gt;
+
+&lt;p&gt;You should now be able to log back into the server with SSH.&lt;/p&gt;
+
+&lt;h3 id=&quot;scratching-the-surface&quot;&gt;Scratching the surface&lt;/h3&gt;
+
+&lt;p&gt;This barely scratches the surface as to what fail2ban can do. But now you have a good idea on how to use the system. To find out more, make sure to read the man page with the command:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;man fail2ban
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;That manual page provides a good overview of what fail2ban can do.&lt;/p&gt;
+
+&lt;h2 id=&quot;step-14-port-foward-ssl-to-port-4001&quot;&gt;Step 14: Port foward SSL to Port 4001&lt;/h2&gt;
+
+&lt;p&gt;Set up the firewall:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sudo ufw allow https
+sudo ufw allow 443
+sudo ufw allow 4001
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;There are no ufw commands for setting up the port forwards, so it must be done via configuraton files. Add the lines below to &lt;code class=&quot;highlighter-rouge&quot;&gt;/etc/ufw/before.rules&lt;/code&gt;, before the &lt;code class=&quot;highlighter-rouge&quot;&gt;filter&lt;/code&gt; section, right at the top of the file:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sudo vim /etc/ufw/before.rules
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;*nat
+:PREROUTING ACCEPT [0:0]
+-A PREROUTING -p tcp --dport 443 -j REDIRECT --to-port 4001
+COMMIT
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Then restart the server:&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sudo ufw &lt;span class=&quot;nb&quot;&gt;enable
+&lt;/span&gt;sudo reboot
+ssh deploy@134.209.8.141
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h2 id=&quot;step-15-ssl&quot;&gt;Step 15: SSL&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://blog.progressplum.app/ssl-migration-from-nginx-to-cowboy-2-in-phoenix-1-4/&quot;&gt;https://blog.progressplum.app/ssl-migration-from-nginx-to-cowboy-2-in-phoenix-1-4/&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://medium.com/@zek/secure-your-phoenix-app-with-free-ssl-48ac749c17d7&quot;&gt;https://medium.com/@zek/secure-your-phoenix-app-with-free-ssl-48ac749c17d7&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;step-1--generating-diffie-hellman-parameters&quot;&gt;Step 1 — Generating Diffie Hellman parameters&lt;/h3&gt;
+
+&lt;p&gt;If you don’t already have a set of Diffie Hellman parameters&lt;a href=&quot;https://blog.progressplum.app/ssl-migration-from-nginx-to-cowboy-2-in-phoenix-1-4/#2&quot;&gt;[2]&lt;/a&gt; to use with your SSL, generate a new set for extra security. Run this command on the server but be aware that it’s very CPU-intensive and may take a while on a slow VPS.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;openssl dhparam -out /etc/letsencrypt/dhparam.pem 4096
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h3 id=&quot;step-2--set-up-your-environment&quot;&gt;Step 2 — Set up your environment&lt;/h3&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sudo vim ~/.profile
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;export &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;MIX_ENV&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;prod
+
+&lt;span class=&quot;nb&quot;&gt;export &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;PORT&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;4000
+
+&lt;span class=&quot;nb&quot;&gt;export &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;SPORT&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;4001
+
+&lt;span class=&quot;nb&quot;&gt;export &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;SSL_CERT_FILE&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;/etc/letsencrypt/live/fumigatedb.com/cert.pem
+
+&lt;span class=&quot;nb&quot;&gt;export &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;SSL_CACERT_FILE&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;/etc/letsencrypt/live/fumigatedb.com/chain.pem
+
+&lt;span class=&quot;nb&quot;&gt;export &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;SSL_KEY_FILE&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;/etc/letsencrypt/live/fumigatedb.com/privkey.pem
+
+&lt;span class=&quot;nb&quot;&gt;export &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;SSL_DHPARAM_FILE&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;/etc/letsencrypt/dhparam.pem
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Change &lt;code class=&quot;highlighter-rouge&quot;&gt;fumigatedb.com&lt;/code&gt; to your domainname.&lt;/p&gt;
+
+&lt;h3 id=&quot;step-3--prod-configuration&quot;&gt;Step 3 — prod Configuration&lt;/h3&gt;
+
+&lt;p&gt;Update your application’s Endpoint configuration to add SSL support in &lt;code class=&quot;highlighter-rouge&quot;&gt;config/prod.exs&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;vim config/prod.exs&lt;/code&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-elixir highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;config&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:fumigate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;FumigateWeb&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;Endpoint&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+       &lt;span class=&quot;ss&quot;&gt;url:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;ss&quot;&gt;scheme:&lt;/span&gt; &lt;span class=&quot;sd&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;https&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;host:&lt;/span&gt; &lt;span class=&quot;sd&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;fumigatedb.com&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;port:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;443&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+       &lt;span class=&quot;ss&quot;&gt;http:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;ss&quot;&gt;:inet6&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;port:&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get_env&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sd&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;PORT&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;4000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+       &lt;span class=&quot;ss&quot;&gt;https:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;
+           &lt;span class=&quot;ss&quot;&gt;:inet6&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+           &lt;span class=&quot;ss&quot;&gt;port:&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;\&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;_env&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sd&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;SPORT&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;4001&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+           &lt;span class=&quot;ss&quot;&gt;otp_app:&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:fumigate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+           &lt;span class=&quot;ss&quot;&gt;cipher_suite:&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:strong&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+           &lt;span class=&quot;ss&quot;&gt;keyfile:&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get_env&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sd&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;SSL_KEY_FILE&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
+           &lt;span class=&quot;ss&quot;&gt;certfile:&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get_env&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sd&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;SSL_CERT_FILE&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
+           &lt;span class=&quot;ss&quot;&gt;cacertfile:&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get_env&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sd&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;SSL_CACERT_FILE&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
+           &lt;span class=&quot;ss&quot;&gt;dhfile:&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get_env&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sd&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;SSL_DHPARAM_FILE&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+       &lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+       &lt;span class=&quot;ss&quot;&gt;cache_static_manifest:&lt;/span&gt; &lt;span class=&quot;sd&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;priv/static/cache_manifest.json&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+       &lt;span class=&quot;ss&quot;&gt;server:&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+       &lt;span class=&quot;ss&quot;&gt;code_reloader:&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;false&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Save to git master repo and rerun edeliver again.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;git commit -a -m &lt;span class=&quot;s2&quot;&gt;&quot;edited prod.exs to add HTTPS scheme&quot;&lt;/span&gt;
+git push origin master
+mix edeliver build release production --verbose
+mix edeliver deploy release to production
+mix edeliver stop production
+mix edeliver start production
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Check the ssl website now with: &lt;a href=&quot;https://www.ssllabs.com/ssltest/&quot;&gt;https://www.ssllabs.com/ssltest/&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;step-4--application-configuration-forcing-ssl&quot;&gt;Step 4 — Application Configuration forcing SSL&lt;/h3&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;git commit -a -m &lt;span class=&quot;s2&quot;&gt;&quot;edited prod.exs to force SSL connection&quot;&lt;/span&gt;
+
+git push origin master
+
+mix edeliver build release production --verbose
+
+mix edeliver deploy release to production
+
+mix edeliver stop production
+
+mix edeliver start production
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h3 id=&quot;step-5--increasing-the-security-of-ssl&quot;&gt;Step 5 — Increasing the security of SSL&lt;/h3&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://elixirforum.com/t/making-ssl-tests-all-pass-for-phoenix-lets-encrypt/3507/11&quot;&gt;https://elixirforum.com/t/making-ssl-tests-all-pass-for-phoenix-lets-encrypt/3507/11&lt;/a&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-elixir highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;use&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;Mix&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;Config&lt;/span&gt;
+
+ &lt;span class=&quot;c1&quot;&gt;# For production, don't forget to configure the url host&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;# to something meaningful, Phoenix uses this information&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;# when generating URLs.&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;#&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;# Note we also include the path to a cache manifest&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;# containing the digested version of static files. This&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;# manifest is generated by the `mix phx.digest` task,&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;# which you should run after static files are built and&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;# before starting your production server.&lt;/span&gt;
+ &lt;span class=&quot;n&quot;&gt;config&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:fumigate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;FumigateWeb&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;Endpoint&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+   &lt;span class=&quot;ss&quot;&gt;url:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;ss&quot;&gt;scheme:&lt;/span&gt; &lt;span class=&quot;sd&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;https&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;host:&lt;/span&gt; &lt;span class=&quot;sd&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;fumigatedb.com&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;port:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;443&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+   &lt;span class=&quot;ss&quot;&gt;force_ssl:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;ss&quot;&gt;hsts:&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+   &lt;span class=&quot;ss&quot;&gt;http:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;ss&quot;&gt;:inet6&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;port:&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get_env&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sd&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;PORT&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;4000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+   &lt;span class=&quot;ss&quot;&gt;https:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;
+        &lt;span class=&quot;ss&quot;&gt;:inet6&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+     &lt;span class=&quot;ss&quot;&gt;port:&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get_env&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sd&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;SPORT&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;4001&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+     &lt;span class=&quot;ss&quot;&gt;otp_app:&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:fumigate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+     &lt;span class=&quot;ss&quot;&gt;cipher_suite:&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:strong&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+     &lt;span class=&quot;ss&quot;&gt;keyfile:&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get_env&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sd&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;SSL_KEY_FILE&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
+     &lt;span class=&quot;ss&quot;&gt;certfile:&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get_env&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sd&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;SSL_CERT_FILE&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
+     &lt;span class=&quot;ss&quot;&gt;cacertfile:&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get_env&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sd&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;SSL_CACERT_FILE&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
+     &lt;span class=&quot;ss&quot;&gt;dhfile:&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get_env&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sd&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;SSL_DHPARAM_FILE&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
+     &lt;span class=&quot;ss&quot;&gt;versions:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;ss&quot;&gt;:&quot;tlsv1.2&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:&quot;tlsv1.1&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:&quot;tlsv1&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+           &lt;span class=&quot;ss&quot;&gt;ciphers:&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;~&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;w&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+             &lt;span class=&quot;no&quot;&gt;ECDHE&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;ECDSA&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;AES256&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;GCM&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;SHA384&lt;/span&gt;
+             &lt;span class=&quot;no&quot;&gt;ECDHE&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;ECDSA&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;AES256&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;SHA384&lt;/span&gt;
+             &lt;span class=&quot;no&quot;&gt;ECDHE&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;ECDSA&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;AES128&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;GCM&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;SHA256&lt;/span&gt;
+             &lt;span class=&quot;no&quot;&gt;ECDHE&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;ECDSA&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;AES128&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;SHA256&lt;/span&gt;
+             &lt;span class=&quot;no&quot;&gt;ECDHE&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;ECDSA&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;AES256&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;SHA&lt;/span&gt;
+             &lt;span class=&quot;no&quot;&gt;ECDHE&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;ECDSA&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;AES128&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;SHA&lt;/span&gt;
+
+             &lt;span class=&quot;no&quot;&gt;ECDHE&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;RSA&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;AES256&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;GCM&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;SHA384&lt;/span&gt;
+             &lt;span class=&quot;no&quot;&gt;ECDHE&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;RSA&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;AES256&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;SHA384&lt;/span&gt;
+             &lt;span class=&quot;no&quot;&gt;ECDHE&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;RSA&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;AES128&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;GCM&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;SHA256&lt;/span&gt;
+             &lt;span class=&quot;no&quot;&gt;ECDHE&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;RSA&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;AES128&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;SHA256&lt;/span&gt;
+             &lt;span class=&quot;no&quot;&gt;ECDHE&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;RSA&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;AES256&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;SHA&lt;/span&gt;
+             &lt;span class=&quot;no&quot;&gt;ECDHE&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;RSA&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;AES128&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;SHA&lt;/span&gt;
+
+             &lt;span class=&quot;no&quot;&gt;ECDH&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;ECDSA&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;AES256&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;GCM&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;SHA384&lt;/span&gt;
+             &lt;span class=&quot;no&quot;&gt;ECDH&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;ECDSA&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;AES256&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;SHA384&lt;/span&gt;
+             &lt;span class=&quot;no&quot;&gt;ECDH&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;ECDSA&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;AES128&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;GCM&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;SHA256&lt;/span&gt;
+             &lt;span class=&quot;no&quot;&gt;ECDH&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;ECDSA&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;AES128&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;SHA256&lt;/span&gt;
+             
+             
+             &lt;span class=&quot;no&quot;&gt;DHE&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;RSA&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;AES256&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;GCM&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;SHA384&lt;/span&gt;
+             &lt;span class=&quot;no&quot;&gt;DHE&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;RSA&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;AES256&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;SHA256&lt;/span&gt;
+             &lt;span class=&quot;no&quot;&gt;DHE&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;DSS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;AES256&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;GCM&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;SHA384&lt;/span&gt;
+             &lt;span class=&quot;no&quot;&gt;DHE&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;DSS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;AES256&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;SHA256&lt;/span&gt;
+             &lt;span class=&quot;no&quot;&gt;DHE&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;RSA&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;AES256&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;SHA&lt;/span&gt;
+             &lt;span class=&quot;no&quot;&gt;DHE&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;DSS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;AES256&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;SHA&lt;/span&gt;
+
+             &lt;span class=&quot;no&quot;&gt;DHE&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;DSS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;AES128&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;GCM&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;SHA256&lt;/span&gt;
+             &lt;span class=&quot;no&quot;&gt;DHE&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;RSA&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;AES128&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;GCM&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;SHA256&lt;/span&gt;
+             &lt;span class=&quot;no&quot;&gt;DHE&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;RSA&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;AES128&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;SHA256&lt;/span&gt;
+             &lt;span class=&quot;no&quot;&gt;DHE&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;DSS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;AES128&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;SHA256&lt;/span&gt;
+             &lt;span class=&quot;no&quot;&gt;DHE&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;RSA&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;AES128&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;SHA&lt;/span&gt;
+             &lt;span class=&quot;no&quot;&gt;DHE&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;DSS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;AES128&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;SHA&lt;/span&gt;
+             
+             
+             &lt;span class=&quot;no&quot;&gt;AES128&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;GCM&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;SHA256&lt;/span&gt;
+             &lt;span class=&quot;no&quot;&gt;AES128&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;SHA&lt;/span&gt;
+             &lt;span class=&quot;no&quot;&gt;DES&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;CBC3&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;SHA&lt;/span&gt;
+           &lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+           &lt;span class=&quot;ss&quot;&gt;secure_renegotiate:&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+           &lt;span class=&quot;ss&quot;&gt;reuse_sessions:&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+           &lt;span class=&quot;ss&quot;&gt;honor_cipher_order:&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+           &lt;span class=&quot;ss&quot;&gt;client_renegotiation:&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;false&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+           &lt;span class=&quot;ss&quot;&gt;eccs:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;
+             &lt;span class=&quot;ss&quot;&gt;:sect571r1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:sect571k1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:secp521r1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:brainpoolP512r1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:sect409k1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+             &lt;span class=&quot;ss&quot;&gt;:sect409r1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:brainpoolP384r1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:secp384r1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:sect283k1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:sect283r1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+             &lt;span class=&quot;ss&quot;&gt;:brainpoolP256r1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:secp256k1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:secp256r1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:sect239k1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:sect233k1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+             &lt;span class=&quot;ss&quot;&gt;:sect233r1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:secp224k1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:secp224r1&lt;/span&gt;
+           &lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+   &lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+   &lt;span class=&quot;ss&quot;&gt;cache_static_manifest:&lt;/span&gt; &lt;span class=&quot;sd&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;priv/static/cache_manifest.json&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+   &lt;span class=&quot;ss&quot;&gt;server:&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+   &lt;span class=&quot;ss&quot;&gt;code_reloader:&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;false&lt;/span&gt;
+
+ &lt;span class=&quot;c1&quot;&gt;# Do not print debug messages in production&lt;/span&gt;
+ &lt;span class=&quot;n&quot;&gt;config&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:logger&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;level:&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:info&lt;/span&gt;
+
+ &lt;span class=&quot;c1&quot;&gt;# ## SSL Support&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;#&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;# To get SSL working, you will need to add the `https` key&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;# to the previous section and set your `:url` port to 443:&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;#&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;#     config :fumigate, FumigateWeb.Endpoint,&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;#       ...&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;#       url: [host: &quot;example.com&quot;, port: 443],&lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;#       https: [&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;#         :inet6,&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;#         port: 443,&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;#         cipher_suite: :strong,&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;#         keyfile: System.get_env(&quot;SOME_APP_SSL_KEY_PATH&quot;),&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;#         certfile: System.get_env(&quot;SOME_APP_SSL_CERT_PATH&quot;)&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;#       ]&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;#&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;# The `cipher_suite` is set to `:strong` to support only the&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;# latest and more secure SSL ciphers. This means old browsers&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;# and clients may not be supported. You can set it to&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;# `:compatible` for wider support.&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;#&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;# `:keyfile` and `:certfile` expect an absolute path to the key&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;# and cert in disk or a relative path inside priv, for example&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;# &quot;priv/ssl/server.key&quot;. For all supported SSL configuration&lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;# options, see https://hexdocs.pm/plug/Plug.SSL.html#configure/1&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;#&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;# We also recommend setting `force_ssl` in your endpoint, ensuring&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;# no data is ever sent via http, always redirecting to https:&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;#&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;#&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;# Check `Plug.SSL` for all available options in `force_ssl`.&lt;/span&gt;
+
+ &lt;span class=&quot;c1&quot;&gt;# ## Using releases (distillery)&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;#&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;# If you are doing OTP releases, you need to instruct Phoenix&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;# to start the server for all endpoints:&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;#&lt;/span&gt;
+ &lt;span class=&quot;n&quot;&gt;config&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:phoenix&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:serve_endpoints&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;true&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;#&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;# Alternatively, you can configure exactly which server to&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;# start per endpoint:&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;#&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;#     config :fumigate, FumigateWeb.Endpoint, server: true&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;#&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;# Note you can't rely on `System.get_env/1` when using releases.&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;# See the releases documentation accordingly.&lt;/span&gt;
+
+ &lt;span class=&quot;c1&quot;&gt;# Finally import the config/prod.secret.exs which should be versioned&lt;/span&gt;
+ &lt;span class=&quot;c1&quot;&gt;# separately.&lt;/span&gt;
+ &lt;span class=&quot;n&quot;&gt;import_config&lt;/span&gt; &lt;span class=&quot;sd&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;prod.secret.exs&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+</description>
+        <pubDate>Mon, 16 Sep 2019 00:00:00 -0700</pubDate>
+        <link>https://mythicalprogrammer.github.io/technology/webdev/elixir/phoenix/deployments/distillery/edeliver/2019/09/16/deploying-phoenix.html</link>
+        <guid isPermaLink="true">https://mythicalprogrammer.github.io/technology/webdev/elixir/phoenix/deployments/distillery/edeliver/2019/09/16/deploying-phoenix.html</guid>
+        
+        
+        <category>technology</category>
+        
+        <category>webdev</category>
+        
+        <category>elixir</category>
+        
+        <category>phoenix</category>
+        
+        <category>deployments</category>
+        
+        <category>distillery</category>
+        
+        <category>edeliver</category>
+        
+      </item>
     
       <item>
         <title>Books I've read this week and future reading plans.</title>
@@ -112,8 +1384,8 @@ or self help or statistical modeling.&lt;/p&gt;
 &lt;/ul&gt;
 </description>
         <pubDate>Sun, 16 Dec 2018 18:58:05 -0800</pubDate>
-        <link>http://localhost:4000/modeling/statistic/datascience/machinelearning/technology/webdev/2018/12/16/reading-progress.html</link>
-        <guid isPermaLink="true">http://localhost:4000/modeling/statistic/datascience/machinelearning/technology/webdev/2018/12/16/reading-progress.html</guid>
+        <link>https://mythicalprogrammer.github.io/modeling/statistic/datascience/machinelearning/technology/webdev/2018/12/16/reading-progress.html</link>
+        <guid isPermaLink="true">https://mythicalprogrammer.github.io/modeling/statistic/datascience/machinelearning/technology/webdev/2018/12/16/reading-progress.html</guid>
         
         
         <category>modeling</category>
@@ -190,8 +1462,8 @@ Critiques of Bayesian and solutions.&lt;/p&gt;
 &lt;/ul&gt;
 </description>
         <pubDate>Thu, 13 Dec 2018 18:33:00 -0800</pubDate>
-        <link>http://localhost:4000/modeling/statistic/datascience/machinelearning/bayesian/2018/12/13/interesting-papers-i-have-read-this-week.html</link>
-        <guid isPermaLink="true">http://localhost:4000/modeling/statistic/datascience/machinelearning/bayesian/2018/12/13/interesting-papers-i-have-read-this-week.html</guid>
+        <link>https://mythicalprogrammer.github.io/modeling/statistic/datascience/machinelearning/bayesian/2018/12/13/interesting-papers-i-have-read-this-week.html</link>
+        <guid isPermaLink="true">https://mythicalprogrammer.github.io/modeling/statistic/datascience/machinelearning/bayesian/2018/12/13/interesting-papers-i-have-read-this-week.html</guid>
         
         
         <category>modeling</category>
@@ -281,8 +1553,8 @@ I am incline to believe the latter have less chances of bias.&lt;/p&gt;
 &lt;/ul&gt;
 </description>
         <pubDate>Thu, 29 Nov 2018 20:08:00 -0800</pubDate>
-        <link>http://localhost:4000/modeling/statistic/datascience/machinelearning/2018/11/29/things-I-have-learned-about-modeling.html</link>
-        <guid isPermaLink="true">http://localhost:4000/modeling/statistic/datascience/machinelearning/2018/11/29/things-I-have-learned-about-modeling.html</guid>
+        <link>https://mythicalprogrammer.github.io/modeling/statistic/datascience/machinelearning/2018/11/29/things-I-have-learned-about-modeling.html</link>
+        <guid isPermaLink="true">https://mythicalprogrammer.github.io/modeling/statistic/datascience/machinelearning/2018/11/29/things-I-have-learned-about-modeling.html</guid>
         
         
         <category>modeling</category>
@@ -432,8 +1704,8 @@ I wish it have a better filesystem but I know it’ll work years from now. I’l
 &lt;/ul&gt;
 </description>
         <pubDate>Mon, 26 Nov 2018 16:44:00 -0800</pubDate>
-        <link>http://localhost:4000/technology/webdev/openbsd/2018/11/26/the_case_for_boring_technology.html</link>
-        <guid isPermaLink="true">http://localhost:4000/technology/webdev/openbsd/2018/11/26/the_case_for_boring_technology.html</guid>
+        <link>https://mythicalprogrammer.github.io/technology/webdev/openbsd/2018/11/26/the_case_for_boring_technology.html</link>
+        <guid isPermaLink="true">https://mythicalprogrammer.github.io/technology/webdev/openbsd/2018/11/26/the_case_for_boring_technology.html</guid>
         
         
         <category>technology</category>
@@ -703,8 +1975,8 @@ reduced model is chosen.&lt;/p&gt;
 
 </description>
         <pubDate>Thu, 07 Jun 2018 07:15:00 -0700</pubDate>
-        <link>http://localhost:4000/analysis/longitudinal/biostatistic/statistic/2018/06/07/longitudinal_data_cd4_paper.html</link>
-        <guid isPermaLink="true">http://localhost:4000/analysis/longitudinal/biostatistic/statistic/2018/06/07/longitudinal_data_cd4_paper.html</guid>
+        <link>https://mythicalprogrammer.github.io/analysis/longitudinal/biostatistic/statistic/2018/06/07/longitudinal_data_cd4_paper.html</link>
+        <guid isPermaLink="true">https://mythicalprogrammer.github.io/analysis/longitudinal/biostatistic/statistic/2018/06/07/longitudinal_data_cd4_paper.html</guid>
         
         
         <category>analysis</category>
@@ -1170,8 +2442,8 @@ It’s an amazing book and I highly recommend it.&lt;/p&gt;
 &lt;script src=&quot;/static/js/post/salmon_post.js&quot;&gt;&lt;/script&gt;&lt;/p&gt;
 </description>
         <pubDate>Sat, 15 Jul 2017 08:29:00 -0700</pubDate>
-        <link>http://localhost:4000/bayesian/modeling/hierarchicalmodeling/statistic/2017/07/15/bayesian2.html</link>
-        <guid isPermaLink="true">http://localhost:4000/bayesian/modeling/hierarchicalmodeling/statistic/2017/07/15/bayesian2.html</guid>
+        <link>https://mythicalprogrammer.github.io/bayesian/modeling/hierarchicalmodeling/statistic/2017/07/15/bayesian2.html</link>
+        <guid isPermaLink="true">https://mythicalprogrammer.github.io/bayesian/modeling/hierarchicalmodeling/statistic/2017/07/15/bayesian2.html</guid>
         
         
         <category>bayesian</category>
@@ -1392,8 +2664,8 @@ It’s an amazing book and I highly recommend it.&lt;/p&gt;
 
 </description>
         <pubDate>Thu, 13 Jul 2017 08:29:00 -0700</pubDate>
-        <link>http://localhost:4000/analysis/datascience/lightnovel/statistic/2017/07/13/lightnovels_analysis.html</link>
-        <guid isPermaLink="true">http://localhost:4000/analysis/datascience/lightnovel/statistic/2017/07/13/lightnovels_analysis.html</guid>
+        <link>https://mythicalprogrammer.github.io/analysis/datascience/lightnovel/statistic/2017/07/13/lightnovels_analysis.html</link>
+        <guid isPermaLink="true">https://mythicalprogrammer.github.io/analysis/datascience/lightnovel/statistic/2017/07/13/lightnovels_analysis.html</guid>
         
         
         <category>analysis</category>

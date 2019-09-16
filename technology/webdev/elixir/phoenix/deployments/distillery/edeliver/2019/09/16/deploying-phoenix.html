@@ -1,0 +1,498 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="shortcut icon" href="/static/img/favicon.ico" /><title>Elixir Phoenix 1.4 Deployments with Distillery and Edeliver on Ubuntu - Lackadaisical Cherimoya</title><meta name="author" content="Anthony Doan" /><meta name="description" content="Elixir Phoenix 1.4 Deployments with Distillery and Edeliver on Ubuntu" /><meta name="keywords" content="Elixir Phoenix 1.4 Deployments with Distillery and Edeliver on Ubuntu, Lackadaisical Cherimoya, technology, webdev, elixir, phoenix, deployments, distillery, edeliver" /><link rel="alternate" type="application/rss+xml" title="RSS" href="/feed.xml"><meta content="" property="fb:app_id"><meta content="Lackadaisical Cherimoya" property="og:site_name"><meta content="Elixir Phoenix 1.4 Deployments with Distillery and Edeliver on Ubuntu" property="og:title"><meta content="article" property="og:type"><meta content="It is still a beautiful world. Be cheerful. Strive to be happy." property="og:description"><meta content="https://mythicalprogrammer.github.io/technology/webdev/elixir/phoenix/deployments/distillery/edeliver/2019/09/16/deploying-phoenix.html" property="og:url"><meta content="2019-09-16T00:00:00-07:00" property="article:published_time"><meta content="https://mythicalprogrammer.github.io/about/" property="article:author"><meta content="https://mythicalprogrammer.github.io/static/img/juno_avatar.jpg" property="og:image"><meta content="technology" property="article:section"><meta name="twitter:card" content="summary"><meta name="twitter:site" content="@"><meta name="twitter:creator" content="@"><meta name="twitter:title" content="Elixir Phoenix 1.4 Deployments with Distillery and Edeliver on Ubuntu"><meta name="twitter:url" content="https://mythicalprogrammer.github.io/technology/webdev/elixir/phoenix/deployments/distillery/edeliver/2019/09/16/deploying-phoenix.html"><meta name="twitter:description" content="It is still a beautiful world. Be cheerful. Strive to be happy."><link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous"><link rel="stylesheet" href="/static/css/syntax.css"><link href="/static/css/bootstrap.min.css" rel="stylesheet"><link href="https://fonts.googleapis.com/css?family=Roboto+Condensed:400,300italic,300,400italic,700&amp;subset=latin,latin-ext" rel="stylesheet" type="text/css"><link rel="stylesheet" href="/static/css/super-search.css"><link rel="stylesheet" href="/static/css/thickbox.css"><link rel="stylesheet" href="/static/css/projects.css"><link rel="stylesheet" href="/static/css/main.css"><body><div class="container"><div class="col-sm-3"><div class="fixed-condition"> <!-- <span>(づ｡◕‿‿◕｡)づ</span> --> <center><a href="/"><img class="profile-avatar" src="/static/img/juno_avatar.jpg" height="75px" width="75px" /></a></center> <center><h1 class="author-name">Anthony Doan</h1></center><div class="profile-about"> I am a statistician, data scientist, machine learning practitioner, full stack programmer, and system admin. I like long walks from my refrigerator and back to my bed (also puppy pictures).</div><ul class="nav-list"><li class="nav-item"><a href="/">Home</a><li class="nav-item"><a href="/about/">About Me</a><li class="nav-item"><a href="/projects/">My Projects</a><li class="nav-item"><a href="/feed.xml">XML Feed</a></ul><div class="social"><ul><li><a href="https://www.linkedin.com/in/anthony-anh-quoc-doan-a7234321/" target="_blank"><i class="fa fa-linkedin"></i></a><li><a href="https://stackoverflow.com/users/339405/mythicalprogrammer" target="_blank"><i class="fa fa-stack-exchange"></i></a><li><a href="https://github.com/mythicalprogrammer" target="_blank"><i class="fa fa-github"></i></a><li><a href="https://www.reddit.com/user/anthony_doan/" target="_blank"><i class="fa fa-reddit"></i></a><li><a href="https://twitter.com/AnthonyDoan20" target="_blank"><i class="fa fa-twitter"></i></a><li><a href="https://mastodon.social/@anthony_doan" target="_blank"><i class="fa fa-user-plus"></i></a><li><a href="https://plus.google.com/u/0/108213758217600038620" target="_blank"><i class="fa fa-google-plus"></i></a></ul></div><hr /><div class="search" id="js-search"> <input type="text" placeholder="(sitemap)~$ type to search" class="search__input form-control" id="js-search__input"><ul class="search__results" id="js-search__results"></ul></div></div></div><div class="col-sm-8 col-offset-1 main-layout"><header class="post-header"><h1 class="post-title">Elixir Phoenix 1.4 Deployments with Distillery and Edeliver on Ubuntu</h1></header><span class="time">16 Sep 2019</span> <span class="categories"> &raquo; <a href="/category/technology">technology</a>, <a href="/category/webdev">webdev</a>, <a href="/category/elixir">elixir</a>, <a href="/category/phoenix">phoenix</a>, <a href="/category/deployments">deployments</a>, <a href="/category/distillery">distillery</a>, <a href="/category/edeliver">edeliver</a> </span><div class="content"><div class="post"><p>Base on:<ol><li><a href="https://devato.com/automate-elixir-phoenix-1-4-deployment-with-distillery-and-edeliver-on-ubuntu/#step-6-target-server-install-nodejs">https://devato.com/automate-elixir-phoenix-1-4-deployment-with-distillery-and-edeliver-on-ubuntu/#step-6-target-server-install-nodejs</a><li><a href="https://medium.com/@zek/deploy-early-and-often-deploying-phoenix-with-edeliver-and-distillery-part-one-5e91cac8d4bd">https://medium.com/@zek/deploy-early-and-often-deploying-phoenix-with-edeliver-and-distillery-part-one-5e91cac8d4bd</a><li><a href="https://medium.com/@zek/deploy-early-and-often-deploying-phoenix-with-edeliver-and-distillery-part-two-f361ef36aa10">https://medium.com/@zek/deploy-early-and-often-deploying-phoenix-with-edeliver-and-distillery-part-two-f361ef36aa10</a><li><a href="https://blog.progressplum.app/ssl-migration-from-nginx-to-cowboy-2-in-phoenix-1-4/">https://blog.progressplum.app/ssl-migration-from-nginx-to-cowboy-2-in-phoenix-1-4/</a><li><a href="https://elixirforum.com/t/elixir-1-9-releases-with-edeliver/23728/3?u=mythicalprogrammer">https://elixirforum.com/t/elixir-1-9-releases-with-edeliver/23728/3?u=mythicalprogrammer</a></ol><h2 id="step-1-create-your-digital-ocean-droplet">Step 1: Create your Digital Ocean droplet</h2><p>Make sure you add your SSH when creating digital ocean and do not add a paraphrase to your SSH. It doesn’t work with paraphrase.<h2 id="step-2-setting-up-your-server-do-droplet">Step 2: Setting up your server (DO droplet)</h2><h3 id="log-into-your-server">Log into your server.</h3><div class="language-sh highlighter-rouge"><pre class="highlight"><code>ssh root@134.209.8.141
+</code></pre></div><h3 id="setup-vim-as-default-editor-on-your-server">Setup VIM as default editor on your server.</h3><div class="language-sh highlighter-rouge"><pre class="highlight"><code>sudo update-alternatives --config editor
+</code></pre></div><p>Make sure you select the <code class="highlighter-rouge">/usr/bin/vim.basic</code> option which is number 3.<h3 id="update-your-locale">Update your locale.</h3><div class="language-sh highlighter-rouge"><pre class="highlight"><code>sudo update-locale <span class="nv">LC_ALL</span><span class="o">=</span>en_US.UTF-8
+sudo update-locale <span class="nv">LANGUAGE</span><span class="o">=</span>en_US.UTF-8
+</code></pre></div><h3 id="create-new-deploy-user">Create new <code class="highlighter-rouge">deploy</code> user</h3><p>The next step is to create a non-root user on the server which will own our application and handle deployments. We’ll configure the .ssh directory for the user, configure the user to have passwordless sudo access, and disabled password login to harden the server a bit.<p>Let’s create the user <code class="highlighter-rouge">deploy</code>.<p>As <code class="highlighter-rouge">root</code> on the target server:<div class="language-sh highlighter-rouge"><pre class="highlight"><code>adduser deploy
+</code></pre></div><p>Fill out the data as required. Like password.<p>Next, run this series of commands to configure the user’s <code class="highlighter-rouge">.ssh</code> directory:<div class="language-sh highlighter-rouge"><pre class="highlight"><code>sudo mkdir -p /home/deploy/.ssh
+sudo touch /home/deploy/.ssh/authorized_keys
+sudo chmod 700 /home/deploy/.ssh
+sudo chmod 644 /home/deploy/.ssh/authorized_keys
+sudo chown -R deploy:deploy /home/deploy
+</code></pre></div><p>As <code class="highlighter-rouge">root</code> on the target server:<div class="language-sh highlighter-rouge"><pre class="highlight"><code>sudo vim /etc/ssh/sshd_config
+</code></pre></div><p>Verify that password authentication is set to “no”:<div class="highlighter-rouge"><pre class="highlight"><code>PasswordAuthentication no
+</code></pre></div><h3 id="add-deploy-to-sudoers">Add deploy to sudoers</h3><div class="highlighter-rouge"><pre class="highlight"><code>Finally we'll add the user to sudo.
+
+As `root` on the target machine:
+</code></pre></div><div class="language-sh highlighter-rouge"><pre class="highlight"><code>visudo
+</code></pre></div><p>This will open the sudoers file where we can add the <code class="highlighter-rouge">deploy</code> users privileges below <code class="highlighter-rouge">root</code> like this:<div class="language-sh highlighter-rouge"><pre class="highlight"><code><span class="c"># User privilege specification</span>
+
+root <span class="nv">ALL</span><span class="o">=(</span>ALL:ALL<span class="o">)</span> ALL
+
+deploy <span class="nv">ALL</span><span class="o">=(</span>ALL<span class="o">)</span> NOPASSWD: ALL
+</code></pre></div><h3 id="add-ssh-public-key-to-authorizedkeys">Add ssh public key to authorized_keys</h3><p>In another terminal window, on your local machine:<div class="language-sh highlighter-rouge"><pre class="highlight"><code>cat ~/.ssh/id_rsa.pub
+</code></pre></div><p>On the target server, paste the key into authorized_keys:<div class="language-sh highlighter-rouge"><pre class="highlight"><code>sudo vim /home/deploy/.ssh/authorized_keys
+</code></pre></div><p>Now we can safely log in and work as the <code class="highlighter-rouge">deploy</code> user on the target machine without having to enter a password.<p>Now go to Basic Hardening article to remove root login<h3 id="set-up-your-firewall-on-ubuntu">Set up your firewall on Ubuntu</h3><p><a href="https://www.digitalocean.com/community/tutorials/initial-server-setup-with-ubuntu-18-04">https://www.digitalocean.com/community/tutorials/initial-server-setup-with-ubuntu-18-04</a><p>Ubuntu 18.04 servers can use the UFW firewall to make sure only connections to certain services are allowed. We can set up a basic firewall very easily using this application.<p>Different applications can register their profiles with UFW upon installation. These profiles allow UFW to manage these applications by name. OpenSSH, the service allowing us to connect to our server now, has a profile registered with UFW.<p>You can see this by typing:<div class="language-sh highlighter-rouge"><pre class="highlight"><code>ufw app list
+</code></pre></div><p>Output:<div class="language-sh highlighter-rouge"><pre class="highlight"><code>Available applications:
+  OpenSSH
+</code></pre></div><p>We need to make sure that the firewall allows SSH connections so that we can log back in next time. We can allow these connections by typing:<div class="language-sh highlighter-rouge"><pre class="highlight"><code>ufw allow OpenSSH
+</code></pre></div><p>Afterwards, we can enable the firewall by typing:<div class="language-sh highlighter-rouge"><pre class="highlight"><code>ufw <span class="nb">enable</span>
+</code></pre></div><p>Type “<code class="highlighter-rouge">y</code>” and press <code class="highlighter-rouge">ENTER</code> to proceed. You can see that SSH connections are still allowed by typing:<div class="language-sh highlighter-rouge"><pre class="highlight"><code>ufw status
+</code></pre></div><p>Output:<div class="language-sh highlighter-rouge"><pre class="highlight"><code>Status: active
+
+To                         Action      From
+--                         ------      ----
+OpenSSH                    ALLOW       Anywhere
+OpenSSH <span class="o">(</span>v6<span class="o">)</span>               ALLOW       Anywhere <span class="o">(</span>v6<span class="o">)</span>
+</code></pre></div><p>As <strong>the firewall is currently blocking all connections except for SSH</strong>, if you install and configure additional services, you will need to adjust the firewall settings to allow acceptable traffic in. You can learn some common UFW operations in <a href="https://www.digitalocean.com/community/tutorials/ufw-essentials-common-firewall-rules-and-commands">this guide</a>.<h2 id="step-4-target-server---install-asdf">Step 4: Target Server - Install asdf</h2><p>Sometimes, you’ll need to install specific versions or Erlang, Elixir or Node, and we’ll use <code class="highlighter-rouge">[asdf](https://github.com/asdf-vm/asdf)</code>, a version manager to tackle this complex task.<p><code class="highlighter-rouge">asdf</code> is an extendable version manager with support for Ruby, Node.js, Elixir, Erlang &amp; more.<p>To install it, we’ll first switch over to our newly created <code class="highlighter-rouge">deploy</code> user.<p>On the target server as <code class="highlighter-rouge">root</code>:<div class="language-sh highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>su deploy
+<span class="gp">$ </span><span class="nb">cd</span> <span class="c"># move into deploy's home path</span>
+</code></pre></div><h3 id="install-asdf">Install asdf</h3><p>Install dependencies:<div class="language-sh highlighter-rouge"><pre class="highlight"><code>sudo add-apt-repository <span class="s2">"deb http://archive.ubuntu.com/ubuntu </span><span class="k">$(</span>lsb_release -sc<span class="k">)</span><span class="s2"> main universe restricted multiverse"</span>
+
+sudo add-apt-repository <span class="s2">"deb http://archive.ubuntu.com/ubuntu </span><span class="k">$(</span>lsb_release -sc<span class="k">)</span><span class="s2"> universe"</span>
+
+sudo apt-get update
+
+sudo apt-get install -y build-essential git wget libssl-dev libreadline-dev <span class="se">\</span>
+  libncurses5-dev zlib1g-dev m4 curl wx-common libwxgtk3.0-dev autoconf <span class="se">\</span>
+  libxml2-utils xsltproc fop unixodbc unixodbc-bin unixodbc-dev
+
+sudo apt-get install openjdk-8-jdk
+sudo apt-get autoremove
+sudo apt-get upgrade
+</code></pre></div><p>Ensure that you are using the deploy account, and clone the repo:<div class="language-sh highlighter-rouge"><pre class="highlight"><code>git clone https://github.com/asdf-vm/asdf.git ~/.asdf
+</code></pre></div><p>Then add the shims and source the changes:<div class="language-sh highlighter-rouge"><pre class="highlight"><code><span class="nb">echo</span> -e <span class="s1">'\n. $HOME/.asdf/asdf.sh'</span> &gt;&gt; ~/.bashrc
+<span class="nb">echo</span> -e <span class="s1">'\n. $HOME/.asdf/completions/asdf.bash'</span> &gt;&gt; ~/.bashrc
+<span class="nb">source</span> ~/.bashrc
+</code></pre></div><p>After this you need to add asdf to your deploy user bash profile:<div class="language-sh highlighter-rouge"><pre class="highlight"><code><span class="nb">cd</span> ~
+vim ~/.profile
+</code></pre></div><p>Add this at the end of your profile:<div class="language-sh highlighter-rouge"><pre class="highlight"><code>. <span class="nv">$HOME</span>/.asdf/asdf.sh
+</code></pre></div><h3 id="optional-step-if-you-are-on-5-digital-ocean-droplet">Optional step if you are on $5 Digital Ocean Droplet</h3><p>For $5 droplet, asdf only works if you create a swapspace (I set it to 4GB) and wait a bit for asdf to install and build erlang felt like 30 min. See solution: (<a href="https://www.digitalocean.com/community/tutorials/how-to-add-swap-space-on-ubuntu-18-04">https://www.digitalocean.com/community/tutorials/how-to-add-swap-space-on-ubuntu-18-04</a>) See the problem reported: (<a href="https://github.com/asdf-vm/asdf-erlang/issues/91">https://github.com/asdf-vm/asdf-erlang/issues/91</a>)<p>Switch to root to create swap space.<p>We can see if the system has any configured swap by typing:<div class="language-sh highlighter-rouge"><pre class="highlight"><code>sudo swapon --show
+</code></pre></div><p>You can verify that there is no active swap using the <code class="highlighter-rouge">free</code> utility:<div class="language-sh highlighter-rouge"><pre class="highlight"><code>free -h
+</code></pre></div><p>Create swap file. The size of swap file is usually double your ram. But do 4G minimum.<div class="language-sh highlighter-rouge"><pre class="highlight"><code>sudo fallocate -l 4G /swapfile
+</code></pre></div><p>We can verify that the correct amount of space was reserved by typing:<div class="language-sh highlighter-rouge"><pre class="highlight"><code>ls -lh /swapfile
+</code></pre></div><p>Enabling the swap file<p>Now that we have a file of the correct size available, we need to actually turn this into swap space.<p>First, we need to lock down the permissions of the file so that only the users with <strong>root</strong> privileges can read the contents. This prevents normal users from being able to access the file, which would have significant security implications.<p>Make the file only accessible to <strong>root</strong> by typing:<div class="language-sh highlighter-rouge"><pre class="highlight"><code>sudo chmod 600 /swapfile
+</code></pre></div><p>Verify the permissions change by typing:<div class="language-sh highlighter-rouge"><pre class="highlight"><code>ls -lh /swapfile
+</code></pre></div><p>As you can see, only the <strong>root</strong> user has the read and write flags enabled.<p>We can now mark the file as swap space by typing:<div class="language-sh highlighter-rouge"><pre class="highlight"><code>sudo mkswap /swapfile
+</code></pre></div><div class="highlighter-rouge"><pre class="highlight"><code>
+Output
+
+Setting up swapspace version 1, size = 1024 MiB (1073737728 bytes)
+no label, UUID=6e965805-2ab9-450f-aed6-577e74089dbf
+</code></pre></div><p>After marking the file, we can enable the swap file, allowing our system to start utilizing it:<div class="language-sh highlighter-rouge"><pre class="highlight"><code>sudo swapon /swapfile
+</code></pre></div><p>Verify that the swap is available by typing:<div class="language-sh highlighter-rouge"><pre class="highlight"><code>sudo swapon --show
+</code></pre></div><p>Making the swapfile permanent<p>Our recent changes have enabled the swap file for the current session. However, if we reboot, the server will not retain the swap settings automatically. We can change this by adding the swap file to our <code class="highlighter-rouge">/etc/fstab</code> file.<p>Back up the <code class="highlighter-rouge">/etc/fstab</code> file in case anything goes wrong:<div class="language-sh highlighter-rouge"><pre class="highlight"><code>sudo cp /etc/fstab /etc/fstab.bak
+</code></pre></div><p>Add the swap file information to the end of your <code class="highlighter-rouge">/etc/fstab</code> file by typing:<div class="language-sh highlighter-rouge"><pre class="highlight"><code><span class="nb">echo</span> <span class="s1">'/swapfile none swap sw 0 0'</span> | sudo tee -a /etc/fstab
+</code></pre></div><p>Now switch to deploy user and check to see if asdf by typing <code class="highlighter-rouge">asdf</code>.<h2 id="step-5-target-server---install-erlangelixir">Step 5: Target Server - Install Erlang/Elixir</h2><p>Because we need our Phoenix project to run on both the local development machine and the production server, we’ll need to install the same languages and tools in both places. Erlang 21.1, and Elixir 1.7.4.<h3 id="install-erlang">Install Erlang</h3><p>We’re going to use <code class="highlighter-rouge">asdf</code> to install Erlang. I uses plugins for different libraries, so let’s add the plugin:<p>As <code class="highlighter-rouge">deploy</code> on the target machine:<div class="language-sh highlighter-rouge"><pre class="highlight"><code>asdf plugin-add erlang
+</code></pre></div><p>Install Erlang/OTP 22 (or whichever version your app needs)<div class="language-sh highlighter-rouge"><pre class="highlight"><code>asdf install erlang 22.0
+asdf global erlang 22.0
+</code></pre></div><p>OPTIONAL If anything went wrong or if dependencies skipped<div class="language-sh highlighter-rouge"><pre class="highlight"><code>asdf plugin-remove erlang
+asdf plugin-remove elixir
+asdf plugin-add erlang
+asdf plugin-add elixir
+</code></pre></div><h3 id="install-elixir">Install Elixir</h3><p>As <code class="highlighter-rouge">deploy</code> add the plugin:<div class="language-sh highlighter-rouge"><pre class="highlight"><code>asdf plugin-add elixir
+</code></pre></div><p>Install Elixir and make it global:<div class="highlighter-rouge"><pre class="highlight"><code>asdf install elixir 1.8.2
+</code></pre></div><div class="highlighter-rouge"><pre class="highlight"><code>asdf global elixir 1.8.2
+</code></pre></div><p>Now you can open a new terminal and try <code class="highlighter-rouge">erl</code>:<div class="language-sh highlighter-rouge"><pre class="highlight"><code>erl
+</code></pre></div><p>And you can try <code class="highlighter-rouge">iex</code>:<div class="language-sh highlighter-rouge"><pre class="highlight"><code>iex
+</code></pre></div><p>Use <code class="highlighter-rouge">asdf</code> <code class="highlighter-rouge">.tool-versions</code> file to manage which version is active on each of your projects.<p>Use Mix to install Hex.<div class="language-sh highlighter-rouge"><pre class="highlight"><code> mix local.hex
+</code></pre></div><h2 id="step-6-target-server---install-nodejs">Step 6: Target Server - Install Nodejs</h2><p>Installing Node is straightforward with a few commands.<p>NOTE: Look up what NODE version to install. Replace XX with version number such as 12. see <a href="https://github.com/nodesource/distributions/blob/master/README.md">https://github.com/nodesource/distributions/blob/master/README.md</a><div class="language-sh highlighter-rouge"><pre class="highlight"><code>sudo apt install curl
+curl -sL https://deb.nodesource.com/setup_XX.x | sudo -E bash -
+sudo apt-get install -y nodejs
+</code></pre></div><h2 id="step-7-target-server---install-postgresql">Step 7: Target Server - Install Postgresql</h2><p>base on <a href="https://computingforgeeks.com/install-postgresql-11-on-ubuntu-18-04-ubuntu-16-04/">https://computingforgeeks.com/install-postgresql-11-on-ubuntu-18-04-ubuntu-16-04/</a><p>As <code class="highlighter-rouge">root</code> on the target server:<p>Add PostgreSQL 11 APT repository (for Bionic 18.04 ubuntu)<p>https://www.postgresql.org/download/linux/ubuntu/<p>Create the file /etc/apt/sources.list.d/pgdg.list and add a line for the repository.<div class="language-sh highlighter-rouge"><pre class="highlight"><code>sudo vim /etc/apt/sources.list.d/pgdg.list
+</code></pre></div><p>Add this line:<div class="language-sh highlighter-rouge"><pre class="highlight"><code>deb http://apt.postgresql.org/pub/repos/apt/ bionic-pgdg main
+</code></pre></div><p>Import the repository signing key, and update the package lists :<div class="language-sh highlighter-rouge"><pre class="highlight"><code>wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+sudo apt-get update
+</code></pre></div><h3 id="install-postgresql-11-on-ubuntu-1804--ubuntu-1604">Install PostgreSQL 11 on Ubuntu 18.04 / Ubuntu 16.04</h3><p>After importing GPG key, add repository contents to your Ubuntu 18.04/16.04 system:<div class="language-sh highlighter-rouge"><pre class="highlight"><code>sudo apt-get install postgresql-11
+</code></pre></div><p>Verify repository file contents<div class="language-sh highlighter-rouge"><pre class="highlight"><code>cat /etc/apt/sources.list.d/pgdg.list
+</code></pre></div><h3 id="create-new-database-user">Create new database user</h3><p>During the postgres installation, a postgres root user <code class="highlighter-rouge">postgres</code> was created, but we don’t want to connect to the server with this user. Let’s create a separate postgres user for our app.<p>You can switch to the postgres user with <code class="highlighter-rouge">su postgres</code> than back to root with <code class="highlighter-rouge">exit</code><p>On the target server, switch to the <code class="highlighter-rouge">postgres</code> user, create a <code class="highlighter-rouge">phx</code> database user and set the new user’s password:<div class="language-sh highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>su postgres
+<span class="gp">$ </span><span class="nb">cd</span> ~
+
+<span class="gp">$ </span>createuser phx --pwprompt
+Enter password <span class="k">for </span>new role: 
+Enter it again:
+</code></pre></div><p>NOTE: Remember these credentials as they’ll be used once we configure our Phoenix application for production.<h3 id="create-production-database">Create production database:</h3><p>We’ll need to create our production database manually as edeliver only manages migrations.<p>As <code class="highlighter-rouge">postgres</code> on the target server:<div class="language-sh highlighter-rouge"><pre class="highlight"><code>createdb fumigate_prod
+</code></pre></div><p>Then log in to <code class="highlighter-rouge">psql</code>:<div class="language-sh highlighter-rouge"><pre class="highlight"><code>psql
+</code></pre></div><p>Ensure that you are logged into the postgres cli tool and run:<div class="highlighter-rouge"><pre class="highlight"><code>GRANT ALL PRIVILEGES ON DATABASE fumigate_prod TO phx;
+</code></pre></div><p>This gives our new <code class="highlighter-rouge">phx</code> user access to the newly created database. Exit psql with <code class="highlighter-rouge">\q</code><h3 id="database-credentials">Database credentials:</h3><p>To re-cap:<ul><li>username: <code class="highlighter-rouge">phx</code><li>password: <code class="highlighter-rouge">&lt;yourpass&gt;</code><li>database: fumigate<code class="highlighter-rouge">_prod</code></ul><h2 id="step-8-target-server---production-configuration">Step 8: Target Server - Production Configuration</h2><h3 id="create-prodsecretexs">Create prod.secret.exs</h3><p>You may have noticed that Phoenix created a <code class="highlighter-rouge">config/prod.secret.exs</code> file. This is imported by <code class="highlighter-rouge">config/prod.exs</code> but is ignored by git by default. We’ll need to create this file on the target machine so edeliver can symlink to it during the build process.<p>We’re also going to store our applications in <code class="highlighter-rouge">~/apps/&lt;appname&gt;</code> format which is the equivalent of <code class="highlighter-rouge">/home/deploy/apps/&lt;appname&gt;</code>.<p>Let’s switch over to our deploy user. On the target machine:<div class="language-sh highlighter-rouge"><pre class="highlight"><code>su deploy
+<span class="nb">cd</span>
+</code></pre></div><p>Make a new directory for our secrets:<div class="language-sh highlighter-rouge"><pre class="highlight"><code>mkdir -p apps/fumigate/secret
+</code></pre></div><p>Then create a new <code class="highlighter-rouge">prod.secret.exs</code> file in that directory:<div class="language-sh highlighter-rouge"><pre class="highlight"><code>vim ~/apps/fumigate/secret/prod.secret.exs
+</code></pre></div><p>Add this content to it:<div class="language-elixir highlighter-rouge"><pre class="highlight"><code><span class="kn">use</span> <span class="no">Mix</span><span class="o">.</span><span class="no">Config</span>
+
+<span class="n">config</span> <span class="ss">:fumigate</span><span class="p">,</span> <span class="no">FumigateWeb</span><span class="o">.</span><span class="no">Endpoint</span><span class="p">,</span>
+
+ <span class="ss">secret_key_base:</span> <span class="sd">"</span><span class="s2">YOURKEYHERE+v7fAdFNvoSZpUwTU96jA0UjEF1sgiVwdI5F"</span>
+
+<span class="n">config</span> <span class="ss">:fumigate</span><span class="p">,</span> <span class="no">Fumigate</span><span class="o">.</span><span class="no">Repo</span><span class="p">,</span>
+
+ <span class="ss">username:</span> <span class="sd">"</span><span class="s2">phx"</span><span class="p">,</span>
+
+ <span class="ss">password:</span> <span class="sd">"</span><span class="s2">yourpassword"</span><span class="p">,</span>
+
+ <span class="ss">database:</span> <span class="sd">"</span><span class="s2">fumigate_prod"</span><span class="p">,</span>
+
+ <span class="ss">pool_size:</span> <span class="m">15</span>
+</code></pre></div><p>You can generate a new secret key by using <code class="highlighter-rouge">mix phx.gen.secret</code> on your local machine.<p>IMPORTANT: Update the file to have a production ready secret key, and the database credentials you set from earlier.<h2 id="step-9-install-distillery-and-edeliver">Step 9: Install Distillery and edeliver</h2><p>As previously mentioned, <a href="https://github.com/bitwalker/distillery">Distillery</a> compiles our Phoenix application into releases, and <a href="https://github.com/edeliver/edeliver">edeliver</a> uses ssh and scp to build and deploy the releases to our production server.<p>On your local machine, open <code class="highlighter-rouge">mix.exs</code> and add 2 deps:<div class="language-elixir highlighter-rouge"><pre class="highlight"><code><span class="p">{</span><span class="ss">:edeliver</span><span class="p">,</span> <span class="sd">"</span><span class="s2">&gt;= 1.6.0"</span><span class="p">},</span>
+<span class="p">{</span><span class="ss">:distillery</span><span class="p">,</span> <span class="sd">"</span><span class="s2">~&gt; 2.0"</span><span class="p">,</span> <span class="ss">warn_missing:</span> <span class="no">false</span><span class="p">},</span>
+</code></pre></div><p>And add <code class="highlighter-rouge">:edeliver</code> to extra_applications in the <code class="highlighter-rouge">application</code> block:<div class="language-elixir highlighter-rouge"><pre class="highlight"><code>  <span class="k">def</span> <span class="n">application</span> <span class="k">do</span>
+    <span class="p">[</span>   
+      <span class="ss">mod:</span> <span class="p">{</span><span class="no">Fumigate</span><span class="o">.</span><span class="no">Application</span><span class="p">,</span> <span class="p">[]},</span>
+      <span class="ss">extra_applications:</span> <span class="p">[</span><span class="ss">:logger</span><span class="p">,</span> <span class="ss">:runtime_tools</span><span class="p">,</span> <span class="ss">:edeliver</span><span class="p">]</span>
+    <span class="p">]</span>   
+  <span class="k">end</span> 
+</code></pre></div><p>Use mix to install deps:<div class="language-sh highlighter-rouge"><pre class="highlight"><code>mix deps.get
+</code></pre></div><h3 id="initialize-distillery">Initialize Distillery</h3><p>Distillery requires a build configuration file that is not generated by default.<p>Let’s generate it with:<div class="language-sh highlighter-rouge"><pre class="highlight"><code>mix distillery.init
+</code></pre></div><p>This generates configuration files for Distillery in the <code class="highlighter-rouge">rel</code> directory. We don’t need to make any changes to the default config.<p>We now need to exclude <code class="highlighter-rouge">.deliver/releases/</code> from our git repo.<div class="language-sh highlighter-rouge"><pre class="highlight"><code><span class="nb">echo</span> <span class="s2">".deliver/releases/"</span> &gt;&gt; .gitignore
+</code></pre></div><h3 id="configure-edeliver">Configure edeliver</h3><p>Create a <code class="highlighter-rouge">.deliver</code> directory in your project folder and add the <code class="highlighter-rouge">config</code> file: (Change the IP to your server IP 134.209.8.141)<div class="language-sh highlighter-rouge"><pre class="highlight"><code><span class="c">#!/bin/bash</span>
+
+ <span class="nv">APP</span><span class="o">=</span><span class="s2">"fumigate"</span>
+
+ <span class="nv">BUILD_HOST</span><span class="o">=</span><span class="s2">"134.209.8.141"</span>
+ <span class="nv">BUILD_USER</span><span class="o">=</span><span class="s2">"deploy"</span>
+ <span class="nv">BUILD_AT</span><span class="o">=</span><span class="s2">"/tmp/edeliver/</span><span class="nv">$APP</span><span class="s2">/builds"</span>
+
+ <span class="nv">START_DEPLOY</span><span class="o">=</span><span class="nb">true
+ </span><span class="nv">CLEAN_DEPLOY</span><span class="o">=</span><span class="nb">true</span>
+ 
+ <span class="c"># prevent re-installing node modules; this defaults to "."</span>
+ <span class="nv">GIT_CLEAN_PATHS</span><span class="o">=</span><span class="s2">"_build rel priv/static"</span>
+
+ <span class="nv">PRODUCTION_HOSTS</span><span class="o">=</span><span class="s2">"134.209.8.141"</span>
+ <span class="nv">PRODUCTION_USER</span><span class="o">=</span><span class="s2">"deploy"</span>
+ <span class="nv">DELIVER_TO</span><span class="o">=</span><span class="s2">"/home/deploy/apps"</span>
+
+
+ <span class="c"># For Phoenix projects, symlink prod.secret.exs to our tmp source</span>
+ pre_erlang_get_and_update_deps<span class="o">()</span> <span class="o">{</span>
+   <span class="nb">local </span><span class="nv">_prod_secret_path</span><span class="o">=</span><span class="s2">"/home/deploy/apps/</span><span class="nv">$APP</span><span class="s2">/secret/prod.secret.exs"</span>
+   <span class="k">if</span> <span class="o">[</span> <span class="s2">"</span><span class="nv">$TARGET_MIX_ENV</span><span class="s2">"</span> <span class="o">=</span> <span class="s2">"prod"</span> <span class="o">]</span>; <span class="k">then
+     </span>status <span class="s2">"Linking '</span><span class="nv">$_prod_secret_path</span><span class="s2">'"</span>
+     __sync_remote <span class="s2">"
+       [ -f ~/.profile ] &amp;&amp; source ~/.profile
+       mkdir -p '</span><span class="nv">$BUILD_AT</span><span class="s2">'
+       ln -sfn '</span><span class="nv">$_prod_secret_path</span><span class="s2">' '</span><span class="nv">$BUILD_AT</span><span class="s2">/config/prod.secret.exs'
+     "</span>
+   <span class="k">fi</span>
+    <span class="o">}</span>
+
+ pre_erlang_clean_compile<span class="o">()</span> <span class="o">{</span>
+   status <span class="s2">"Running npm install"</span>
+     __sync_remote <span class="s2">"
+       [ -f ~/.profile ] &amp;&amp; source ~/.profile
+       set -e
+       cd '</span><span class="nv">$BUILD_AT</span><span class="s2">'/assets
+       npm install
+     "</span>
+
+   status <span class="s2">"Compiling assets"</span>
+      __sync_remote <span class="s2">"
+       [ -f ~/.profile ] &amp;&amp; source ~/.profile
+       set -e
+       cd '</span><span class="nv">$BUILD_AT</span><span class="s2">'/assets
+       node_modules/.bin/webpack --mode production --silent
+     "</span>
+
+   status <span class="s2">"Running phoenix.digest"</span> <span class="c"># log output prepended with "-----&gt;"</span>
+   __sync_remote <span class="s2">" # runs the commands on the build host
+     [ -f ~/.profile ] &amp;&amp; source ~/.profile # load profile (optional)
+     set -e # fail if any command fails (recommended)
+     cd '</span><span class="nv">$BUILD_AT</span><span class="s2">' # enter the build directory on the build host (required)
+          # prepare something
+     mkdir -p priv/static # required by the phoenix.digest task
+     # run your custom task
+     APP='</span><span class="nv">$APP</span><span class="s2">' MIX_ENV='</span><span class="nv">$TARGET_MIX_ENV</span><span class="s2">' </span><span class="nv">$MIX_CMD</span><span class="s2"> phx.digest </span><span class="nv">$SILENCE</span><span class="s2">
+     APP='</span><span class="nv">$APP</span><span class="s2">' MIX_ENV='</span><span class="nv">$TARGET_MIX_ENV</span><span class="s2">' </span><span class="nv">$MIX_CMD</span><span class="s2"> phx.digest.clean </span><span class="nv">$SILENCE</span><span class="s2">
+   "</span>
+ <span class="o">}</span>
+</code></pre></div><p>These are mostly environment variables use by Edeliver in the shell scripts. Go through them one by one and try to understand what they’re doing.<p>You can read more about the configuration variables in their <a href="https://github.com/edeliver/edeliver/wiki/Configuration-(.deliver-config)">Wiki</a>.<blockquote><p>Don’t forget to update your host configuration</blockquote><p>The custom functions are hooks that run during different phases of the deployment.<p>You can also read more about running additional tasks in their <a href="https://github.com/edeliver/edeliver/wiki/Run-additional-build-tasks">Wiki</a>.<h3 id="project-prod-configuration">Project prod configuration</h3><p>We’ll need to make some changes to the default production configuration in our project.<p>DO NOT RUN ON PORT 80. KEEP IT AT 4000. The application is running on deploy there fore it cannot run on port 80. We need to route incoming requests from 80 http and https to port 4000. Do not attempt to run app as root. That’s asking for trouble. Source: <a href="https://elixirforum.com/t/running-on-ec2-giving-error/13574/5">https://elixirforum.com/t/running-on-ec2-giving-error/13574/5</a><p>Open <code class="highlighter-rouge">config/prod.exs</code> and update it to this:<div class="language-elixir highlighter-rouge"><pre class="highlight"><code><span class="kn">use</span> <span class="no">Mix</span><span class="o">.</span><span class="no">Config</span>
+
+<span class="n">config</span> <span class="ss">:fumigate</span><span class="p">,</span> <span class="no">FumigateWeb</span><span class="o">.</span><span class="no">Endpoint</span><span class="p">,</span>
+   <span class="ss">http:</span> <span class="p">[</span><span class="ss">:inet6</span><span class="p">,</span> <span class="ss">port:</span> <span class="no">System</span><span class="o">.</span><span class="n">get_env</span><span class="p">(</span><span class="sd">"</span><span class="s2">PORT"</span><span class="p">)</span> <span class="o">||</span> <span class="m">4000</span><span class="p">],</span>
+   <span class="ss">url:</span> <span class="p">[</span><span class="ss">host:</span> <span class="sd">"</span><span class="s2">fumigatedb.com"</span><span class="p">,</span> <span class="ss">port:</span> <span class="m">80</span><span class="p">],</span>
+   <span class="ss">cache_static_manifest:</span> <span class="sd">"</span><span class="s2">priv/static/cache_manifest.json"</span><span class="p">,</span>
+   <span class="ss">server:</span> <span class="no">true</span><span class="p">,</span>
+   <span class="ss">code_reloader:</span> <span class="no">false</span>
+
+ <span class="c1"># Do not print debug messages in production</span>
+ <span class="n">config</span> <span class="ss">:logger</span><span class="p">,</span> <span class="ss">level:</span> <span class="ss">:info</span>
+
+<span class="c1"># ## SSL Support</span>
+ <span class="c1">#</span>
+ <span class="c1"># To get SSL working, you will need to add the `https` key</span>
+ <span class="c1"># to the previous section and set your `:url` port to 443:</span>
+ <span class="c1">#</span>
+ <span class="c1">#     config :fumigate, FumigateWeb.Endpoint,</span>
+ <span class="c1">#       ...</span>
+ <span class="c1">#       url: [host: "example.com", port: 443],</span>
+ <span class="c1">#       https: [</span>
+ <span class="c1">#         :inet6,</span>
+ <span class="c1">#         port: 443,</span>
+ <span class="c1">#         cipher_suite: :strong,</span>
+ <span class="c1">#         keyfile: System.get_env("SOME_APP_SSL_KEY_PATH"),</span>
+<span class="c1">#         certfile: System.get_env("SOME_APP_SSL_CERT_PATH")</span>
+ <span class="c1">#       ]</span>
+ <span class="c1">#</span>
+ <span class="c1"># The `cipher_suite` is set to `:strong` to support only the</span>
+ <span class="c1"># latest and more secure SSL ciphers. This means old browsers</span>
+ <span class="c1"># and clients may not be supported. You can set it to</span>
+ <span class="c1"># `:compatible` for wider support.</span>
+ <span class="c1">#</span>
+ <span class="c1"># `:keyfile` and `:certfile` expect an absolute path to the key</span>
+<span class="c1"># and cert in disk or a relative path inside priv, for example</span>
+ <span class="c1"># "priv/ssl/server.key". For all supported SSL configuration</span>
+ <span class="c1"># options, see https://hexdocs.pm/plug/Plug.SSL.html#configure/1</span>
+ <span class="c1">#</span>
+ <span class="c1"># We also recommend setting `force_ssl` in your endpoint, ensuring</span>
+ <span class="c1"># no data is ever sent via http, always redirecting to https:</span>
+ <span class="c1">#</span>
+ <span class="c1">#     config :fumigate, FumigateWeb.Endpoint,</span>
+ <span class="c1">#       force_ssl: [hsts: true]</span>
+ <span class="c1">#</span>
+ <span class="c1"># Check `Plug.SSL` for all available options in `force_ssl`.</span>
+
+ <span class="c1"># ## Using releases (distillery)</span>
+ <span class="c1">#</span>
+ <span class="c1"># If you are doing OTP releases, you need to instruct Phoenix</span>
+ <span class="c1"># to start the server for all endpoints:</span>
+ <span class="c1">#</span>
+ <span class="n">config</span> <span class="ss">:phoenix</span><span class="p">,</span> <span class="ss">:serve_endpoints</span><span class="p">,</span> <span class="no">true</span>
+ <span class="c1">#</span>
+ <span class="c1"># Alternatively, you can configure exactly which server to</span>
+ <span class="c1"># start per endpoint:</span>
+ <span class="c1">#</span>
+ <span class="c1">#     config :fumigate, FumigateWeb.Endpoint, server: true</span>
+ <span class="c1">#</span>
+ <span class="c1"># Note you can't rely on `System.get_env/1` when using releases.</span>
+ <span class="c1"># See the releases documentation accordingly.</span>
+
+ <span class="c1"># Finally import the config/prod.secret.exs which should be versioned</span>
+ <span class="c1"># separately.</span>
+ <span class="n">import_config</span> <span class="sd">"</span><span class="s2">prod.secret.exs"</span>
+</code></pre></div><p>These are settings recommended by Distillery. You might notice that we’re setting the system port using the <code class="highlighter-rouge">PORT</code> environment variable. This needs to be available during the build process and we can add it to the <code class="highlighter-rouge">~/.profile</code> file on our production server.<h3 id="add-env-variables-to-target-server">Add env Variables to Target Server</h3><p>Login as <code class="highlighter-rouge">deploy</code> to the target server.<div class="language-sh highlighter-rouge"><pre class="highlight"><code><span class="nb">cd</span> ~
+vim ~/.profile
+</code></pre></div><p>And add these lines:<div class="highlighter-rouge"><pre class="highlight"><code>export MIX_ENV=prod
+export PORT=4000
+</code></pre></div><p>This will ensure that our system runs on port 4000, and that the environment is set to <code class="highlighter-rouge">prod</code>.<p>Logout of deploy and log back in for ~/.profile be in effect<h2 id="step-10-deployment">Step 10: Deployment</h2><p>We’re finally ready to build and deploy our first release. The default version is <code class="highlighter-rouge">0.1.0</code> so let’s just keep that for now.<p>Warning: the commands for building and deploy can seem complicated at first but once you become familiar with them, you will see that they use a natural language style.<h3 id="build-the-production-release">Build the production release:</h3><p>NOTE: edeliver uses <strong>git master branch</strong> to build the code into release package.<p>In your project directory and git master branch:<div class="language-sh highlighter-rouge"><pre class="highlight"><code>mix edeliver build release production --verbose
+</code></pre></div><p>This builds the release on the target server, and stores the archive in your local <code class="highlighter-rouge">.edeliver/releases</code> directory.<h3 id="deploy-the-reload-to-production">Deploy the reload to production:</h3><p>In your project directory:<div class="language-sh highlighter-rouge"><pre class="highlight"><code>mix edeliver deploy release to production --verbose
+mix edeliver migrate production --verbose
+mix edeliver start production --verbose
+</code></pre></div><p>Other neat edeliver commands:<div class="language-sh highlighter-rouge"><pre class="highlight"><code>mix edeliver ping production <span class="c"># shows which nodes are up and running</span>
+mix edeliver version production <span class="c"># shows the release version running on the nodes</span>
+mix edeliver show migrations on production <span class="c"># shows pending database migrations</span>
+mix edeliver migrate production <span class="c"># run database migrations</span>
+mix edeliver restart production <span class="c"># or start or stop</span>
+</code></pre></div><p>You can read more about Edeliver in their <a href="https://github.com/edeliver/edeliver">documentation</a>.<h3 id="view-our-website-on-our-server">View our website on our server</h3><div class="language-sh highlighter-rouge"><pre class="highlight"><code>ssh deploy@188.166.182.170
+curl localhost:4000
+</code></pre></div><h2 id="step-11-generating-ssl-cert---before-routing-incoming-http-request-to-port-4000-our-phoenix-app">Step 11: Generating SSL CERT - BEFORE Routing incoming http request to port 4000 (our phoenix app)</h2><p><a href="https://www.digitalocean.com/community/tutorials/how-to-use-certbot-standalone-mode-to-retrieve-let-s-encrypt-ssl-certificates-on-ubuntu-1804">https://www.digitalocean.com/community/tutorials/how-to-use-certbot-standalone-mode-to-retrieve-let-s-encrypt-ssl-certificates-on-ubuntu-1804</a><p><a href="https://github.com/certbot/certbot/issues/5257">https://github.com/certbot/certbot/issues/5257</a><p>We should generate SSL Certificate. The certbot generator needs port 80. So you need to do this before rerouting incoming port 80 requests to our phoenix web app that’s listening on port 4000.<h3 id="step-1--installing-certbot">Step 1 — Installing Certbot</h3><p>The first step to using Let’s Encrypt to obtain an SSL certificate is to install the Certbot software on your server.<p>Certbot is in very active development, so the Certbot packages provided by Ubuntu tend to be outdated. However, the Certbot developers maintain a Ubuntu software repository with up-to-date versions, so we’ll use that repository instead.<p>First, add the repository:<div class="language-sh highlighter-rouge"><pre class="highlight"><code>sudo add-apt-repository ppa:certbot/certbot
+apt-get update
+</code></pre></div><p>Install certbot:<div class="language-sh highlighter-rouge"><pre class="highlight"><code>sudo apt-get install certbot
+</code></pre></div><h3 id="step-2--generating-certificate">Step 2 — Generating Certificate</h3><p>Make sure that your firewall is accepting port 80.<div class="language-sh highlighter-rouge"><pre class="highlight"><code>sudo ufw allow 80
+</code></pre></div><p>Generate the SSL cert:<div class="language-sh highlighter-rouge"><pre class="highlight"><code>sudo certbot certonly --standalone --preferred-challenges http -d fumigatedb.com -d www.fumigatedb.com
+</code></pre></div><p>Enable it so deploy user and app own by deploy can read those certs:<div class="language-sh highlighter-rouge"><pre class="highlight"><code>chmod 755 /etc/letsencrypt/live/
+chmod 755 /etc/letsencrypt/archive/
+</code></pre></div><p>We’ll get back to using cert on the server soon in step 14.<h2 id="step-12-routing-incoming-http-request-to-port-4000-our-phoenix-app">Step 12: Routing incoming http request to port 4000 (our phoenix app)</h2><p><a href="https://serverfault.com/questions/238563/can-i-use-ufw-to-setup-a-port-forward">https://serverfault.com/questions/238563/can-i-use-ufw-to-setup-a-port-forward</a><p>Let’s say you want to forward requests going to 80 (http) to a server listening on port 4000.<p>Note that you will need to make sure port 8080 is allowed, otherwise ufw will block the requests that are redirected to 4000.<div class="language-sh highlighter-rouge"><pre class="highlight"><code>sudo ufw allow 4000/tcp
+</code></pre></div><p>There are no ufw commands for setting up the port forwards, so it must be done via configuraton files. Add the lines below to <code class="highlighter-rouge">/etc/ufw/before.rules</code>, before the <code class="highlighter-rouge">filter</code> section, right at the top of the file:<div class="language-sh highlighter-rouge"><pre class="highlight"><code>sudo vim /etc/ufw/before.rules
+</code></pre></div><div class="highlighter-rouge"><pre class="highlight"><code>*nat
+:PREROUTING ACCEPT [0:0]
+-A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 4000
+COMMIT
+</code></pre></div><p>Then restart the server:<div class="language-sh highlighter-rouge"><pre class="highlight"><code>sudo reboot
+ssh deploy@134.209.8.141
+</code></pre></div><p>Enable ufw to start on boot:<div class="language-sh highlighter-rouge"><pre class="highlight"><code>sudo ufw <span class="nb">enable</span>
+</code></pre></div><p>Debug tips: check <code class="highlighter-rouge">/var/log/syslog</code><h2 id="step-13-fail2ban">Step 13: Fail2ban</h2><p><a href="https://www.lifewire.com/harden-ubuntu-server-security-4178243">https://www.lifewire.com/harden-ubuntu-server-security-4178243</a><p><a href="https://www.techrepublic.com/article/how-to-install-fail2ban-on-ubuntu-server-18-04/">https://www.techrepublic.com/article/how-to-install-fail2ban-on-ubuntu-server-18-04/</a><p>The fail2ban system is an intrusion prevention system that monitors log files and searches for particular patterns that correspond to a failed login attempt. If a certain number of failed logins are detected from a specific IP address (within a specified amount of time), fail2ban will block access from that IP address.<p>To install fail2ban, open a terminal window and issue the command:<div class="language-sh highlighter-rouge"><pre class="highlight"><code>sudo apt-get update
+sudo apt-get upgrade
+sudo apt-get install -y fail2ban
+</code></pre></div><p>Within the directory<code class="highlighter-rouge"> /etc/fail2ban</code><em>,</em> you’ll find the main configuration file, jail.conf. Also in that directory is the subdirectory, jail.d. The jail.conf file is the main configuration file and jail.d contains the secondary configuration files. Do not edit the jail.conf file. Instead, we’ll create a new configuration that will monitor SSH logins with the command:<div class="language-sh highlighter-rouge"><pre class="highlight"><code>sudo vim /etc/fail2ban/jail.local
+</code></pre></div><p>In this new file add the following contents:<div class="language-sh highlighter-rouge"><pre class="highlight"><code><span class="o">[</span>sshd]
+    enabled <span class="o">=</span> <span class="nb">true
+    </span>port <span class="o">=</span> 22
+    filter <span class="o">=</span> sshd
+    logpath <span class="o">=</span> /var/log/auth.log
+    maxretry <span class="o">=</span> 3
+</code></pre></div><p>This configuration does the following:<ul><li>Enables the jail.<li>Sets the SSH port to be monitored to 22.<li>Uses the sshd filter.<li>Sets the log file to be monitored.</ul><p>Save and close that file. Restart fail2ban with the command:<div class="language-sh highlighter-rouge"><pre class="highlight"><code>sudo systemctl start fail2ban
+sudo systemctl <span class="nb">enable </span>fail2ban
+sudo systemctl restart fail2ban
+</code></pre></div><p>If you attempt to Secure Shell into that server and fail the log in three times (set as the default by fail2ban), access will be then blocked from the <a href="https://www.lifewire.com/what-is-an-ip-address-2625920">IP address</a> you are working from.<h3 id="testing-and-unbanning">Testing and unbanning</h3><p>You can test to make sure the new jail works by failing three attempts at logging into the server, via ssh. After the third failed attempt, the connection will hang. Hit [Ctrl]+[c] to escape and then attempt to SSH back into the server. You should no longer be able to SSH into that server from the IP address you were using.<p>You can then unban your test IP address with the following command:<div class="language-sh highlighter-rouge"><pre class="highlight"><code>sudo fail2ban-client <span class="nb">set </span>sshd unbanip IP_ADDRESS
+</code></pre></div><p>where IP_ADDRESS is the banned IP Address.<p>You should now be able to log back into the server with SSH.<h3 id="scratching-the-surface">Scratching the surface</h3><p>This barely scratches the surface as to what fail2ban can do. But now you have a good idea on how to use the system. To find out more, make sure to read the man page with the command:<div class="language-sh highlighter-rouge"><pre class="highlight"><code>man fail2ban
+</code></pre></div><p>That manual page provides a good overview of what fail2ban can do.<h2 id="step-14-port-foward-ssl-to-port-4001">Step 14: Port foward SSL to Port 4001</h2><p>Set up the firewall:<div class="language-sh highlighter-rouge"><pre class="highlight"><code>sudo ufw allow https
+sudo ufw allow 443
+sudo ufw allow 4001
+</code></pre></div><p>There are no ufw commands for setting up the port forwards, so it must be done via configuraton files. Add the lines below to <code class="highlighter-rouge">/etc/ufw/before.rules</code>, before the <code class="highlighter-rouge">filter</code> section, right at the top of the file:<div class="language-sh highlighter-rouge"><pre class="highlight"><code>sudo vim /etc/ufw/before.rules
+</code></pre></div><div class="highlighter-rouge"><pre class="highlight"><code>*nat
+:PREROUTING ACCEPT [0:0]
+-A PREROUTING -p tcp --dport 443 -j REDIRECT --to-port 4001
+COMMIT
+</code></pre></div><p>Then restart the server:<div class="language-sh highlighter-rouge"><pre class="highlight"><code>sudo ufw <span class="nb">enable
+</span>sudo reboot
+ssh deploy@134.209.8.141
+</code></pre></div><h2 id="step-15-ssl">Step 15: SSL</h2><p><a href="https://blog.progressplum.app/ssl-migration-from-nginx-to-cowboy-2-in-phoenix-1-4/">https://blog.progressplum.app/ssl-migration-from-nginx-to-cowboy-2-in-phoenix-1-4/</a><p><a href="https://medium.com/@zek/secure-your-phoenix-app-with-free-ssl-48ac749c17d7">https://medium.com/@zek/secure-your-phoenix-app-with-free-ssl-48ac749c17d7</a><h3 id="step-1--generating-diffie-hellman-parameters">Step 1 — Generating Diffie Hellman parameters</h3><p>If you don’t already have a set of Diffie Hellman parameters<a href="https://blog.progressplum.app/ssl-migration-from-nginx-to-cowboy-2-in-phoenix-1-4/#2">[2]</a> to use with your SSL, generate a new set for extra security. Run this command on the server but be aware that it’s very CPU-intensive and may take a while on a slow VPS.<div class="language-sh highlighter-rouge"><pre class="highlight"><code>openssl dhparam -out /etc/letsencrypt/dhparam.pem 4096
+</code></pre></div><h3 id="step-2--set-up-your-environment">Step 2 — Set up your environment</h3><div class="language-sh highlighter-rouge"><pre class="highlight"><code>sudo vim ~/.profile
+</code></pre></div><div class="language-sh highlighter-rouge"><pre class="highlight"><code><span class="nb">export </span><span class="nv">MIX_ENV</span><span class="o">=</span>prod
+
+<span class="nb">export </span><span class="nv">PORT</span><span class="o">=</span>4000
+
+<span class="nb">export </span><span class="nv">SPORT</span><span class="o">=</span>4001
+
+<span class="nb">export </span><span class="nv">SSL_CERT_FILE</span><span class="o">=</span>/etc/letsencrypt/live/fumigatedb.com/cert.pem
+
+<span class="nb">export </span><span class="nv">SSL_CACERT_FILE</span><span class="o">=</span>/etc/letsencrypt/live/fumigatedb.com/chain.pem
+
+<span class="nb">export </span><span class="nv">SSL_KEY_FILE</span><span class="o">=</span>/etc/letsencrypt/live/fumigatedb.com/privkey.pem
+
+<span class="nb">export </span><span class="nv">SSL_DHPARAM_FILE</span><span class="o">=</span>/etc/letsencrypt/dhparam.pem
+</code></pre></div><p>Change <code class="highlighter-rouge">fumigatedb.com</code> to your domainname.<h3 id="step-3--prod-configuration">Step 3 — prod Configuration</h3><p>Update your application’s Endpoint configuration to add SSL support in <code class="highlighter-rouge">config/prod.exs</code>.<p><code class="highlighter-rouge">vim config/prod.exs</code><div class="language-elixir highlighter-rouge"><pre class="highlight"><code><span class="n">config</span> <span class="ss">:fumigate</span><span class="p">,</span> <span class="no">FumigateWeb</span><span class="o">.</span><span class="no">Endpoint</span><span class="p">,</span>
+       <span class="ss">url:</span> <span class="p">[</span><span class="ss">scheme:</span> <span class="sd">"</span><span class="s2">https"</span><span class="p">,</span> <span class="ss">host:</span> <span class="sd">"</span><span class="s2">fumigatedb.com"</span><span class="p">,</span> <span class="ss">port:</span> <span class="m">443</span><span class="p">],</span>
+       <span class="ss">http:</span> <span class="p">[</span><span class="ss">:inet6</span><span class="p">,</span> <span class="ss">port:</span> <span class="no">System</span><span class="o">.</span><span class="n">get_env</span><span class="p">(</span><span class="sd">"</span><span class="s2">PORT"</span><span class="p">)</span> <span class="o">||</span> <span class="m">4000</span><span class="p">],</span>
+       <span class="ss">https:</span> <span class="p">[</span>
+           <span class="ss">:inet6</span><span class="p">,</span>
+           <span class="ss">port:</span> <span class="no">System</span><span class="o">.</span><span class="n">get</span><span class="p">\</span><span class="n">_env</span><span class="p">(</span><span class="sd">"</span><span class="s2">SPORT"</span><span class="p">)</span> <span class="o">||</span> <span class="m">4001</span><span class="p">,</span>
+           <span class="ss">otp_app:</span> <span class="ss">:fumigate</span><span class="p">,</span>
+           <span class="ss">cipher_suite:</span> <span class="ss">:strong</span><span class="p">,</span>
+           <span class="ss">keyfile:</span> <span class="no">System</span><span class="o">.</span><span class="n">get_env</span><span class="p">(</span><span class="sd">"</span><span class="s2">SSL_KEY_FILE"</span><span class="p">),</span>
+           <span class="ss">certfile:</span> <span class="no">System</span><span class="o">.</span><span class="n">get_env</span><span class="p">(</span><span class="sd">"</span><span class="s2">SSL_CERT_FILE"</span><span class="p">),</span>
+           <span class="ss">cacertfile:</span> <span class="no">System</span><span class="o">.</span><span class="n">get_env</span><span class="p">(</span><span class="sd">"</span><span class="s2">SSL_CACERT_FILE"</span><span class="p">),</span>
+           <span class="ss">dhfile:</span> <span class="no">System</span><span class="o">.</span><span class="n">get_env</span><span class="p">(</span><span class="sd">"</span><span class="s2">SSL_DHPARAM_FILE"</span><span class="p">)</span>
+       <span class="p">],</span>
+       <span class="ss">cache_static_manifest:</span> <span class="sd">"</span><span class="s2">priv/static/cache_manifest.json"</span><span class="p">,</span>
+       <span class="ss">server:</span> <span class="no">true</span><span class="p">,</span>
+       <span class="ss">code_reloader:</span> <span class="no">false</span>
+</code></pre></div><p>Save to git master repo and rerun edeliver again.<div class="language-sh highlighter-rouge"><pre class="highlight"><code>git commit -a -m <span class="s2">"edited prod.exs to add HTTPS scheme"</span>
+git push origin master
+mix edeliver build release production --verbose
+mix edeliver deploy release to production
+mix edeliver stop production
+mix edeliver start production
+</code></pre></div><p>Check the ssl website now with: <a href="https://www.ssllabs.com/ssltest/">https://www.ssllabs.com/ssltest/</a><h3 id="step-4--application-configuration-forcing-ssl">Step 4 — Application Configuration forcing SSL</h3><div class="language-sh highlighter-rouge"><pre class="highlight"><code>git commit -a -m <span class="s2">"edited prod.exs to force SSL connection"</span>
+
+git push origin master
+
+mix edeliver build release production --verbose
+
+mix edeliver deploy release to production
+
+mix edeliver stop production
+
+mix edeliver start production
+</code></pre></div><h3 id="step-5--increasing-the-security-of-ssl">Step 5 — Increasing the security of SSL</h3><p><a href="https://elixirforum.com/t/making-ssl-tests-all-pass-for-phoenix-lets-encrypt/3507/11">https://elixirforum.com/t/making-ssl-tests-all-pass-for-phoenix-lets-encrypt/3507/11</a><div class="language-elixir highlighter-rouge"><pre class="highlight"><code><span class="kn">use</span> <span class="no">Mix</span><span class="o">.</span><span class="no">Config</span>
+
+ <span class="c1"># For production, don't forget to configure the url host</span>
+ <span class="c1"># to something meaningful, Phoenix uses this information</span>
+ <span class="c1"># when generating URLs.</span>
+ <span class="c1">#</span>
+ <span class="c1"># Note we also include the path to a cache manifest</span>
+ <span class="c1"># containing the digested version of static files. This</span>
+ <span class="c1"># manifest is generated by the `mix phx.digest` task,</span>
+ <span class="c1"># which you should run after static files are built and</span>
+ <span class="c1"># before starting your production server.</span>
+ <span class="n">config</span> <span class="ss">:fumigate</span><span class="p">,</span> <span class="no">FumigateWeb</span><span class="o">.</span><span class="no">Endpoint</span><span class="p">,</span>
+   <span class="ss">url:</span> <span class="p">[</span><span class="ss">scheme:</span> <span class="sd">"</span><span class="s2">https"</span><span class="p">,</span> <span class="ss">host:</span> <span class="sd">"</span><span class="s2">fumigatedb.com"</span><span class="p">,</span> <span class="ss">port:</span> <span class="m">443</span><span class="p">],</span>
+   <span class="ss">force_ssl:</span> <span class="p">[</span><span class="ss">hsts:</span> <span class="no">true</span><span class="p">],</span>
+   <span class="ss">http:</span> <span class="p">[</span><span class="ss">:inet6</span><span class="p">,</span> <span class="ss">port:</span> <span class="no">System</span><span class="o">.</span><span class="n">get_env</span><span class="p">(</span><span class="sd">"</span><span class="s2">PORT"</span><span class="p">)</span> <span class="o">||</span> <span class="m">4000</span><span class="p">],</span>
+   <span class="ss">https:</span> <span class="p">[</span>
+        <span class="ss">:inet6</span><span class="p">,</span>
+     <span class="ss">port:</span> <span class="no">System</span><span class="o">.</span><span class="n">get_env</span><span class="p">(</span><span class="sd">"</span><span class="s2">SPORT"</span><span class="p">)</span> <span class="o">||</span> <span class="m">4001</span><span class="p">,</span>
+     <span class="ss">otp_app:</span> <span class="ss">:fumigate</span><span class="p">,</span>
+     <span class="ss">cipher_suite:</span> <span class="ss">:strong</span><span class="p">,</span>
+     <span class="ss">keyfile:</span> <span class="no">System</span><span class="o">.</span><span class="n">get_env</span><span class="p">(</span><span class="sd">"</span><span class="s2">SSL_KEY_FILE"</span><span class="p">),</span>
+     <span class="ss">certfile:</span> <span class="no">System</span><span class="o">.</span><span class="n">get_env</span><span class="p">(</span><span class="sd">"</span><span class="s2">SSL_CERT_FILE"</span><span class="p">),</span>
+     <span class="ss">cacertfile:</span> <span class="no">System</span><span class="o">.</span><span class="n">get_env</span><span class="p">(</span><span class="sd">"</span><span class="s2">SSL_CACERT_FILE"</span><span class="p">),</span>
+     <span class="ss">dhfile:</span> <span class="no">System</span><span class="o">.</span><span class="n">get_env</span><span class="p">(</span><span class="sd">"</span><span class="s2">SSL_DHPARAM_FILE"</span><span class="p">),</span>
+     <span class="ss">versions:</span> <span class="p">[</span><span class="ss">:"tlsv1.2"</span><span class="p">,</span> <span class="ss">:"tlsv1.1"</span><span class="p">,</span> <span class="ss">:"tlsv1"</span><span class="p">],</span>
+           <span class="ss">ciphers:</span> <span class="err">~</span><span class="n">w</span><span class="p">(</span>
+             <span class="no">ECDHE</span><span class="o">-</span><span class="no">ECDSA</span><span class="o">-</span><span class="no">AES256</span><span class="o">-</span><span class="no">GCM</span><span class="o">-</span><span class="no">SHA384</span>
+             <span class="no">ECDHE</span><span class="o">-</span><span class="no">ECDSA</span><span class="o">-</span><span class="no">AES256</span><span class="o">-</span><span class="no">SHA384</span>
+             <span class="no">ECDHE</span><span class="o">-</span><span class="no">ECDSA</span><span class="o">-</span><span class="no">AES128</span><span class="o">-</span><span class="no">GCM</span><span class="o">-</span><span class="no">SHA256</span>
+             <span class="no">ECDHE</span><span class="o">-</span><span class="no">ECDSA</span><span class="o">-</span><span class="no">AES128</span><span class="o">-</span><span class="no">SHA256</span>
+             <span class="no">ECDHE</span><span class="o">-</span><span class="no">ECDSA</span><span class="o">-</span><span class="no">AES256</span><span class="o">-</span><span class="no">SHA</span>
+             <span class="no">ECDHE</span><span class="o">-</span><span class="no">ECDSA</span><span class="o">-</span><span class="no">AES128</span><span class="o">-</span><span class="no">SHA</span>
+
+             <span class="no">ECDHE</span><span class="o">-</span><span class="no">RSA</span><span class="o">-</span><span class="no">AES256</span><span class="o">-</span><span class="no">GCM</span><span class="o">-</span><span class="no">SHA384</span>
+             <span class="no">ECDHE</span><span class="o">-</span><span class="no">RSA</span><span class="o">-</span><span class="no">AES256</span><span class="o">-</span><span class="no">SHA384</span>
+             <span class="no">ECDHE</span><span class="o">-</span><span class="no">RSA</span><span class="o">-</span><span class="no">AES128</span><span class="o">-</span><span class="no">GCM</span><span class="o">-</span><span class="no">SHA256</span>
+             <span class="no">ECDHE</span><span class="o">-</span><span class="no">RSA</span><span class="o">-</span><span class="no">AES128</span><span class="o">-</span><span class="no">SHA256</span>
+             <span class="no">ECDHE</span><span class="o">-</span><span class="no">RSA</span><span class="o">-</span><span class="no">AES256</span><span class="o">-</span><span class="no">SHA</span>
+             <span class="no">ECDHE</span><span class="o">-</span><span class="no">RSA</span><span class="o">-</span><span class="no">AES128</span><span class="o">-</span><span class="no">SHA</span>
+
+             <span class="no">ECDH</span><span class="o">-</span><span class="no">ECDSA</span><span class="o">-</span><span class="no">AES256</span><span class="o">-</span><span class="no">GCM</span><span class="o">-</span><span class="no">SHA384</span>
+             <span class="no">ECDH</span><span class="o">-</span><span class="no">ECDSA</span><span class="o">-</span><span class="no">AES256</span><span class="o">-</span><span class="no">SHA384</span>
+             <span class="no">ECDH</span><span class="o">-</span><span class="no">ECDSA</span><span class="o">-</span><span class="no">AES128</span><span class="o">-</span><span class="no">GCM</span><span class="o">-</span><span class="no">SHA256</span>
+             <span class="no">ECDH</span><span class="o">-</span><span class="no">ECDSA</span><span class="o">-</span><span class="no">AES128</span><span class="o">-</span><span class="no">SHA256</span>
+             
+             
+             <span class="no">DHE</span><span class="o">-</span><span class="no">RSA</span><span class="o">-</span><span class="no">AES256</span><span class="o">-</span><span class="no">GCM</span><span class="o">-</span><span class="no">SHA384</span>
+             <span class="no">DHE</span><span class="o">-</span><span class="no">RSA</span><span class="o">-</span><span class="no">AES256</span><span class="o">-</span><span class="no">SHA256</span>
+             <span class="no">DHE</span><span class="o">-</span><span class="no">DSS</span><span class="o">-</span><span class="no">AES256</span><span class="o">-</span><span class="no">GCM</span><span class="o">-</span><span class="no">SHA384</span>
+             <span class="no">DHE</span><span class="o">-</span><span class="no">DSS</span><span class="o">-</span><span class="no">AES256</span><span class="o">-</span><span class="no">SHA256</span>
+             <span class="no">DHE</span><span class="o">-</span><span class="no">RSA</span><span class="o">-</span><span class="no">AES256</span><span class="o">-</span><span class="no">SHA</span>
+             <span class="no">DHE</span><span class="o">-</span><span class="no">DSS</span><span class="o">-</span><span class="no">AES256</span><span class="o">-</span><span class="no">SHA</span>
+
+             <span class="no">DHE</span><span class="o">-</span><span class="no">DSS</span><span class="o">-</span><span class="no">AES128</span><span class="o">-</span><span class="no">GCM</span><span class="o">-</span><span class="no">SHA256</span>
+             <span class="no">DHE</span><span class="o">-</span><span class="no">RSA</span><span class="o">-</span><span class="no">AES128</span><span class="o">-</span><span class="no">GCM</span><span class="o">-</span><span class="no">SHA256</span>
+             <span class="no">DHE</span><span class="o">-</span><span class="no">RSA</span><span class="o">-</span><span class="no">AES128</span><span class="o">-</span><span class="no">SHA256</span>
+             <span class="no">DHE</span><span class="o">-</span><span class="no">DSS</span><span class="o">-</span><span class="no">AES128</span><span class="o">-</span><span class="no">SHA256</span>
+             <span class="no">DHE</span><span class="o">-</span><span class="no">RSA</span><span class="o">-</span><span class="no">AES128</span><span class="o">-</span><span class="no">SHA</span>
+             <span class="no">DHE</span><span class="o">-</span><span class="no">DSS</span><span class="o">-</span><span class="no">AES128</span><span class="o">-</span><span class="no">SHA</span>
+             
+             
+             <span class="no">AES128</span><span class="o">-</span><span class="no">GCM</span><span class="o">-</span><span class="no">SHA256</span>
+             <span class="no">AES128</span><span class="o">-</span><span class="no">SHA</span>
+             <span class="no">DES</span><span class="o">-</span><span class="no">CBC3</span><span class="o">-</span><span class="no">SHA</span>
+           <span class="p">)</span><span class="n">c</span><span class="p">,</span>
+           <span class="ss">secure_renegotiate:</span> <span class="no">true</span><span class="p">,</span>
+           <span class="ss">reuse_sessions:</span> <span class="no">true</span><span class="p">,</span>
+           <span class="ss">honor_cipher_order:</span> <span class="no">true</span><span class="p">,</span>
+           <span class="ss">client_renegotiation:</span> <span class="no">false</span><span class="p">,</span>
+           <span class="ss">eccs:</span> <span class="p">[</span>
+             <span class="ss">:sect571r1</span><span class="p">,</span> <span class="ss">:sect571k1</span><span class="p">,</span> <span class="ss">:secp521r1</span><span class="p">,</span> <span class="ss">:brainpoolP512r1</span><span class="p">,</span> <span class="ss">:sect409k1</span><span class="p">,</span>
+             <span class="ss">:sect409r1</span><span class="p">,</span> <span class="ss">:brainpoolP384r1</span><span class="p">,</span> <span class="ss">:secp384r1</span><span class="p">,</span> <span class="ss">:sect283k1</span><span class="p">,</span> <span class="ss">:sect283r1</span><span class="p">,</span>
+             <span class="ss">:brainpoolP256r1</span><span class="p">,</span> <span class="ss">:secp256k1</span><span class="p">,</span> <span class="ss">:secp256r1</span><span class="p">,</span> <span class="ss">:sect239k1</span><span class="p">,</span> <span class="ss">:sect233k1</span><span class="p">,</span>
+             <span class="ss">:sect233r1</span><span class="p">,</span> <span class="ss">:secp224k1</span><span class="p">,</span> <span class="ss">:secp224r1</span>
+           <span class="p">],</span>
+   <span class="p">],</span>
+   <span class="ss">cache_static_manifest:</span> <span class="sd">"</span><span class="s2">priv/static/cache_manifest.json"</span><span class="p">,</span>
+   <span class="ss">server:</span> <span class="no">true</span><span class="p">,</span>
+   <span class="ss">code_reloader:</span> <span class="no">false</span>
+
+ <span class="c1"># Do not print debug messages in production</span>
+ <span class="n">config</span> <span class="ss">:logger</span><span class="p">,</span> <span class="ss">level:</span> <span class="ss">:info</span>
+
+ <span class="c1"># ## SSL Support</span>
+ <span class="c1">#</span>
+ <span class="c1"># To get SSL working, you will need to add the `https` key</span>
+ <span class="c1"># to the previous section and set your `:url` port to 443:</span>
+ <span class="c1">#</span>
+ <span class="c1">#     config :fumigate, FumigateWeb.Endpoint,</span>
+ <span class="c1">#       ...</span>
+ <span class="c1">#       url: [host: "example.com", port: 443],</span>
+  <span class="c1">#       https: [</span>
+ <span class="c1">#         :inet6,</span>
+ <span class="c1">#         port: 443,</span>
+ <span class="c1">#         cipher_suite: :strong,</span>
+ <span class="c1">#         keyfile: System.get_env("SOME_APP_SSL_KEY_PATH"),</span>
+ <span class="c1">#         certfile: System.get_env("SOME_APP_SSL_CERT_PATH")</span>
+ <span class="c1">#       ]</span>
+ <span class="c1">#</span>
+ <span class="c1"># The `cipher_suite` is set to `:strong` to support only the</span>
+ <span class="c1"># latest and more secure SSL ciphers. This means old browsers</span>
+ <span class="c1"># and clients may not be supported. You can set it to</span>
+ <span class="c1"># `:compatible` for wider support.</span>
+ <span class="c1">#</span>
+ <span class="c1"># `:keyfile` and `:certfile` expect an absolute path to the key</span>
+ <span class="c1"># and cert in disk or a relative path inside priv, for example</span>
+ <span class="c1"># "priv/ssl/server.key". For all supported SSL configuration</span>
+  <span class="c1"># options, see https://hexdocs.pm/plug/Plug.SSL.html#configure/1</span>
+ <span class="c1">#</span>
+ <span class="c1"># We also recommend setting `force_ssl` in your endpoint, ensuring</span>
+ <span class="c1"># no data is ever sent via http, always redirecting to https:</span>
+ <span class="c1">#</span>
+ <span class="c1">#</span>
+ <span class="c1"># Check `Plug.SSL` for all available options in `force_ssl`.</span>
+
+ <span class="c1"># ## Using releases (distillery)</span>
+ <span class="c1">#</span>
+ <span class="c1"># If you are doing OTP releases, you need to instruct Phoenix</span>
+ <span class="c1"># to start the server for all endpoints:</span>
+ <span class="c1">#</span>
+ <span class="n">config</span> <span class="ss">:phoenix</span><span class="p">,</span> <span class="ss">:serve_endpoints</span><span class="p">,</span> <span class="no">true</span>
+ <span class="c1">#</span>
+ <span class="c1"># Alternatively, you can configure exactly which server to</span>
+ <span class="c1"># start per endpoint:</span>
+ <span class="c1">#</span>
+ <span class="c1">#     config :fumigate, FumigateWeb.Endpoint, server: true</span>
+ <span class="c1">#</span>
+ <span class="c1"># Note you can't rely on `System.get_env/1` when using releases.</span>
+ <span class="c1"># See the releases documentation accordingly.</span>
+
+ <span class="c1"># Finally import the config/prod.secret.exs which should be versioned</span>
+ <span class="c1"># separately.</span>
+ <span class="n">import_config</span> <span class="sd">"</span><span class="s2">prod.secret.exs"</span>
+</code></pre></div></div></div><div class="panel-body"><h4>Related Posts</h4><ul><li class="relatedPost"> <a href="https://mythicalprogrammer.github.io/modeling/statistic/datascience/machinelearning/technology/webdev/2018/12/16/reading-progress.html">Books I've read this week and future reading plans.</a> (Categories: <a href="/category/modeling">modeling</a>, <a href="/category/statistic">statistic</a>, <a href="/category/datascience">datascience</a>, <a href="/category/machinelearning">machinelearning</a>, <a href="/category/technology">technology</a>, <a href="/category/webdev">webdev</a>)<li class="relatedPost"> <a href="https://mythicalprogrammer.github.io/technology/webdev/openbsd/2018/11/26/the_case_for_boring_technology.html">The Case for Boring Technology</a> (Categories: <a href="/category/technology">technology</a>, <a href="/category/webdev">webdev</a>, <a href="/category/openbsd">openbsd</a>)</ul></div><div class="PageNavigation"> <a class="prev" href="/modeling/statistic/datascience/machinelearning/technology/webdev/2018/12/16/reading-progress.html">&laquo; Books I've read this week and future reading plans.</a></div><footer> &copy; Anthony Doan - <a href="https://github.com/mythicalprogrammer">https://github.com/mythicalprogrammer</a> - Powered by <a href="https://jekyllrb.com">Jekyll</a> created via <a href="https://www.vim.org/">Vim</a>.<p>It is still a beautiful world. Be cheerful. Strive to be happy.<div class="btn-github" style="float:right;"> <iframe src="https://ghbtns.com/github-btn.html?user=agusmakmun&repo=agusmakmun.github.io&type=star&count=true" frameborder="0" scrolling="0" width="85" height="20px"></iframe> <iframe src="https://ghbtns.com/github-btn.html?user=agusmakmun&repo=agusmakmun.github.io&type=fork&count=true" frameborder="0" scrolling="0" width="85" height="20px"></iframe></div></footer></div></div><script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script> <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script> <script src="/static/js/bootstrap.min.js"></script> <script src="/static/js/super-search.js"></script> <script src="/static/js/thickbox-compressed.js"></script> <script src="/static/js/projects.js"></script>
